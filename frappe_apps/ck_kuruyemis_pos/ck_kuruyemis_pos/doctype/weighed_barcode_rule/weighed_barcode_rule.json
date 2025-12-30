@@ -1,0 +1,143 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:rule_name",
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "rule_name",
+  "enabled",
+  "priority",
+  "barcode_length",
+  "prefix",
+  "item_code_start",
+  "item_code_length",
+  "item_code_prefix",
+  "item_code_strip_leading_zeros",
+  "weight_start",
+  "weight_length",
+  "weight_divisor",
+  "price_start",
+  "price_length",
+  "price_divisor",
+  "check_ean13",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "rule_name",
+   "fieldtype": "Data",
+   "label": "Rule Name",
+   "reqd": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
+  },
+  {
+   "default": "0",
+   "fieldname": "priority",
+   "fieldtype": "Int",
+   "label": "Priority"
+  },
+  {
+   "default": "13",
+   "fieldname": "barcode_length",
+   "fieldtype": "Int",
+   "label": "Barcode Length"
+  },
+  {
+   "fieldname": "prefix",
+   "fieldtype": "Data",
+   "label": "Prefix"
+  },
+  {
+   "fieldname": "item_code_start",
+   "fieldtype": "Int",
+   "label": "Item Code Start (1-based)"
+  },
+  {
+   "fieldname": "item_code_length",
+   "fieldtype": "Int",
+   "label": "Item Code Length"
+  },
+  {
+   "fieldname": "item_code_prefix",
+   "fieldtype": "Data",
+   "label": "Item Code Prefix"
+  },
+  {
+   "default": "0",
+   "fieldname": "item_code_strip_leading_zeros",
+   "fieldtype": "Check",
+   "label": "Strip Leading Zeros"
+  },
+  {
+   "fieldname": "weight_start",
+   "fieldtype": "Int",
+   "label": "Weight Start (1-based)"
+  },
+  {
+   "fieldname": "weight_length",
+   "fieldtype": "Int",
+   "label": "Weight Length"
+  },
+  {
+   "default": "1000",
+   "fieldname": "weight_divisor",
+   "fieldtype": "Int",
+   "label": "Weight Divisor"
+  },
+  {
+   "fieldname": "price_start",
+   "fieldtype": "Int",
+   "label": "Price Start (1-based)"
+  },
+  {
+   "fieldname": "price_length",
+   "fieldtype": "Int",
+   "label": "Price Length"
+  },
+  {
+   "default": "100",
+   "fieldname": "price_divisor",
+   "fieldtype": "Int",
+   "label": "Price Divisor"
+  },
+  {
+   "default": "1",
+   "fieldname": "check_ean13",
+   "fieldtype": "Check",
+   "label": "Validate EAN-13 Checksum"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "module": "CK Kuruyemis POS",
+ "name": "Weighed Barcode Rule",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "write": 1
+  }
+ ],
+ "sort_field": "priority",
+ "sort_order": "DESC",
+ "title_field": "rule_name"
+}

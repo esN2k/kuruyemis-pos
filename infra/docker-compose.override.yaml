@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  backend:
+    volumes:
+      - ../frappe_apps/ck_kuruyemis_pos:/home/frappe/frappe-bench/apps/ck_kuruyemis_pos
+  frontend:
+    volumes:
+      - ../frappe_apps/ck_kuruyemis_pos:/home/frappe/frappe-bench/apps/ck_kuruyemis_pos
+  websocket:
+    volumes:
+      - ../frappe_apps/ck_kuruyemis_pos:/home/frappe/frappe-bench/apps/ck_kuruyemis_pos
+  queue-short:
+    volumes:
+      - ../frappe_apps/ck_kuruyemis_pos:/home/frappe/frappe-bench/apps/ck_kuruyemis_pos
+  queue-long:
+    volumes:
+      - ../frappe_apps/ck_kuruyemis_pos:/home/frappe/frappe-bench/apps/ck_kuruyemis_pos
+  scheduler:
+    volumes:
+      - ../frappe_apps/ck_kuruyemis_pos:/home/frappe/frappe-bench/apps/ck_kuruyemis_pos
