@@ -1,20 +1,24 @@
-name: pytest
+name: kalite
 
 on:
   push:
   pull_request:
 
 jobs:
-  pytest:
+  kalite:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Install test dependencies
-        run: pip install pytest
-      - name: Run pytest
+      - name: Bağımlılıkları kur
+        run: pip install pytest ruff black
+      - name: Ruff kontrolü
+        run: ruff check frappe_apps/ck_kuruyemis_pos services
+      - name: Black kontrolü
+        run: black --check frappe_apps/ck_kuruyemis_pos services
+      - name: Pytest çalıştır
         env:
           PYTHONPATH: ${{ github.workspace }}/frappe_apps/ck_kuruyemis_pos
-        run: pytest frappe_apps/ck_kuruyemis_pos/ck_kuruyemis_pos/tests
+        run: pytest frappe_apps/ck_kuruyemis_pos/ck_kuruyemis_pos/tests services

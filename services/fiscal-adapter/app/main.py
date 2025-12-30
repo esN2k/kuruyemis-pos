@@ -7,28 +7,30 @@ from app.config import settings
 from app.models import SaleRequest, SaleResponse
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("fiscal-adapter")
+logger = logging.getLogger("mali-adapter")
 
-app = FastAPI(title="Fiscal Adapter Stub", version="0.1.0")
+app = FastAPI(title="Mali Adaptör (Taslak)", version="0.1.0")
 
 
 @app.get("/health")
 def health():
-    return {"status": "ok"}
+    return {"durum": "tamam"}
 
 
 @app.post("/fiscal/sale", response_model=SaleResponse)
 def fiscal_sale(payload: SaleRequest) -> SaleResponse:
-    logger.info("Received sale request: total=%s lines=%s", payload.total, len(payload.lines))
-    logger.info("Target device %s:%s app_no=%s", settings.device_ip, settings.device_port, settings.app_no)
+    logger.info("Satış isteği alındı: toplam=%s satır=%s", payload.total, len(payload.lines))
+    logger.info(
+        "Hedef cihaz %s:%s uygulama_no=%s", settings.device_ip, settings.device_port, settings.app_no
+    )
 
-    # TODO: Implement GMP3 message framing and send via TCP socket.
-    # TODO: Handle ACK/NAK, retries, and timeouts.
-    # TODO: Map response to fiscal receipt number.
+    # YAPILACAK: GMP3 mesaj çerçeveleme ve TCP soket ile gönderim.
+    # YAPILACAK: ACK/NAK, yeniden deneme ve zaman aşımı yönetimi.
+    # YAPILACAK: Cihaz yanıtını mali fiş numarasına eşle.
 
-    placeholder = f"STUB-{uuid4().hex[:8]}"
+    placeholder = f"TASLAK-{uuid4().hex[:8]}"
     return SaleResponse(
-        status="stub",
+        status="taslak",
         fiscal_receipt_no=placeholder,
-        message="GMP3 adapter not implemented yet",
+        message="GMP3 adaptörü henüz uygulanmadı",
     )

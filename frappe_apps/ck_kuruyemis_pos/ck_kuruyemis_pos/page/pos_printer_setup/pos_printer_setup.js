@@ -1,7 +1,7 @@
 frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
   const page = frappe.ui.make_app_page({
     parent: wrapper,
-    title: "POS Printer Setup",
+    title: __("POS Printer Setup"),
     single_column: true,
   });
 
@@ -12,38 +12,38 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
     fields: [
       {
         fieldname: "receipt_printer_name",
-        label: "Default Receipt Printer",
+        label: __("Default Receipt Printer"),
         fieldtype: "Select",
       },
       {
         fieldname: "label_printer_name",
-        label: "Default Label Printer",
+        label: __("Default Label Printer"),
         fieldtype: "Select",
       },
       {
         fieldname: "label_size_preset",
-        label: "Label Size Preset",
+        label: __("Label Size Preset"),
         fieldtype: "Select",
         options: "38x80",
       },
       {
         fieldname: "btn_refresh",
-        label: "Refresh Printers",
+        label: __("Refresh Printers"),
         fieldtype: "Button",
       },
       {
         fieldname: "btn_save",
-        label: "Save Defaults",
+        label: __("Save Defaults"),
         fieldtype: "Button",
       },
       {
         fieldname: "btn_test_receipt",
-        label: "Test Receipt Print",
+        label: __("Test Receipt Print"),
         fieldtype: "Button",
       },
       {
         fieldname: "btn_test_label",
-        label: "Test Label Print",
+        label: __("Test Label Print"),
         fieldtype: "Button",
       },
     ],
@@ -62,7 +62,7 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
       const response = await frappe.call("frappe.client.get_single", { doctype: SETTINGS_DOCTYPE });
       return response.message || { doctype: SETTINGS_DOCTYPE };
     } catch (err) {
-      console.warn("Failed to load settings", err);
+      console.warn(__("Loading printer settings failed"), err);
       return { doctype: SETTINGS_DOCTYPE };
     }
   }
@@ -76,17 +76,17 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
 
     try {
       await frappe.call("frappe.client.save", { doc });
-      showAlert("Printer defaults saved");
+      showAlert(__("Printer defaults saved"));
     } catch (err) {
       console.error(err);
-      frappe.msgprint({ message: "Failed to save settings", indicator: "red" });
+      frappe.msgprint({ message: __("Failed to save settings"), indicator: "red" });
     }
   }
 
   async function refreshPrinters() {
     try {
       if (!window.ck_qz) {
-        frappe.msgprint({ message: "QZ Tray wrapper not loaded", indicator: "red" });
+        frappe.msgprint({ message: __("QZ Tray wrapper not loaded"), indicator: "red" });
         return;
       }
 
@@ -100,10 +100,10 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
       receiptField.refresh();
       labelField.refresh();
 
-      showAlert("Printer list refreshed");
+      showAlert(__("Printer list refreshed"));
     } catch (err) {
       console.error(err);
-      frappe.msgprint({ message: "Failed to fetch printers", indicator: "red" });
+      frappe.msgprint({ message: __("Failed to fetch printers"), indicator: "red" });
     }
   }
 
@@ -119,14 +119,14 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
       const values = fieldGroup.get_values();
       const printer = values.receipt_printer_name;
       if (!printer) {
-        frappe.msgprint({ message: "Select a receipt printer first", indicator: "orange" });
+        frappe.msgprint({ message: __("Select a receipt printer first"), indicator: "orange" });
         return;
       }
       await window.ck_qz.printRaw(printer, window.ck_qz_examples.receiptPayload());
-      showAlert("Receipt sent to printer");
+      showAlert(__("Receipt sent to printer: {0}", [printer]));
     } catch (err) {
       console.error(err);
-      frappe.msgprint({ message: "Receipt print failed", indicator: "red" });
+      frappe.msgprint({ message: __("Receipt print failed"), indicator: "red" });
     }
   }
 
@@ -135,14 +135,14 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
       const values = fieldGroup.get_values();
       const printer = values.label_printer_name;
       if (!printer) {
-        frappe.msgprint({ message: "Select a label printer first", indicator: "orange" });
+        frappe.msgprint({ message: __("Select a label printer first"), indicator: "orange" });
         return;
       }
       await window.ck_qz.printRaw(printer, window.ck_qz_examples.labelPayloadTspl());
-      showAlert("Label sent to printer");
+      showAlert(__("Label sent to printer: {0}", [printer]));
     } catch (err) {
       console.error(err);
-      frappe.msgprint({ message: "Label print failed", indicator: "red" });
+      frappe.msgprint({ message: __("Label print failed"), indicator: "red" });
     }
   }
 

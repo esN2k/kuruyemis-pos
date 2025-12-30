@@ -1,7 +1,7 @@
 app_name = "ck_kuruyemis_pos"
-app_title = "CK Kuruyemis POS"
-app_publisher = "CK Kuruyemis"
-app_description = "Custom POS workflows and weighed barcode parsing."
+app_title = "CK Kuruyemiş POS"
+app_publisher = "CK Kuruyemiş"
+app_description = "Kuruyemiş POS özelleştirmeleri ve tartılı barkod iş akışları."
 app_email = "ops@example.com"
 app_license = "GPLv3"
 

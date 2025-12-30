@@ -1,17 +1,11 @@
 param(
-  [string]$FrappeDockerDir = (Join-Path $PSScriptRoot "frappe_docker"),
   [switch]$WithOptionalServices
 )
 
-$composeArgs = @()
+$target = Resolve-Path (Join-Path $PSScriptRoot "..\scripts\windows\02-baslat.ps1")
+Write-Host "Bu script taşındı: scripts/windows/02-baslat.ps1"
 if ($WithOptionalServices) {
-  $composeArgs += "--profile"
-  $composeArgs += "optional"
+  & $target -WithOptionalServices
+} else {
+  & $target
 }
-$composeArgs += @(
-  "-f", (Join-Path $FrappeDockerDir "compose.yaml"),
-  "-f", (Join-Path $PSScriptRoot "docker-compose.override.yaml")
-)
-
-Write-Host "Starting frappe_docker with local overrides..."
-docker compose @composeArgs up -d

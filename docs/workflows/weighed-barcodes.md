@@ -1,47 +1,5 @@
-# Weighed Barcodes (CAS CL3000 Concepts)
+# Tartılı Barkod İş Akışı
 
-CAS CL3000 uses configurable barcode formats and format symbols that map segments to meanings (item code, weight, or price). Our parser config mirrors this by defining segments and their meaning.
+Bu doküman `docs/04-tartili-barkodlar.md` içeriğine taşındı.
 
-## Typical EAN-13 weighed layouts
-Common pattern (13 digits):
-- Prefix (2 digits): scale or format prefix
-- Item code (5 digits): PLU or internal item code
-- Value (5 digits): weight or price
-- Check digit (1 digit)
-
-In our config:
-- `segment_type = item_code` maps the PLU segment.
-- `segment_type = weight` maps a weight segment.
-- `segment_type = price` maps a price segment.
-
-PLU values map to `Item.scale_plu` by default.
-Ensure each weighed item has a 5-digit `scale_plu` set in ERPNext.
-If needed, set `Item Code Target` to `item_code` to match ERPNext item codes instead.
-
-## Segment scale units
-- Weight: `grams` (divisor 1000) or `kilograms` (divisor 1)
-- Price: `cents` (divisor 100) or `lira` (divisor 1)
-
-## Default rule presets
-These presets are shipped as fixtures and load automatically on app install/migrate.
-
-### Preset A: Prefix + ItemCode + Weight + Check (grams)
-- Prefix: `20`
-- Item code: start 3, length 5
-- Weight: start 8, length 5, scale unit `grams`
-- Check digit: enabled
-
-Sample barcode (passes tests): `2012345001501`
-
-### Preset B: Prefix + ItemCode + Price + Check (cents)
-- Prefix: `21`
-- Item code: start 3, length 5
-- Price: start 8, length 5, scale unit `cents`
-- Check digit: enabled
-
-Sample barcode (passes tests): `2154321012344`
-
-## Notes
-- Item code segments map to `Item.scale_plu` by default; change `Item Code Target` to use `item_code`.
-- If you prefer the older fixed fields, you can still set `weight_start`/`price_start` and `weight_divisor`/`price_divisor`.
-- When the `Segments` table is filled, it takes precedence for parsing.
+- CL3000 presetleri ve örnek barkodlar: `docs/04-tartili-barkodlar.md`

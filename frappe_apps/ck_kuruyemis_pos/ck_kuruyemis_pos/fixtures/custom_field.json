@@ -5,11 +5,11 @@
     "dt": "Item",
     "fieldname": "scale_plu",
     "fieldtype": "Data",
-    "label": "Scale PLU",
+    "label": "Tartı PLU",
     "insert_after": "item_code",
     "length": 5,
     "unique": 1,
     "reqd": 0,
-    "description": "5-digit scale PLU code for CL3000"
+    "description": "CL3000 için 5 haneli tartı PLU kodu"
   }
 ]

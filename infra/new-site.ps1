@@ -1,14 +1,9 @@
 param(
   [Parameter(Mandatory = $true)][string]$SiteName,
   [string]$AdminPassword = "admin",
-  [string]$MariaDBRootPassword = "admin",
-  [string]$FrappeDockerDir = (Join-Path $PSScriptRoot "frappe_docker")
+  [string]$MariaDBRootPassword = "admin"
 )
 
-$composeArgs = @(
-  "-f", (Join-Path $FrappeDockerDir "compose.yaml"),
-  "-f", (Join-Path $PSScriptRoot "docker-compose.override.yaml")
-)
-
-Write-Host "Creating site $SiteName..."
-docker compose @composeArgs exec backend bench new-site $SiteName --admin-password $AdminPassword --mariadb-root-password $MariaDBRootPassword --install-app erpnext
+$target = Resolve-Path (Join-Path $PSScriptRoot "..\scripts\windows\03-site-olustur.ps1")
+Write-Host "Bu script taşındı: scripts/windows/03-site-olustur.ps1"
+& $target -SiteAdi $SiteName -YoneticiSifresi $AdminPassword -MariaDBRootSifresi $MariaDBRootPassword

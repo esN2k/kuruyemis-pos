@@ -1,2 +1,2 @@
 include README.md
-recursive-include ck_kuruyemis_pos *.json *.py *.md *.js
+recursive-include ck_kuruyemis_pos *.json *.py *.md *.js *.csv

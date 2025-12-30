@@ -2,7 +2,7 @@
   {
     "doctype": "Weighed Barcode Rule",
     "name": "CL3000-Weight-20",
-    "rule_name": "CL3000 Weight (Prefix 20)",
+    "rule_name": "CL3000 Ağırlık (Önek 20)",
     "enabled": 1,
     "priority": 10,
     "barcode_length": 13,
@@ -39,7 +39,7 @@
   {
     "doctype": "Weighed Barcode Rule",
     "name": "CL3000-Price-21",
-    "rule_name": "CL3000 Price (Prefix 21)",
+    "rule_name": "CL3000 Fiyat (Önek 21)",
     "enabled": 1,
     "priority": 9,
     "barcode_length": 13,

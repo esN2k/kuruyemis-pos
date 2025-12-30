@@ -33,120 +33,120 @@
   {
    "fieldname": "rule_name",
    "fieldtype": "Data",
-   "label": "Rule Name",
+   "label": "Kural Adı",
    "reqd": 1
   },
   {
    "default": "1",
    "fieldname": "enabled",
    "fieldtype": "Check",
-   "label": "Enabled"
+   "label": "Etkin"
   },
   {
    "default": "0",
    "fieldname": "priority",
    "fieldtype": "Int",
-   "label": "Priority"
+   "label": "Öncelik"
   },
   {
    "default": "13",
    "fieldname": "barcode_length",
    "fieldtype": "Int",
-   "label": "Barcode Length"
+   "label": "Barkod Uzunluğu"
   },
   {
    "fieldname": "prefix",
    "fieldtype": "Data",
-   "label": "Prefix"
+   "label": "Önek"
   },
   {
    "fieldname": "segments",
    "fieldtype": "Table",
-   "label": "Segments",
+   "label": "Parçalar",
    "options": "Weighed Barcode Segment"
   },
   {
    "fieldname": "item_code_start",
    "fieldtype": "Int",
-   "label": "Item Code Start (1-based)"
+   "label": "Ürün Kodu Başlangıcı (1 tabanlı)"
   },
   {
    "fieldname": "item_code_length",
    "fieldtype": "Int",
-   "label": "Item Code Length"
+   "label": "Ürün Kodu Uzunluğu"
   },
   {
    "default": "scale_plu",
    "fieldname": "item_code_target",
    "fieldtype": "Select",
-   "label": "Item Code Target",
-   "options": "item_code\nscale_plu"
+   "label": "Ürün Kodu Hedefi",
+   "options": "Ürün Kodu|item_code\nTartı PLU|scale_plu"
   },
   {
    "fieldname": "item_code_prefix",
    "fieldtype": "Data",
-   "label": "Item Code Prefix"
+   "label": "Ürün Kodu Öneki"
   },
   {
    "default": "0",
    "fieldname": "item_code_strip_leading_zeros",
    "fieldtype": "Check",
-   "label": "Strip Leading Zeros"
+   "label": "Baştaki Sıfırları Kaldır"
   },
   {
    "fieldname": "weight_start",
    "fieldtype": "Int",
-   "label": "Weight Start (1-based)"
+   "label": "Ağırlık Başlangıcı (1 tabanlı)"
   },
   {
    "fieldname": "weight_length",
    "fieldtype": "Int",
-   "label": "Weight Length"
+   "label": "Ağırlık Uzunluğu"
   },
   {
    "default": "1000",
    "fieldname": "weight_divisor",
    "fieldtype": "Int",
-   "label": "Weight Divisor"
+   "label": "Ağırlık Bölümü"
   },
   {
    "fieldname": "weight_scale_unit",
    "fieldtype": "Select",
-   "label": "Weight Scale Unit",
-   "options": "grams\nkilograms"
+   "label": "Ağırlık Ölçek Birimi",
+   "options": "Gram|grams\nKilogram|kilograms"
   },
   {
    "fieldname": "price_start",
    "fieldtype": "Int",
-   "label": "Price Start (1-based)"
+   "label": "Fiyat Başlangıcı (1 tabanlı)"
   },
   {
    "fieldname": "price_length",
    "fieldtype": "Int",
-   "label": "Price Length"
+   "label": "Fiyat Uzunluğu"
   },
   {
    "default": "100",
    "fieldname": "price_divisor",
    "fieldtype": "Int",
-   "label": "Price Divisor"
+   "label": "Fiyat Bölümü"
   },
   {
    "fieldname": "price_scale_unit",
    "fieldtype": "Select",
-   "label": "Price Scale Unit",
-   "options": "cents\nlira"
+   "label": "Fiyat Ölçek Birimi",
+   "options": "Kuruş|cents\nLira|lira"
   },
   {
    "default": "1",
    "fieldname": "check_ean13",
    "fieldtype": "Check",
-   "label": "Validate EAN-13 Checksum"
+   "label": "EAN-13 Kontrol Basamağını Doğrula"
   },
   {
    "fieldname": "notes",
    "fieldtype": "Small Text",
-   "label": "Notes"
+   "label": "Notlar"
   }
  ],
  "index_web_pages_for_search": 1,

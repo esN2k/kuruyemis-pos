@@ -95,10 +95,17 @@
       };
       return settingsCache;
     } catch (err) {
-      console.warn("Failed to load POS Printing Settings", err);
+      console.warn(__("Loading printer settings failed"), err);
       settingsCache = defaults;
       return settingsCache;
     }
+  }
+
+  function formatError(err) {
+    if (!err) {
+      return "";
+    }
+    return err.message || String(err);
   }
 
   async function printReceipt() {
@@ -106,10 +113,10 @@
       const settings = await loadSettings();
       const printer = settings.receiptPrinter || DEFAULTS.receiptPrinter;
       await window.ck_qz.printRaw(printer, window.ck_qz_examples.receiptPayload());
-      notify("Receipt sent to printer: " + printer);
+      notify(__("Receipt sent to printer: {0}", [printer]));
     } catch (err) {
       console.error(err);
-      notify("Receipt print failed: " + err, true);
+      notify(__("Receipt print failed: {0}", [formatError(err)]), true);
     }
   }
 
@@ -118,10 +125,10 @@
       const settings = await loadSettings();
       const printer = settings.labelPrinter || DEFAULTS.labelPrinter;
       await window.ck_qz.printRaw(printer, window.ck_qz_examples.labelPayloadTspl());
-      notify("Label sent to printer: " + printer);
+      notify(__("Label sent to printer: {0}", [printer]));
     } catch (err) {
       console.error(err);
-      notify("Label print failed: " + err, true);
+      notify(__("Label print failed: {0}", [formatError(err)]), true);
     }
   }
 
@@ -153,8 +160,8 @@
       return;
     }
 
-    const addedReceipt = addAction(page, "Print Non-Fiscal Receipt", printReceipt);
-    const addedLabel = addAction(page, "Print Shelf Label", printLabel);
+    const addedReceipt = addAction(page, __("Print Non-Fiscal Receipt"), printReceipt);
+    const addedLabel = addAction(page, __("Print Shelf Label"), printLabel);
     page.__ck_qz_actions_added = addedReceipt || addedLabel;
   }
 

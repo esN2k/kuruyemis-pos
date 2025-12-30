@@ -13,21 +13,21 @@
   {
    "fieldname": "receipt_printer_name",
    "fieldtype": "Data",
-   "label": "Default Receipt Printer",
-   "description": "Windows printer name for ZY907",
+   "label": "Varsayılan Fiş Yazıcısı",
+   "description": "ZY907 için Windows yazıcı adı",
    "reqd": 0
   },
   {
    "fieldname": "label_printer_name",
    "fieldtype": "Data",
-   "label": "Default Label Printer",
-   "description": "Windows printer name for X-Printer 490B",
+   "label": "Varsayılan Etiket Yazıcısı",
+   "description": "X-Printer 490B için Windows yazıcı adı",
    "reqd": 0
   },
   {
    "fieldname": "label_size_preset",
    "fieldtype": "Select",
-   "label": "Label Size Preset",
+   "label": "Etiket Boyutu Preseti",
    "options": "38x80",
    "reqd": 0
   }

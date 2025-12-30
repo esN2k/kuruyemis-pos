@@ -1,3 +1,7 @@
-# Vendor JS placeholder
+# Vendor JS
 
-Run `./scripts/get-qz-tray.ps1` or `./scripts/get-qz-tray.sh` to download `qz-tray.js` into this folder.
+`qz-tray.js` bu klasöre indirilir.
+
+İndirmek için:
+- `scripts/get-qz-tray.ps1`
+- `scripts/get-qz-tray.sh`

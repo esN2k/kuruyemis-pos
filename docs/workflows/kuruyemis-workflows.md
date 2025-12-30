@@ -1,16 +1,23 @@
-# Kuruyemis Workflows
+# Kuruyemiş İş Akışı
 
-## Weighed label -> scan -> sale (store flow)
-1) Customer selects bulk product; CL3000 prints a barcode label with embedded PLU + weight/price.
-2) Cashier scans the label in POS Awesome.
-3) Weighed barcode parser resolves the Item by `scale_plu` and sets quantity/price automatically.
-4) Cashier completes sale in POS.
-5) Fiscal receipt is printed manually on INPOS M530 (MVP).
-6) Optional non-fiscal receipt is printed via QZ Tray.
-7) Stock is decremented in ERPNext after the sale is submitted.
+Bu doküman mağaza operasyonu için **net, adım adım** akışı tanımlar.
 
-## Returns
-- Locate original invoice, scan item barcode, and refund or replace per store policy.
+## Ana Satış Akışı
+1) **Tart**: CL3000 üzerinde ürün tartılır
+2) **Etiket**: Tartı, barkodlu etiket basar (Prefix 20/21)
+3) **Tara**: POS Awesome'da barkod okutulur
+4) **Sepet**: Ürün otomatik sepete düşer (miktar/fiyat dolu gelir)
+5) **Mali Fiş**: M530 üzerinde mali fiş manuel basılır (MVP)
+6) **Mali Olmayan Fiş**: İstenirse QZ Tray üzerinden basılır
+7) **Stok**: ERPNext stoktan düşer
 
-## Discounts
-- Line or cart discounts applied by authorized staff only (role-based permission in ERPNext).
+## İade Akışı (Özet)
+- Müşteri fişi ile gelir
+- POS'ta iade satışı yapılır
+- M530 üzerinde iade mali fişi manuel basılır
+
+## İndirim Akışı (Özet)
+- POS'ta indirim uygulanır
+- Toplam tutar güncellenir
+
+Not: Barkod ve yazdırma ayarları için `docs/04-tartili-barkodlar.md` ve `docs/03-yazdirma-qz.md`.

@@ -1,3 +1,3 @@
 # ck_kuruyemis_pos
 
-Custom Frappe app for kuruyemis POS workflows (weighed barcode parsing, POS hooks).
+Kuruyemiş POS için Frappe uygulaması (tartılı barkod çözümleme, POS yazdırma entegrasyonu).

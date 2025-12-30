@@ -1,11 +1,11 @@
-# Infra
+# Altyapı (Infra)
 
-Docker-based development uses the upstream `frappe_docker` compose files with a local override.
+Geliştirme ortamı, upstream `frappe_docker` compose dosyaları ve yerel override ile çalışır.
 
-- Pinned versions: `infra/versions.md`
+- Pinli sürümler: `infra/versions.md`
 - Override compose: `infra/docker-compose.override.yaml`
-- Scripts: `infra/start-dev.ps1`, `infra/new-site.ps1`, `infra/install-apps.ps1`
+- Windows scriptleri: `scripts/windows/*`
 
-Optional services (enable with `./start-dev.ps1 -WithOptionalServices`):
-- `fiscal-adapter` on port `8090`
-- `hardware-bridge` on port `8091`
+Opsiyonel servisler:
+- `fiscal-adapter` (port 8090)
+- `hardware-bridge` (port 8091)

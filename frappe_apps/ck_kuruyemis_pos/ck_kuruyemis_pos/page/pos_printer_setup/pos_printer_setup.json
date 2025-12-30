@@ -1,7 +1,7 @@
 {
  "doctype": "Page",
  "name": "pos_printer_setup",
- "title": "POS Printer Setup",
+ "title": "POS Yazıcı Kurulumu",
  "icon": "octicon octicon-device-desktop",
  "module": "CK Kuruyemis POS",
  "standard": "Yes"

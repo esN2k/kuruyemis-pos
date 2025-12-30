@@ -4,15 +4,15 @@
 
   function receiptPayload() {
     const lines = [
-      "CK KURUYEMIS POS\n",
-      "Non-fiscal receipt (demo)\n",
+      "CK KURUYEMİŞ POS\n",
+      "Mali olmayan fiş (demo)\n",
       "---------------------------\n",
-      "Item: Antep Pistachio\n",
-      "Qty : 0.250 kg\n",
-      "Price: 375.00 TRY/kg\n",
-      "Total: 93.75 TRY\n",
+      "Ürün: Antep Fıstığı\n",
+      "Miktar: 0.250 kg\n",
+      "Fiyat: 375.00 TRY/kg\n",
+      "Tutar: 93.75 TRY\n",
       "---------------------------\n",
-      "Thank you!\n\n\n",
+      "Teşekkürler!\n\n\n",
     ].join("");
 
     // ESC/POS init + cut
@@ -27,7 +27,7 @@
       "SPEED 4",
       "DIRECTION 1",
       "CLS",
-      "TEXT 20,20,\"0\",0,1,1,\"Antep Pistachio\"",
+      "TEXT 20,20,\"0\",0,1,1,\"Antep Fıstığı\"",
       "TEXT 20,50,\"0\",0,1,1,\"0.250 kg\"",
       "TEXT 20,80,\"0\",0,1,1,\"93.75 TRY\"",
       "BARCODE 20,120,\"128\",80,1,0,2,2,\"2101234002508\"",
