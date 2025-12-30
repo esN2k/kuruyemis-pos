@@ -1,0 +1,76 @@
+[
+  {
+    "doctype": "Weighed Barcode Rule",
+    "name": "CL3000-Weight-20",
+    "rule_name": "CL3000 Weight (Prefix 20)",
+    "enabled": 1,
+    "priority": 10,
+    "barcode_length": 13,
+    "prefix": "20",
+    "item_code_start": 3,
+    "item_code_length": 5,
+    "item_code_target": "scale_plu",
+    "item_code_strip_leading_zeros": 0,
+    "weight_start": 8,
+    "weight_length": 5,
+    "weight_divisor": 1000,
+    "weight_scale_unit": "grams",
+    "price_start": 0,
+    "price_length": 0,
+    "price_divisor": 100,
+    "price_scale_unit": "cents",
+    "check_ean13": 1,
+    "segments": [
+      {
+        "doctype": "Weighed Barcode Segment",
+        "segment_type": "item_code",
+        "start": 3,
+        "length": 5
+      },
+      {
+        "doctype": "Weighed Barcode Segment",
+        "segment_type": "weight",
+        "start": 8,
+        "length": 5,
+        "scale_unit": "grams"
+      }
+    ]
+  },
+  {
+    "doctype": "Weighed Barcode Rule",
+    "name": "CL3000-Price-21",
+    "rule_name": "CL3000 Price (Prefix 21)",
+    "enabled": 1,
+    "priority": 9,
+    "barcode_length": 13,
+    "prefix": "21",
+    "item_code_start": 3,
+    "item_code_length": 5,
+    "item_code_target": "scale_plu",
+    "item_code_strip_leading_zeros": 0,
+    "weight_start": 0,
+    "weight_length": 0,
+    "weight_divisor": 1000,
+    "weight_scale_unit": "grams",
+    "price_start": 8,
+    "price_length": 5,
+    "price_divisor": 100,
+    "price_scale_unit": "cents",
+    "check_ean13": 1,
+    "segments": [
+      {
+        "doctype": "Weighed Barcode Segment",
+        "segment_type": "item_code",
+        "start": 3,
+        "length": 5
+      },
+      {
+        "doctype": "Weighed Barcode Segment",
+        "segment_type": "price",
+        "start": 8,
+        "length": 5,
+        "scale_unit": "cents"
+      }
+    ]
+  }
+]

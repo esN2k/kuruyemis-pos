@@ -1,0 +1,8 @@
+{
+ "doctype": "Page",
+ "name": "pos_printer_setup",
+ "title": "POS Printer Setup",
+ "icon": "octicon octicon-device-desktop",
+ "module": "CK Kuruyemis POS",
+ "standard": "Yes"
+}

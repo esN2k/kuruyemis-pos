@@ -1,11 +1,14 @@
-/* POS Awesome demo buttons for QZ Tray printing. */
+/* POS Awesome toolbar/menu actions for QZ Tray printing. */
 (function () {
   "use strict";
 
   const DEFAULTS = {
     receiptPrinter: "ZY907",
     labelPrinter: "X-Printer 490B",
+    labelSizePreset: "38x80",
   };
+  const SETTINGS_DOCTYPE = "POS Printing Settings";
+  let settingsCache = null;
 
   function isPosRoute() {
     const route = (window.frappe && frappe.get_route_str && frappe.get_route_str()) || window.location.pathname || "";
@@ -13,81 +16,153 @@
     return normalized.includes("posawesome") || normalized.includes("point-of-sale");
   }
 
-  function notify(message) {
-    if (window.frappe && frappe.msgprint) {
-      frappe.msgprint(message);
+  function notify(message, isError) {
+    if (window.frappe && frappe.show_alert && !isError) {
+      frappe.show_alert({ message, indicator: "green" });
+      refocusBarcodeInput();
+    } else if (window.frappe && frappe.msgprint) {
+      const dialog = frappe.msgprint({
+        message,
+        indicator: isError ? "red" : "green",
+      });
+      if (dialog && typeof dialog.onhide === "function") {
+        dialog.onhide = refocusBarcodeInput;
+      } else {
+        refocusBarcodeInput();
+      }
     } else {
       alert(message);
+      refocusBarcodeInput();
     }
   }
 
-  function ensurePanel() {
+  function isVisible(el) {
+    return el && el.offsetParent !== null;
+  }
+
+  function findBarcodeInput() {
+    const container = document.querySelector("#posawesome-app") || document.body;
+    const selectors = [
+      "input[data-fieldname='barcode']",
+      "input[data-fieldname='item_code']",
+      "input[placeholder*='barcode' i]",
+      "input[placeholder*='scan' i]",
+      "input[type='text']",
+    ];
+
+    for (const selector of selectors) {
+      const input = container.querySelector(selector);
+      if (isVisible(input)) {
+        return input;
+      }
+    }
+    return null;
+  }
+
+  function refocusBarcodeInput() {
+    setTimeout(() => {
+      const input = findBarcodeInput();
+      if (input) {
+        input.focus();
+        input.select?.();
+      }
+    }, 150);
+  }
+
+  async function loadSettings() {
+    if (settingsCache) {
+      return settingsCache;
+    }
+
+    const defaults = {
+      receiptPrinter: DEFAULTS.receiptPrinter,
+      labelPrinter: DEFAULTS.labelPrinter,
+      labelSizePreset: DEFAULTS.labelSizePreset,
+    };
+
+    if (!window.frappe || !frappe.call) {
+      settingsCache = defaults;
+      return settingsCache;
+    }
+
+    try {
+      const response = await frappe.call("frappe.client.get_single", { doctype: SETTINGS_DOCTYPE });
+      const data = response.message || {};
+      settingsCache = {
+        receiptPrinter: data.receipt_printer_name || defaults.receiptPrinter,
+        labelPrinter: data.label_printer_name || defaults.labelPrinter,
+        labelSizePreset: data.label_size_preset || defaults.labelSizePreset,
+      };
+      return settingsCache;
+    } catch (err) {
+      console.warn("Failed to load POS Printing Settings", err);
+      settingsCache = defaults;
+      return settingsCache;
+    }
+  }
+
+  async function printReceipt() {
+    try {
+      const settings = await loadSettings();
+      const printer = settings.receiptPrinter || DEFAULTS.receiptPrinter;
+      await window.ck_qz.printRaw(printer, window.ck_qz_examples.receiptPayload());
+      notify("Receipt sent to printer: " + printer);
+    } catch (err) {
+      console.error(err);
+      notify("Receipt print failed: " + err, true);
+    }
+  }
+
+  async function printLabel() {
+    try {
+      const settings = await loadSettings();
+      const printer = settings.labelPrinter || DEFAULTS.labelPrinter;
+      await window.ck_qz.printRaw(printer, window.ck_qz_examples.labelPayloadTspl());
+      notify("Label sent to printer: " + printer);
+    } catch (err) {
+      console.error(err);
+      notify("Label print failed: " + err, true);
+    }
+  }
+
+  function addAction(page, label, action) {
+    if (page.add_inner_button) {
+      page.add_inner_button(label, action);
+      return true;
+    }
+    if (page.add_action_item) {
+      page.add_action_item(label, action);
+      return true;
+    }
+    if (page.add_menu_item) {
+      page.add_menu_item(label, action);
+      return true;
+    }
+    return false;
+  }
+
+  function ensureActions() {
     if (!isPosRoute()) {
       return;
     }
-    if (document.getElementById("ck-qz-demo-panel")) {
+    if (!window.frappe || !frappe.ui || !frappe.ui.get_cur_page) {
+      return;
+    }
+    const page = frappe.ui.get_cur_page();
+    if (!page || page.__ck_qz_actions_added) {
       return;
     }
 
-    const panel = document.createElement("div");
-    panel.id = "ck-qz-demo-panel";
-    panel.style.position = "fixed";
-    panel.style.right = "16px";
-    panel.style.bottom = "16px";
-    panel.style.zIndex = "9999";
-    panel.style.background = "#f5f5f5";
-    panel.style.border = "1px solid #d1d1d1";
-    panel.style.padding = "10px";
-    panel.style.boxShadow = "0 2px 6px rgba(0,0,0,0.15)";
-    panel.style.fontSize = "12px";
-
-    const title = document.createElement("div");
-    title.textContent = "QZ Tray Demo";
-    title.style.marginBottom = "6px";
-    title.style.fontWeight = "600";
-
-    const receiptBtn = document.createElement("button");
-    receiptBtn.textContent = "Non-fiscal receipt";
-    receiptBtn.style.marginRight = "6px";
-
-    const labelBtn = document.createElement("button");
-    labelBtn.textContent = "Shelf label";
-
-    panel.appendChild(title);
-    panel.appendChild(receiptBtn);
-    panel.appendChild(labelBtn);
-    document.body.appendChild(panel);
-
-    receiptBtn.addEventListener("click", async () => {
-      try {
-        const settings = window.ck_qz_settings || {};
-        const printer = settings.receiptPrinter || DEFAULTS.receiptPrinter;
-        await window.ck_qz.printRaw(printer, window.ck_qz_examples.receiptPayload());
-        notify("Receipt sent to printer: " + printer);
-      } catch (err) {
-        console.error(err);
-        notify("Receipt print failed: " + err);
-      }
-    });
-
-    labelBtn.addEventListener("click", async () => {
-      try {
-        const settings = window.ck_qz_settings || {};
-        const printer = settings.labelPrinter || DEFAULTS.labelPrinter;
-        await window.ck_qz.printRaw(printer, window.ck_qz_examples.labelPayloadTspl());
-        notify("Label sent to printer: " + printer);
-      } catch (err) {
-        console.error(err);
-        notify("Label print failed: " + err);
-      }
-    });
+    const addedReceipt = addAction(page, "Print Non-Fiscal Receipt", printReceipt);
+    const addedLabel = addAction(page, "Print Shelf Label", printLabel);
+    page.__ck_qz_actions_added = addedReceipt || addedLabel;
   }
 
   function bindRoute() {
     if (window.frappe && frappe.router && frappe.router.on) {
-      frappe.router.on("change", ensurePanel);
+      frappe.router.on("change", ensureActions);
     }
-    document.addEventListener("DOMContentLoaded", ensurePanel);
+    document.addEventListener("DOMContentLoaded", ensureActions);
   }
 
   bindRoute();

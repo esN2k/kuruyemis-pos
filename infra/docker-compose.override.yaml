@@ -19,3 +19,20 @@ services:
   scheduler:
     volumes:
       - ../frappe_apps/ck_kuruyemis_pos:/home/frappe/frappe-bench/apps/ck_kuruyemis_pos
+  fiscal-adapter:
+    profiles: ["optional"]
+    build:
+      context: ../services/fiscal-adapter
+    ports:
+      - "8090:8090"
+    environment:
+      FISCAL_DEVICE_IP: "192.168.1.50"
+      FISCAL_DEVICE_PORT: "9100"
+      FISCAL_APP_NO: "1"
+      FISCAL_TIMEOUT_SECONDS: "5"
+  hardware-bridge:
+    profiles: ["optional"]
+    build:
+      context: ../services/hardware-bridge
+    ports:
+      - "8091:8091"

@@ -6,6 +6,7 @@ from ck_kuruyemis_pos.weighed_barcode.parser import (
     parse_weighed_barcode,
     WeighedBarcodeRule,
 )
+from ck_kuruyemis_pos.weighed_barcode.cart import ItemRef, build_cart_line
 
 
 def _make_ean13(body: str) -> str:
@@ -64,7 +65,7 @@ def test_default_preset_weight_grams():
     rule = WeighedBarcodeRule(
         name="default-weight",
         barcode_length=13,
-        prefix="21",
+        prefix="20",
         item_code_start=3,
         item_code_length=5,
         weight_start=8,
@@ -73,7 +74,7 @@ def test_default_preset_weight_grams():
         check_ean13=True,
     )
 
-    body = "21" + "12345" + "00150"
+    body = "20" + "12345" + "00150"
     barcode = _make_ean13(body)
 
     parsed = parse_weighed_barcode(barcode, [rule])
@@ -87,7 +88,7 @@ def test_default_preset_price_cents():
     rule = WeighedBarcodeRule(
         name="default-price",
         barcode_length=13,
-        prefix="22",
+        prefix="21",
         item_code_start=3,
         item_code_length=5,
         price_start=8,
@@ -96,7 +97,7 @@ def test_default_preset_price_cents():
         check_ean13=True,
     )
 
-    body = "22" + "54321" + "01234"
+    body = "21" + "54321" + "01234"
     barcode = _make_ean13(body)
 
     parsed = parse_weighed_barcode(barcode, [rule])
@@ -104,6 +105,58 @@ def test_default_preset_price_cents():
     assert parsed is not None
     assert parsed.item_code == "54321"
     assert parsed.price == Decimal("12.34")
+
+
+def test_end_to_end_weight_barcode_to_cart_line():
+    rule = WeighedBarcodeRule(
+        name="cl3000-weight",
+        barcode_length=13,
+        prefix="20",
+        item_code_start=3,
+        item_code_length=5,
+        item_code_target="scale_plu",
+        weight_start=8,
+        weight_length=5,
+        weight_divisor=1000,
+        check_ean13=True,
+    )
+
+    body = "20" + "12345" + "00150"
+    barcode = _make_ean13(body)
+
+    parsed = parse_weighed_barcode(barcode, [rule])
+    assert parsed is not None
+
+    items = [ItemRef(item_code="ITEM-12345", scale_plu="12345")]
+    line = build_cart_line(parsed, items)
+
+    assert line == {"item_code": "ITEM-12345", "qty": 0.15, "price": None}
+
+
+def test_end_to_end_price_barcode_to_cart_line():
+    rule = WeighedBarcodeRule(
+        name="cl3000-price",
+        barcode_length=13,
+        prefix="21",
+        item_code_start=3,
+        item_code_length=5,
+        item_code_target="scale_plu",
+        price_start=8,
+        price_length=5,
+        price_divisor=100,
+        check_ean13=True,
+    )
+
+    body = "21" + "54321" + "01234"
+    barcode = _make_ean13(body)
+
+    parsed = parse_weighed_barcode(barcode, [rule])
+    assert parsed is not None
+
+    items = [ItemRef(item_code="ITEM-54321", scale_plu="54321")]
+    line = build_cart_line(parsed, items)
+
+    assert line == {"item_code": "ITEM-54321", "qty": 1.0, "price": 12.34}
 
 
 def test_strip_leading_zeros_and_prefix():

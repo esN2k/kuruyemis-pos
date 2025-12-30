@@ -15,6 +15,7 @@
   "segments",
   "item_code_start",
   "item_code_length",
+  "item_code_target",
   "item_code_prefix",
   "item_code_strip_leading_zeros",
   "weight_start",
@@ -73,6 +74,13 @@
    "fieldname": "item_code_length",
    "fieldtype": "Int",
    "label": "Item Code Length"
+  },
+  {
+   "default": "scale_plu",
+   "fieldname": "item_code_target",
+   "fieldtype": "Select",
+   "label": "Item Code Target",
+   "options": "item_code\nscale_plu"
   },
   {
    "fieldname": "item_code_prefix",

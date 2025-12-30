@@ -23,6 +23,7 @@ def _load_rules_from_db() -> List[WeighedBarcodeRule]:
             "prefix",
             "item_code_start",
             "item_code_length",
+            "item_code_target",
             "item_code_prefix",
             "item_code_strip_leading_zeros",
             "weight_start",
@@ -44,6 +45,7 @@ def _load_rules_from_db() -> List[WeighedBarcodeRule]:
 
         item_code_start = int(row.get("item_code_start") or 0)
         item_code_length = int(row.get("item_code_length") or 0)
+        item_code_target = (row.get("item_code_target") or "scale_plu").strip().lower()
         weight_start = int(row.get("weight_start") or 0) or None
         weight_length = int(row.get("weight_length") or 0) or None
         weight_divisor = int(row.get("weight_divisor") or 1000)
@@ -95,6 +97,7 @@ def _load_rules_from_db() -> List[WeighedBarcodeRule]:
                 prefix=(row.get("prefix") or ""),
                 item_code_start=item_code_start,
                 item_code_length=item_code_length,
+                item_code_target=item_code_target,
                 weight_start=weight_start,
                 weight_length=weight_length,
                 weight_divisor=weight_divisor,
@@ -111,6 +114,11 @@ def _load_rules_from_db() -> List[WeighedBarcodeRule]:
 
 
 def _resolve_item_code(parsed: ParsedWeighedBarcode) -> Optional[str]:
+    if parsed.item_code_target == "scale_plu":
+        plu_match = frappe.db.get_value("Item", {"scale_plu": parsed.raw_item_code}, "name")
+        if plu_match:
+            return plu_match
+
     if not parsed.item_code:
         return None
 

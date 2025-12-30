@@ -5,14 +5,15 @@ Verify non-fiscal receipt and shelf label printing through QZ Tray from POS Awes
 
 ## Demo flow
 1) Start QZ Tray and ensure it is running (tray icon visible).
-2) Ensure `qz-tray.js` is placed at:
-   - `frappe_apps/ck_kuruyemis_pos/ck_kuruyemis_pos/public/js/qz/vendor/qz-tray.js`
-3) Open POS Awesome (`/app/posawesome`).
-4) Use the demo panel to print:
+2) Download `qz-tray.js`:
+   - `./scripts/get-qz-tray.ps1` (Windows)
+   - `./scripts/get-qz-tray.sh` (Linux/macOS)
+3) Open the Printer Setup page (`/app/pos_printer_setup`) or search "POS Printer Setup" in the Awesome Bar to list printers and set defaults.
+4) Open POS Awesome (`/app/posawesome`).
+5) Use the toolbar/menu actions to print:
    - Non-fiscal receipt (ZY907)
    - Shelf label 38x80 (X-Printer 490B)
 
 ## Notes
-- If your printer name differs, update `window.ck_qz_settings` in the browser console:
-  - `window.ck_qz_settings = { receiptPrinter: "<printer>", labelPrinter: "<printer>" }`
+- If your printer name differs, update defaults in `POS Printing Settings` or via `/app/pos_printer_setup`.
 - These are demo payloads only; replace with real templates later.

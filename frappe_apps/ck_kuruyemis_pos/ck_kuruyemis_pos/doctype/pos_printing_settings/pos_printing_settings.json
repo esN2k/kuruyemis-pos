@@ -1,0 +1,52 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "receipt_printer_name",
+  "label_printer_name",
+  "label_size_preset"
+ ],
+ "fields": [
+  {
+   "fieldname": "receipt_printer_name",
+   "fieldtype": "Data",
+   "label": "Default Receipt Printer",
+   "description": "Windows printer name for ZY907",
+   "reqd": 0
+  },
+  {
+   "fieldname": "label_printer_name",
+   "fieldtype": "Data",
+   "label": "Default Label Printer",
+   "description": "Windows printer name for X-Printer 490B",
+   "reqd": 0
+  },
+  {
+   "fieldname": "label_size_preset",
+   "fieldtype": "Select",
+   "label": "Label Size Preset",
+   "options": "38x80",
+   "reqd": 0
+  }
+ ],
+ "is_single": 1,
+ "module": "CK Kuruyemis POS",
+ "name": "POS Printing Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "read": 1,
+   "role": "POS User"
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "read": 1,
+   "write": 1,
+   "role": "System Manager"
+  }
+ ]
+}

@@ -10,6 +10,7 @@ class WeighedBarcodeRule:
     prefix: str
     item_code_start: int
     item_code_length: int
+    item_code_target: str = "scale_plu"
     weight_start: Optional[int] = None
     weight_length: Optional[int] = None
     weight_divisor: int = 1000
@@ -27,6 +28,7 @@ class ParsedWeighedBarcode:
     barcode: str
     item_code: str
     raw_item_code: str
+    item_code_target: str
     weight: Optional[Decimal]
     price: Optional[Decimal]
     rule_name: str
@@ -121,10 +123,12 @@ def parse_weighed_barcode(barcode: str, rules: Sequence[WeighedBarcodeRule]) -> 
         if weight is None and price is None:
             continue
 
+        item_code_target = (rule.item_code_target or "scale_plu").strip().lower()
         return ParsedWeighedBarcode(
             barcode=candidate,
             item_code=item_code,
             raw_item_code=raw_item_code,
+            item_code_target=item_code_target,
             weight=weight,
             price=price,
             rule_name=rule.name,

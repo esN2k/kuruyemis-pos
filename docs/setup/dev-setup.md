@@ -23,6 +23,12 @@ cd infra
 ./start-dev.ps1
 ```
 
+To include optional services (fiscal-adapter + hardware-bridge):
+
+```powershell
+./start-dev.ps1 -WithOptionalServices
+```
+
 ## Create a site
 ```powershell
 cd infra
@@ -35,6 +41,14 @@ cd infra
 ./install-apps.ps1 -SiteName kuruyemis.local
 ```
 
+## QZ Tray vendor JS
+```powershell
+./scripts/get-qz-tray.ps1
+```
+
 ## Notes
 - POS Awesome must match the ERPNext major version. If you bump ERPNext, update `infra/versions.md` and `infra/frappe_docker.env` together.
 - All custom code lives under `frappe_apps/ck_kuruyemis_pos`.
+- Optional services:
+  - `fiscal-adapter` on port `8090` (env: `FISCAL_DEVICE_IP`, `FISCAL_DEVICE_PORT`, `FISCAL_APP_NO`, `FISCAL_TIMEOUT_SECONDS`)
+  - `hardware-bridge` on port `8091`

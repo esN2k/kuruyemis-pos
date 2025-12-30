@@ -14,28 +14,34 @@ In our config:
 - `segment_type = weight` maps a weight segment.
 - `segment_type = price` maps a price segment.
 
+PLU values map to `Item.scale_plu` by default.
+Ensure each weighed item has a 5-digit `scale_plu` set in ERPNext.
+If needed, set `Item Code Target` to `item_code` to match ERPNext item codes instead.
+
 ## Segment scale units
 - Weight: `grams` (divisor 1000) or `kilograms` (divisor 1)
 - Price: `cents` (divisor 100) or `lira` (divisor 1)
 
 ## Default rule presets
+These presets are shipped as fixtures and load automatically on app install/migrate.
 
 ### Preset A: Prefix + ItemCode + Weight + Check (grams)
-- Prefix: `21`
+- Prefix: `20`
 - Item code: start 3, length 5
 - Weight: start 8, length 5, scale unit `grams`
 - Check digit: enabled
 
-Sample barcode (passes tests): `2112345001500`
+Sample barcode (passes tests): `2012345001501`
 
 ### Preset B: Prefix + ItemCode + Price + Check (cents)
-- Prefix: `22`
+- Prefix: `21`
 - Item code: start 3, length 5
 - Price: start 8, length 5, scale unit `cents`
 - Check digit: enabled
 
-Sample barcode (passes tests): `2254321012343`
+Sample barcode (passes tests): `2154321012344`
 
 ## Notes
+- Item code segments map to `Item.scale_plu` by default; change `Item Code Target` to use `item_code`.
 - If you prefer the older fixed fields, you can still set `weight_start`/`price_start` and `weight_divisor`/`price_divisor`.
 - When the `Segments` table is filled, it takes precedence for parsing.

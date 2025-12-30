@@ -12,6 +12,12 @@ app_include_js = [
     "/assets/ck_kuruyemis_pos/js/qz/qz-posawesome.js",
 ]
 
+# Fixtures for default settings and barcode presets.
+fixtures = [
+    "Custom Field",
+    "Weighed Barcode Rule",
+]
+
 # Override ERPNext barcode resolution to inject weighed barcode parsing.
 override_whitelisted_methods = {
     "erpnext.stock.get_item_details.get_item_details": "ck_kuruyemis_pos.weighed_barcode.integration.get_item_details"

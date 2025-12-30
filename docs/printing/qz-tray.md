@@ -15,9 +15,18 @@ QZ Tray is a desktop bridge between the browser and local printers. It exposes a
 4) In QZ Tray settings, allow unsigned requests for dev. For production, you must configure signing.
 
 ## Dev setup (local)
-1) Download `qz-tray.js` from the QZ Tray release assets (same version as your tray app).
-2) Place it here so Frappe can serve it:
-   - `frappe_apps/ck_kuruyemis_pos/ck_kuruyemis_pos/public/js/qz/vendor/qz-tray.js`
+1) Download `qz-tray.js` using the script (this also records the checksum):
+
+```powershell
+./scripts/get-qz-tray.ps1
+```
+
+2) For Linux/macOS:
+
+```bash
+./scripts/get-qz-tray.sh
+```
+
 3) Build assets (if needed by your Frappe setup):
 
 ```powershell
@@ -25,9 +34,14 @@ cd infra
 ./start-dev.ps1
 ```
 
-4) Navigate to POS Awesome (`/app/posawesome`). A small demo panel appears with two buttons:
-   - Non-fiscal receipt
-   - Shelf label
+4) Navigate to POS Awesome (`/app/posawesome`). Use the toolbar/menu actions:
+   - Print Non-Fiscal Receipt
+   - Print Shelf Label
+
+5) Use the Printer Setup page to list printers and set defaults:
+   - `/app/pos_printer_setup` (or open "POS Printer Setup" from the Awesome Bar)
+
+Defaults are stored in the `POS Printing Settings` single DocType.
 
 ## Message signing (high level)
 - QZ Tray supports signed requests using a client certificate + private key.
@@ -37,4 +51,13 @@ cd infra
 
 ## Notes
 - If you see "WebSocket connection failed", check firewall or QZ Tray service status.
-- Ensure the printer names match your Windows printer names; the demo buttons use defaults that you can change in JS.
+- Ensure the printer names match your Windows printer names; defaults are stored in `POS Printing Settings`.
+
+## Checksum
+<!-- QZ_TRAY_SHA256_START -->
+- Version: v2.2.5
+- SHA256: dc9fe4b0a32b412e015acab93ca4e29462b61b2f4c33c044e3d3b1ba3f4052fc
+<!-- QZ_TRAY_SHA256_END -->
+
+This section is updated by the download scripts to record the exact `qz-tray.js` hash.
+
