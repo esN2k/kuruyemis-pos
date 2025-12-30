@@ -12,6 +12,7 @@
   "priority",
   "barcode_length",
   "prefix",
+  "segments",
   "item_code_start",
   "item_code_length",
   "item_code_prefix",
@@ -19,9 +20,11 @@
   "weight_start",
   "weight_length",
   "weight_divisor",
+  "weight_scale_unit",
   "price_start",
   "price_length",
   "price_divisor",
+  "price_scale_unit",
   "check_ean13",
   "notes"
  ],
@@ -54,6 +57,12 @@
    "fieldname": "prefix",
    "fieldtype": "Data",
    "label": "Prefix"
+  },
+  {
+   "fieldname": "segments",
+   "fieldtype": "Table",
+   "label": "Segments",
+   "options": "Weighed Barcode Segment"
   },
   {
    "fieldname": "item_code_start",
@@ -93,6 +102,12 @@
    "label": "Weight Divisor"
   },
   {
+   "fieldname": "weight_scale_unit",
+   "fieldtype": "Select",
+   "label": "Weight Scale Unit",
+   "options": "grams\nkilograms"
+  },
+  {
    "fieldname": "price_start",
    "fieldtype": "Int",
    "label": "Price Start (1-based)"
@@ -107,6 +122,12 @@
    "fieldname": "price_divisor",
    "fieldtype": "Int",
    "label": "Price Divisor"
+  },
+  {
+   "fieldname": "price_scale_unit",
+   "fieldtype": "Select",
+   "label": "Price Scale Unit",
+   "options": "cents\nlira"
   },
   {
    "default": "1",

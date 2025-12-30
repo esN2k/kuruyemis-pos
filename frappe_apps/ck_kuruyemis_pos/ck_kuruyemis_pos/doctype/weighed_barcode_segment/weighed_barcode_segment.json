@@ -1,0 +1,45 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "segment_type",
+  "start",
+  "length",
+  "scale_unit"
+ ],
+ "fields": [
+  {
+   "fieldname": "segment_type",
+   "fieldtype": "Select",
+   "label": "Segment Type",
+   "options": "item_code\nweight\nprice",
+   "reqd": 1
+  },
+  {
+   "fieldname": "start",
+   "fieldtype": "Int",
+   "label": "Start (1-based)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "length",
+   "fieldtype": "Int",
+   "label": "Length",
+   "reqd": 1
+  },
+  {
+   "fieldname": "scale_unit",
+   "fieldtype": "Select",
+   "label": "Scale Unit",
+   "options": "grams\nkilograms\ncents\nlira"
+  }
+ ],
+ "istable": 1,
+ "module": "CK Kuruyemis POS",
+ "name": "Weighed Barcode Segment",
+ "owner": "Administrator"
+}

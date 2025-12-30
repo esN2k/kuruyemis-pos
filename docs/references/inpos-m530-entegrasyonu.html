@@ -1,0 +1,875 @@
+
+<!DOCTYPE html>
+<html lang = "tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>inPOS m530 Entegrasyonu  - AKINSOFT Bilgi Bankası</title>
+    <meta name="keywords" content="inPOS,m530">
+    <meta name="description" content="AKINSOFT - inPOS m530 Yeni Nesil Yazar Kasa POS Entegrasyonu ">
+
+    <meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:site" content="@akinsoftyazilim" />
+	<meta name="twitter:creator" content="@akinsoftyazilim" />
+	<meta name="twitter:title" content="inPOS m530 Entegrasyonu " />
+	<meta name="twitter:description" content="AKINSOFT - inPOS m530 Yeni Nesil Yazar Kasa POS Entegrasyonu " />
+	<meta name="twitter:image" content="https://bilgibankasi.akinsoft.net/images/touch-icon.png" />	
+	<meta property="og:title" content="inPOS m530 Entegrasyonu " />
+	<meta property="og:type" content="article" />
+	<meta property="og:url" content="http://bilgibankasi.akinsoft.net/tr/home/makale/3760-inpos-m530-entegrasyonu" />
+	<meta property="og:image" content="https://bilgibankasi.akinsoft.net/assets/images/bb_og_share.jpg" />  
+	<meta property="og:image:type" content="image/jpg">
+	<meta property="og:image:alt" content="Bilgi Bankası | inPOS m530 Entegrasyonu  | AKINSOFT">
+	<meta property="og:description" content="AKINSOFT - inPOS m530 Yeni Nesil Yazar Kasa POS Entegrasyonu "> 
+	<meta property="og:site_name" content="AKINSOFT" />
+    <meta property="fb:app_id" content="BILGIBANKASI"/>
+    <meta itemprop="url" content="https://bilgibankasi.akinsoft.net/"/>
+    <meta name="theme-color" content="#5900ff">
+    <meta name="msapplication-navbutton-color" content="#5900ff">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#5900ff">
+    <meta name="content-language" content="tr" />
+    <meta name="author" content="AKINSOFT - bilgibankasi.akinsoft.net | Bilgi Bankası" />
+    <meta name="HandheldFriendly" content="true">
+    <meta name="robots" content="all" />
+    <meta name="copyright" content="Copyright (c) 1995 - 2021 AKINSOFT Software Engineering, All Rights Reserved." />
+    <meta name="creator" content="AKINSOFT Software Engineering LLC." />
+    <meta name="publisher" content="AKINSOFT Software Engineering LLC." />
+    <link rel="canonical" href="https://bilgibankasi.akinsoft.net/">
+    <!-- geo-tag.de -->
+    <meta name="geo.placename" content="Konya" />
+    <meta name="geo.position" content="37.977758;32.5158554" />
+    <meta name="geo.region" content="TR-42" />
+    <meta name="ICBM" content="37.977758,32.5158554" />
+    <meta name="siteid" content="tr">
+    <meta name="countryid" content="TR">
+    <meta name="country" content="Türkiye">
+    <link rel="shortcut icon" href="/assets/images/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap"/>
+        <script type='text/javascript' src='https://platform-api.sharethis.com/js/sharethis.js#property=607eacbb26099f001824151d&amp;product=inline-share-buttons' async='async'></script>
+
+    <link href="/2/bundles/css/main" rel="stylesheet"/>
+
+
+    
+    <link href="/2/assets/node_modules/prismjs/themes/prism.css" rel="stylesheet"/>
+<link href="/2/assets/node_modules/prismjs/plugins/toolbar/prism-toolbar.css" rel="stylesheet"/>
+
+
+    <style>
+        .makaleimage {
+            -webkit-box-shadow: 0 1px 6px 0 rgb(0 0 0 / 6%), 0 2px 32px 0 rgb(0 0 0 / 16%);
+            box-shadow: 0 1px 6px 0 rgb(0 0 0 / 6%), 0 2px 32px 0 rgb(0 0 0 / 16%);
+        }
+    </style>
+
+
+</head>
+<body data-spy="scroll" data-target="#faq-menu" data-offset="150">
+
+    <!--============= ScrollToTop Section Starts Here =============-->
+    <div class="overlayer" id="overlayer">
+        <div class="loader">
+            <div class="loader-inner"></div>
+        </div>
+    </div>
+    <a title="spy" href="#0" class="scrollToTop"><i class="fas fa-angle-up"></i></a>
+    <div class="overlay"></div>
+    <!--============= ScrollToTop Section Ends Here =============-->
+    
+
+
+<!--============= Header Section Starts Here =============-->
+<header class="header-section">
+    <div class="container">
+        <div class="header-wrapper">
+            <div class="logo-area">
+                <div class="logo" style="width: 80px; margin-right: 15px;">
+                    <a title="Akınsoft" href="https://www.akinsoft.com.tr/" target="_blank">
+                        <img src="/assets/images/logo/logo.png" alt="logo">
+                    </a>
+                </div>
+                <div class="support">
+                    
+                    <a title="BilgiBankası" href="/tr"><i class="fa fa-home" style="color: white;"></i> Bilgi Bankası</a>
+                </div>
+            </div>
+            <ul class="menu">
+                <li class="menu-item-has-children">
+                    <a href="#"><i class="fa fa-globe"></i> TR</a>
+                    <ul class="submenu" style="display: none;">
+                        <li>
+                            <a title="Türkçe" class="dropdown-item" href="/tr">Türkçe</a>
+                        </li>
+                        <li>
+                            <a title="İngilizce" class="dropdown-item" href="/en">İngilizce</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="d-md-none text-center">
+                    <a title="istek-öneri" href="https://www.akinsoft.com.tr/as/irtibat/istekoneri.php?musteri-hizmetleri" target="_blank" class="m-0 header-button">Bir İstek Gönder</a>
+                </li>
+            </ul>
+            <div class="header-bar d-lg-none">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <div class="header-right">
+                <ul class="social-icons d-none d-md-flex">
+                    <li>
+                        <a title="facebook" target="_blank" href="https://www.facebook.com/akinsoft/"><i class="fab fa-facebook-f"></i></a>
+                    </li>
+                    <li>
+                        <a title="linkedin" target="_blank" href="https://www.linkedin.com/in/akinsoft"><i class="fab fa-linkedin"></i></a>
+                    </li>
+                    <li>
+                        <a title="twitter" target="_blank" href="https://twitter.com/akinsoftyazilim"><i class="fab fa-twitter"></i></a>
+                    </li>
+                    <li>
+                        <a title="instagram" target="_blank" href="https://www.instagram.com/akinsoft"><i class="fab fa-instagram"></i></a>
+                    </li>
+                    <li>
+                        <a title="youtube" target="_blank" href="https://www.youtube.com/akinsoftmedya"><i class="fab fa-youtube"></i></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+<!--============= Header Section Ends Here =============-->
+
+
+    
+
+<style>
+    .knowledge-single ul:not(.knowledge-meta,.nulla-list) {
+        margin: revert;
+        padding: revert;
+    }
+
+        .knowledge-single ul:not(.knowledge-meta,.nulla-list) li {
+            list-style: revert;
+        }
+
+    @media (max-width: 575px) {
+        #st-2 .st-btn {
+            margin-bottom: 0 !important;
+        }
+    }
+</style>
+<div class="hero-section bg_img clean-header" data-background="/assets/images/banner/page-header.jpg">
+    <div class="container">
+        <div class="banner-content cl-white">
+            <ul class="breadcrumb mb-30">
+                        <li><a href="/tr/home/makalelistesi?kat=78">Donanım Entegrasyonları</a></li>
+                        <li>Yeni Nesil Yazarkasa POS işlemleri</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="form-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="mt--150" style="padding: 30px 40px;">
+                    <form action="/tr/home/makalelistesi" class="search-form round no-border mw-925">
+                        <input type="text" name="search" placeholder="Arama yapmak için yazmaya başla...">
+                        <button type="submit"><i class="flaticon-search"></i> <span class="d-none d-sm-inline-block">Ara</span></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--============= Knowledge Single Section Starts Here =============-->
+<section class="knowledge-single-section padding-bottom padding-top">
+    <div class="container">
+        <div class="row mb--70">
+            <div class="col-xl-8 col-lg-7 mb-70">
+                <div class="knowledge-single">
+                    <div class="knowledge-header">
+                        <p>KOD: A3760</p>
+                        <h3 class="title">inPOS m530 Entegrasyonu </h3>
+                        <ul class="knowledge-meta">
+                            <li>
+                                <span>Oluşturulma</span>
+                                <span>19.01.2024</span>
+                            </li>
+                            <li>
+                                <span>Güncellenme </span>
+                                <span>05.11.2025</span>
+                            </li>
+                            <li>
+                                <span>Kategori</span>
+                                <span><a href="/tr/home/makalelistesi?kat=113">Yeni Nesil Yazarkasa POS işlemleri</a></span>
+                            </li>
+                        </ul>
+                    </div>
+                    <ul><li><p>AKINSOFT - İnPOS İşbirliği ile 01.04.2016 tarihinden itibaren geçerli olacak yeni nesil ödeme kaydedici cihaz geçişinizi AKINSOFT Wolvox ERP programımız ile güvenli bir şekilde yapabilirsiniz.</p><p><strong>AKINSOFT - inPOS m530 Yeni Nesil YazarKasa POS Entegrasyonu aşağıdaki uygulamalarımız için geçerlidir.</strong></p><ul><li>AKINSOFT Wolvox Restaurant</li><li>AKINSOFT Wolvox Hızlı Satış</li><li>AKINSOFT - inPOS m530 Yeni Nesil Yazar Kasa POS Entegrasyonunu kullanabilmek için<strong> </strong>kullanıcılarımız tarafından Wolvox ERP programımızın modüllerinden &nbsp;<strong> ''Yazarkasa - Pos - Terazi ''&nbsp;&nbsp;</strong> lisansının satın alınması gerekmektedir.</li><li><strong>inPOS m530 Yeni Nesil Yazarkasa POS cihazının genel&nbsp; ve teknik özelliklerine bu&nbsp; linkten ulaşabilirsiniz:</strong> <a target="_blank" rel="noopener"><u>http://inpos.com.tr/</u></a></li><li>Entegrasyon işlemini yapabilmeniz için öncelik ile PC ve Cihazı eşleştirmeniz gerekmektedir. Eşleştirme yapabilmeniz için <strong>inposgmp3&nbsp; </strong>uygulamasını kullanmanız gerekecektir. (<strong>Uygulama inPOS'a aittir</strong>.) Bu sebeble PC ve cihazı eşleştirme işlemini <strong><u>yetkili cihaz servisleri </u></strong>yapmalıdır.&nbsp;</li><li>Sayfa alt bölümünde <strong>inposgmp3.exe</strong> indirme işlemi yapabilirsiniz. İndirilen dosyayı \AKINSOFT \ Wolvox8\&nbsp; MarketOtomasyon \ POSOrtak \ YeniNesilServis \ INPosOKCServis dosya konumuna atarak çalıştırabilirsiniz.</li></ul><p><strong>PC ve Cihazın eşleştirilmesi için aşağıdaki adımları izlemelisiniz <u>(Yetkili servisler için</u>)</strong></p><ul><li><strong>IP Adresi : </strong>Bu alana bilgisayarınızın IP adresini belirtmeniz gerekmektedir.</li><li><strong>Port : </strong>Bu alana port numarası default olarak gelmektedir. İsteğe bağlı olarak değiştirebilir.</li><li><strong>Uygulama : </strong>Cihaz entegrasyon uygulamasının( inPOSm120.exe) yolu belirtilmelidir.&nbsp; Wolvox Market Otomasyonu dizini içerisinde default olarak yer almaktadır.</li><li><strong>Uygulama No :</strong> AKINSOFT Uygulama numarası girilmelidir. AKINSOFT Uygulama numarası : 25807'dir.</li><li style="text-align:left;"><strong>Örnek dizin : </strong>\AKINSOFT \ Wolvox8\&nbsp; MarketOtomasyon \ POSOrtak \ YeniNesilServis \ INPosOKCServis<strong>&nbsp;</strong></li></ul><p><img class="image_resized" style="width:702px;" src="//www.akinsoft.net/bilgibankasi/data/upload/441/GMP3.png" alt="" width="702"></p><p><strong>inposgmp3&nbsp; uygulamasında yukarıda yer alan ayarlar yapıldıktan sonra inPOS m530 cihazınızın üzerinde aşağıdaki adımları takip etmelisiniz<u> (Yetkili servisler için</u>) :</strong></p><blockquote><ul><li>Cihaz ana menü üzerinde iken <strong>servis </strong>modülüne geçiş sağlanır.</li><li>Servis modülü içerisinde&nbsp;<strong> diğer</strong> menüsüne geçiş sağlanır.</li><li>Diğer menüsünde 3.modül olan<strong> harici uygulamalara</strong> girilir.</li><li>Harici uygulamalar modülü içerisinden 3.menü olan <strong>uygulama kapat</strong> seçilir<strong>.</strong><ul><li style="list-style-type:none;">&nbsp;<ul><li><strong>Uygulama No </strong>girilir. Ok tuşuna basılır ve menü kapatılır.</li></ul></li></ul></li><li>Servis modülünden <strong>Uygulama eşle menüsüne girilir.</strong><ul><li style="list-style-type:none;">&nbsp;<ul><li><strong>Uygulama No </strong>girilir.</li><li><strong>Uygulama IP adresi </strong>girilir.</li><li><strong>Uygulama Portu </strong>girilir.</li><li><strong>Ok</strong> diyerek işlemler tamamlanır.</li></ul></li></ul></li></ul></blockquote><ul><li><u>Eşleşmenin tamamlanabilmesi için </u><strong><u>inposgmp3&nbsp;</u></strong><u> uygulamasına eşle butonuna basılır. Cihaz üzerinde </u><strong><u>Uygulama No, IP adresi ve Port girilerek OK </u></strong><u>tuşuna basılır ve</u><strong><u>&nbsp;</u></strong><u>eşleşme tamamlanır. </u><strong><u>inposgmp3 </u></strong><u>uygulaması üzerinde </u><strong><u>eşleşme başarılı</u></strong><u> uyarısı kontrol edilir.</u></li></ul><blockquote><ul><li>Son adım olarak <strong>harici uygulamalar</strong> modülünden, 2. menü olan <strong>uygulama etkinleştir </strong>denilir.</li><li><strong>Uygulama numarası </strong>girilir ve işlemler tamamlanır.</li></ul></blockquote><blockquote><p><img class="image_resized" style="width:702px;" src="//www.akinsoft.net/bilgibankasi/data/upload/441/BSRL_1.png" alt="" width="702"></p></blockquote><p>&nbsp;</p><ul><li><strong>&nbsp; PC ile Cihazın eşleştirilmesinden sonra Wolvox Kontrol paneli üzerinde aşağıda belirtilen işlemi yapmanız gerekecektir.</strong></li><li>Kontrol paneli ---&gt; Şirket kayıt işlemleri ---&gt; Şirket kaydı---&gt; E-Devlet sekmesinde yer alan '<strong>'Yeni Nesil Yazarkasa Kullan ''</strong> alanı işaretlenmelidir.</li></ul><blockquote><p><img class="image_resized" style="width:687px;" src="//www.akinsoft.net/bilgibankasi/data/upload/441/5a4be7f376.png" width="687"></p></blockquote><ul><li><strong>Yukarıda belirtilen Wolvox kontrol paneli üzerinde yapılan işlemin tamamlanasına istinaden <u>AKINSOFT Wolvox Market otomasyonu </u>üzerinde aşağıdaki ayarları yapmanız gerekmektedir.</strong><br>&nbsp;</li><li><strong>Standart Ayarlar : </strong>Cihaz iletişimi için aşağıdaki bilgilerin tanımlanmasını gerektiren ayarlardır.</li></ul><blockquote><ul><li><strong>Cihaz Seri Numarası : </strong>Cihazınıza ait seri numarasını gireceğiniz alandır.</li><li><strong>Port : </strong>Port alanı default olarak gelmektedir. Default gelen port numarası 59000'dir.</li><li><strong>Ip adresi</strong> : Bu alana bilgisayarınızın IP adresini belirtmeniz gerekmektedir.</li><li><strong>Fiş Limiti : </strong>Fiş limiti değeri varsayılan olarka gelmektedir. Belirtilen tutar ve üstü satışlarda fatura kesilmesi gerekliliğini ifade eder.</li></ul><p><img src="//www.akinsoft.net/bilgibankasi/data/upload/3760/image1706707058.png"></p></blockquote><p><strong>Ödeme Tanımı Ayarları: </strong>Bu alan cihazınızda yer alan ödeme tanımları ile Wolvox ERP programımızda tanımladığınız ödeme türlerinin eşleştirilmesi için kullanabilirsiniz.&nbsp;</p><blockquote><ul><li><strong>İşlem Türü : </strong>Wolvox ERP programımızda tanımlı olan işlem türünü ifade eder.</li><li><strong>Ödeme Kodu :</strong> Cihaz üzerinde ödeme tanımlarına verilen kodları ifade eder. Kodlar otomatik olarak ödeme tanımlarına göre gelmektedir.</li><li><strong>Ödeme Adı:</strong> Cihazınıda tanımlı olan ödeme adlarını ifade eder.</li><li><strong>Banka Adı : </strong>Ödeme tanımlarınız da POS işlem türünün hangi bankaya ait olduğunu belirtmektedir.</li><li><strong>Pos Adı : </strong>Bankaya ait POS tanımı ifade etmektedir.</li></ul></blockquote><blockquote><p><img src="//www.akinsoft.net/bilgibankasi/data/upload/3760/image1706707016.png"></p></blockquote><blockquote><p>&nbsp;</p></blockquote><p><strong>Birim Eşletirme : </strong>Cihazda tanımlanmış olan sabit 8 adet birim varsayılan olarak gelmektedir. Kullanıcılarımız bu birimlerin , Wolvox ERP programımız daki karşılıklarını girmek için kullanabilecek alandır.</p><blockquote><ul><li><strong>Birim Kodu:</strong> Cihazınıda tanımlı olan birim kodunu ifade eder.Default olarak gelmektedir.</li><li><strong>Birim Adı : </strong>Cihazınıda tanımlı olan birim adlarını ifade eder.Default olarak gelmektedir.</li><li><strong>ERP Birim Adı :</strong> Cihazınıda tanımlı olan birimlerin Wolvox ERP progarmımızda ki karşılığı yazılır.</li></ul><p><img src="//www.akinsoft.net/bilgibankasi/data/upload/3760/image1706706987.png"></p><p><strong>Belirtilen ayarların yapılması ile beraber AKINSOFT - inPOS m530 Entegrasyonu&nbsp; ile&nbsp; aşağıdaki işlemleri yapabileceksiniz;</strong></p></blockquote><ul><li>&nbsp;Wolvox Hızlı Satış ve Wolvox Restaurant uygulamalarımızda yapmış olduğunuz satışlarınızı online olarak cihazınıza gönderebilirsiniz.</li><li>Satışlarınızın cihazınıza gönderiminden sonra&nbsp; mali onaylı fiş basımı yapabileceksiniz.</li></ul></li></ul>
+                        <div class="know-single-item">
+                            <h4 class="title">Dosyalar</h4>
+                            <ul class="nulla-list">
+                                    <li>
+                                        <a href="/tr/home/dosyaindir?blkodu=1028">inposgmp3.zip</a> <span style="font-size:14px">(İndirilme: 1072)</span>
+                                    </li>
+                                    <li>
+                                        <a href="/tr/home/dosyaindir?blkodu=1041">gmp3-esleme-protokolu-dokumani.pdf</a> <span style="font-size:14px">(İndirilme: 398)</span>
+                                    </li>
+                            </ul>
+                        </div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-lg-5 mb-70">
+                <aside class="sticky-menu">
+                    
+                    <div class="row">
+                        <div class="col-lg-12 col-md-6">
+                            <div class="knowledge-widget">
+                                <div class="author">
+                                    <div class="author-thumb">
+                                        <a href="#"><img src="/assets/images/logo/logo.png" alt="personel"></a>
+                                    </div>
+                                    <div class="author-content">
+                                        <span class="by">Ekleyen</span>
+                                        <h5 class="subtitle"><a href="#">Ar-Ge Departmanı</a></h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-6">
+                            <div class="knowledge-widget">
+                                <div class="call-to-page">
+                                    <h5 class="title">Görüntülenme</h5>
+                                    <div style="text-align:center;">
+                                        <h3 style="cursor:initial; font-size:35px " class="btn" title="Görüntülenme">2.949</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-6">
+                            <div class="knowledge-widget">
+                                <div class="call-to-page">
+                                    <h5 class="title">Bu sayfayı yararlı buluyor musunuz?</h5>
+                                    <div id="feedback" style="text-align:center">
+                                        <button id="thumb_up" class="btn w-auto shadow-none" ><i data-val="1" class="far fa-thumbs-up"></i> <span id="artioy">5</span></button>
+                                        <button id="thumb_down" class="btn w-auto shadow-none" ><i data-val="-1" class="far fa-thumbs-down"></i> <span id="eksioy">3</span></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 col-md-6">
+                            <div class="knowledge-widget">
+                                <div class="call-to-page">
+                                    <h1 style="font-size: 24px; line-height: 28px;" class="title">Aradığınızı bulamıyor musunuz?</h1>
+                                    <p>
+                                        Müşteri hizmetleri ekibimiz sizin için burada!
+                                    </p>
+                                    <a target="_blank" href="https://www.akinsoft.com.tr/as/irtibat/istekoneri.php?musteri-hizmetleri" class="call-button">Bizimle İletişime Geçin</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <h5 class="title my-4">Bu Kategorinin En Çok Okunanları</h5>
+                    <div class="row justify-content-center mb-30-none">
+                            <div class="col-lg-12 col-md-6">
+                                <a href="/tr/home/makale/843-beko-300tr-ynokc-entegrasyonu" class="popular-item">
+                                    <div class="popular-thumb">
+                                        <i class="flaticon-file"></i>
+                                    </div>
+                                    <div class="popular-content">
+                                        <span class="info">Yeni Nesil Yazarkasa POS işlemleri</span>
+                                        <p>Beko 300TR YN&#214;KC Entegrasyonu</p>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-lg-12 col-md-6">
+                                <a href="/tr/home/makale/3570-hugin-t300-entegrasyonu" class="popular-item">
+                                    <div class="popular-thumb">
+                                        <i class="flaticon-file"></i>
+                                    </div>
+                                    <div class="popular-content">
+                                        <span class="info">Yeni Nesil Yazarkasa POS işlemleri</span>
+                                        <p>Hugin T300 Entegrasyonu</p>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-lg-12 col-md-6">
+                                <a href="/tr/home/makale/3760-inpos-m530-entegrasyonu" class="popular-item">
+                                    <div class="popular-thumb">
+                                        <i class="flaticon-file"></i>
+                                    </div>
+                                    <div class="popular-content">
+                                        <span class="info">Yeni Nesil Yazarkasa POS işlemleri</span>
+                                        <p>inPOS m530 Entegrasyonu </p>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-lg-12 col-md-6">
+                                <a href="/tr/home/makale/3544-beko-300tr-yazarkasa-entegrasyonunda-cihazda-onceki-satis-tamamlanmamis-uyarisi-cozumu" class="popular-item">
+                                    <div class="popular-thumb">
+                                        <i class="flaticon-file"></i>
+                                    </div>
+                                    <div class="popular-content">
+                                        <span class="info">Yeni Nesil Yazarkasa POS işlemleri</span>
+                                        <p>Beko 300Tr Yazarkasa Entegrasyonunda &#39;Cihazda &#214;nceki Satış Tamamlanmamış&#39; uyarısı &#231;&#246;z&#252;m&#252;.</p>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-lg-12 col-md-6">
+                                <a href="/tr/home/makale/2282-ingenico-ide280-ynokc-entegrasyonu" class="popular-item">
+                                    <div class="popular-thumb">
+                                        <i class="flaticon-file"></i>
+                                    </div>
+                                    <div class="popular-content">
+                                        <span class="info">Yeni Nesil Yazarkasa POS işlemleri</span>
+                                        <p>İngenico İDE280 YN&#214;KC Entegrasyonu</p>
+                                    </div>
+                                </a>
+                            </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--============= Knowledge Single Section Ends Here =============-->
+
+
+    
+
+<!--============= Have Questions Section Starts Here =============-->
+<div class="have-questions-section mb--70--145 section-bg">
+    <div class="container">
+        <div class="have-question-wrapper">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="have-question-content">
+                        <h2 class="title">Daha fazla bilgiye mi ihtiyacınız var ?</h2>
+                        <p>Müşteri hizmetleri ekibimiz sizin için burada!</p>
+                        <a title="isteköneri" href="https://www.akinsoft.com.tr/as/irtibat/istekoneri.php?musteri-hizmetleri" target="_blank" class="custom-button">Bizimle İletişime geçin</a>
+                    </div>
+                </div>
+                <div class="right-thumb d-none d-lg-block">
+                    <img src="/assets/images/faq/have-questions.png" alt="faq">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--============= Have Questions Section Ends Here =============-->
+<!--============= Footer Section Starts Here =============-->
+<footer class="footer-section pt-70-145">
+    <div class="dot-slider bg_img" data-background="/assets/css/img/footer-dots.png"></div>
+    <div class="container">
+        <div class="footer-top cl-white padding-bottom padding-top">
+            <div class="row mb--50 justify-content-between">
+                <div class="col-sm-8 col-lg-4">
+                    <div class="footer-widget widget-about">
+                        <div class="logo-area">
+                            <div class="logo" style="width:inherit">
+                                <a title="akinsoft" href="https://www.akinsoft.com.tr/" target="_blank"><img src="/assets/images/logo/logo.png" alt="logo"></a>
+                            </div>
+                            <div class="support">
+                                <a title="Bilgi Bankası" href="/">Bilgi Bankası</a>
+                            </div>
+                        </div>
+                        <p>Bilgi Bankası, 7/24 müşteri destek ve yardım merkezi hizmetimizdir.</p>
+                        <ul class="social-icons">
+                            <li>
+                                <a target="_blank" title="facebook" href="https://www.facebook.com/akinsoft/"><i class="fab fa-facebook-f"></i></a>
+                            </li>
+                            <li>
+                                <a target="_blank" title="linkedin" href="https://www.linkedin.com/in/akinsoft"><i class="fab fa-linkedin"></i></a>
+                            </li>
+                            <li>
+                                <a target="_blank" title="twitter" href="https://twitter.com/akinsoftyazilim"><i class="fab fa-twitter"></i></a>
+                            </li>
+                            <li>
+                                <a target="_blank" title="instagram" href="https://www.instagram.com/akinsoft"><i class="fab fa-instagram"></i></a>
+                            </li>
+                            <li>
+                                <a target="_blank" title="youtube" href="https://www.youtube.com/akinsoftmedya"><i class="fab fa-youtube"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-4 col-md-8">
+                    <div class="footer-widget widget-link">
+                        <h5 class="title">En Populer Makaleler</h5>
+                        <ul>
+                                <li>
+                                    <a title="CREATE or ALTER ASSEMBLY for assembly &#39;Wolvox7Udf_mssql&#39;  &#199;&#246;z&#252;m&#252;" href="/tr/home/makale/3187-create-or-alter-assembly-for-assembly-wolvox7udf_mssql-cozumu">CREATE or ALTER ASSEMBLY for assembly &#39;Wolvox7Udf_mssql&#39;  &#199;&#246;z&#252;m&#252;</a>
+                                </li>
+                                <li>
+                                    <a title="Mobil Satış (Android) Programında Otomatik e-Fatura/e-Arşiv G&#246;nderimi" href="/tr/home/makale/3349-mobil-satis-android-programinda-otomatik-e-faturae-arsiv-gonderimi">Mobil Satış (Android) Programında Otomatik e-Fatura/e-Arşiv G&#246;nderimi</a>
+                                </li>
+                                <li>
+                                    <a title="Katma Değer Vergisi (KDV) Oran Değişikliğinin Wolvox ERP Programında Uyarlanması" href="/tr/home/makale/3641-katma-deger-vergisi-kdv-oran-degisikliginin-wolvox-erp-programinda-uyarlanmasi">Katma Değer Vergisi (KDV) Oran Değişikliğinin Wolvox ERP Programında Uyarlanması</a>
+                                </li>
+                                <li>
+                                    <a title="CafePlus12 Programında Valorant Oyununu &#199;alıştırmak" href="/tr/home/makale/3006-cafeplus12-programinda-valorant-oyununu-calistirmak">CafePlus12 Programında Valorant Oyununu &#199;alıştırmak</a>
+                                </li>
+                                <li>
+                                    <a title="MSSQL Server 2019 kurulumunu nasıl yapabilirim?" href="/tr/home/makale/2220-mssql-server-2019-kurulumunu-nasil-yapabilirim">MSSQL Server 2019 kurulumunu nasıl yapabilirim?</a>
+                                </li>
+                                <li>
+                                    <a title="WOLVOX 8 S&#252;r&#252;m G&#252;ncelleme İşlemleri" href="/tr/home/makale/351-wolvox-8-surum-guncelleme-islemleri">WOLVOX 8 S&#252;r&#252;m G&#252;ncelleme İşlemleri</a>
+                                </li>
+                                <li>
+                                    <a title="AKINSOFT CafePlus 12 programımda URL Loglarını Tutmak" href="/tr/home/makale/11-akinsoft-cafeplus-12-programimda-url-loglarini-tutmak">AKINSOFT CafePlus 12 programımda URL Loglarını Tutmak</a>
+                                </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom cl-white">
+            <p>Copyright &copy; 1995-2025 <a title="akinsoft" target="_blank" href="https://www.akinsoft.com.tr/">AKINSOFT Software Engineering </a> | Türkiye'nin Vizyonu - Her Hakkı Saklıdır. <a rel="nofollow" target="_blank" href="https://www.akinsoft.com.tr/kullanim-kosullari.php">Kullanım Koşulları</a> </p>
+        </div>
+    </div>
+</footer>
+<!--============= Footer Section Ends Here =============-->
+
+
+
+    <script src="/2/bundles/js/main"></script>
+
+
+    
+    <script src="/2/assets/node_modules/prismjs/prism.js"></script>
+<script src="/2/assets/node_modules/prismjs/plugins/toolbar/prism-toolbar.min.js"></script>
+<script src="/2/assets/node_modules/prismjs/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script>
+<script src="/2/assets/node_modules/prismjs/plugins/autoloader/prism-autoloader.min.js"></script>
+
+
+<script>
+    window.Prism = window.Prism || {};
+    window.Prism.manual = true;
+    Prism.highlightAll();
+
+    var oylama = null;
+    var hit = null;
+    var eskioylama = 0;
+    var canliOylamaArti = '5';
+    var canliOylamaEksi = '3';
+
+    $(function () {
+        $(".knowledge-single img").addClass("img-fluid rounded makaleimage");
+        lightboxStartToParentWindow($(".knowledge-single img"));
+
+        hit = localStorage.getItem("hit_3760");
+        oylama = localStorage.getItem("oylama_3760");
+
+        if (oylama) {
+            eskioylama = oylama == null ? 0 : oylama;
+
+            if (eskioylama == 1 && canliOylamaArti == 0) {
+                eskioylama = 0;
+            } else if (eskioylama == -1 && canliOylamaEksi == 0) {
+                eskioylama = 0;
+            }
+
+            if (oylama == 1) {
+                if ('False'.toLowerCase() != 'true') {
+                    $("#thumb_up").click();
+                }
+            }
+            if (oylama == -1) {
+                if ('False'.toLowerCase() != 'true') {
+                    $("#thumb_down").click();
+                }
+            }
+        }
+        if (!hit) {
+            localStorage.setItem("hit_3760",1);
+            $.post("/tr/home/oylamavehit", {
+                blkodu: 3760,
+                hit: 1
+            });
+        }
+        else {
+            localStorage.setItem("hit_3760", parseInt(hit) + 1);
+        }
+    });
+
+    $("#thumb_up").click(function () {
+        var clicked = "fa text-success active";
+        var notclicked = "far";
+
+        var has_far_up = $("#thumb_up i").hasClass(notclicked);
+        var has_far_down = $("#thumb_down i").hasClass(notclicked);
+
+        if (!has_far_down) { // hayır seçili iken evete basılırsa
+            $("#thumb_down i").addClass(notclicked);
+            $("#thumb_down i").removeClass("fa active text-danger");
+        }
+
+        if (has_far_up) { //clicked
+            $("#thumb_up i").removeClass(notclicked);
+            $("#thumb_up i").addClass(clicked);
+        }
+        else { //notclicked
+            $("#thumb_up i").addClass(notclicked);
+            $("#thumb_up i").removeClass(clicked);
+        }
+        gonder();
+    });
+
+    $("#thumb_down").click(function () {
+        var clicked = "fa text-danger active";
+        var notclicked = "far";
+
+        var has_far_up = $("#thumb_up i").hasClass(notclicked);
+        var has_far_down = $("#thumb_down i").hasClass(notclicked);
+
+        if (!has_far_up) { // evet seçili iken hayıra basılırsa
+            $("#thumb_up i").addClass(notclicked);
+            $("#thumb_up i").removeClass("fa active text-success");
+        }
+
+        if (has_far_down) { //clicked
+            $("#thumb_down i").removeClass(notclicked);
+            $("#thumb_down i").addClass(clicked);
+        }
+        else { //not clicked
+            $("#thumb_down i").addClass(notclicked);
+            $("#thumb_down i").removeClass(clicked);
+        }
+        gonder();
+    });
+    
+    function gonder() {
+        var oy = $("#feedback .active").data("val");
+        if (oy == undefined) {
+            oy = 0;
+        }
+        if (oy != 1 && oy != -1 && oy != 0) {
+            return;
+        }
+        if (eskioylama == oy) {
+            return;
+        }
+        var artioy = parseInt($("#artioy").text());
+        var eksioy = parseInt($("#eksioy").text());
+        if (eskioylama != 0) {
+            if (eskioylama == 1) {
+                artioy--;
+            }
+            if (eskioylama == -1) {
+                eksioy--;
+            }
+        }
+        if (oy != 0) {
+            if (oy == 1) {
+                artioy++;
+            }
+            if (oy == -1) {
+                eksioy++;
+            }
+        }
+
+        $("#artioy").text(artioy);
+        $("#eksioy").text(eksioy);
+
+        $('#thumb_up').attr('disabled', true);
+        $('#thumb_down').attr('disabled', true);
+
+        var spinclass = "fas fa-spinner fa-spin";
+        var defclass = "";
+
+        if (oy == 1 || (oy == 0 && eskioylama == 1)) {
+            defclass = $("#thumb_up i").attr("class");
+            $("#thumb_up i").removeClass(defclass);
+            $("#thumb_up i").addClass(spinclass);
+        }
+        if (oy == -1 || (oy == 0 && eskioylama == -1)) {
+            defclass = $("#thumb_down i").attr("class");
+            $("#thumb_down i").removeClass(defclass);
+            $("#thumb_down i").addClass(spinclass);
+        }
+
+        $.post("/tr/home/oylamavehit", {
+                blkodu: 3760,
+                oy: oy,
+                eskioy:eskioylama
+        }, function () {
+            localStorage.setItem("oylama_3760", oy);
+            setTimeout(function () {
+                if (oy == 1 || (oy == 0 && eskioylama == 1)) {
+                    $("#thumb_up i").removeClass(spinclass);
+                    $("#thumb_up i").addClass(defclass);
+                }
+                if (oy == -1 || (oy == 0 && eskioylama == -1)) {
+                    $("#thumb_down i").removeClass(spinclass);
+                    $("#thumb_down i").addClass(defclass);
+                }
+                eskioylama = oy;
+                $('#thumb_up').removeAttr('disabled');
+                $('#thumb_down').removeAttr('disabled');
+            }, 300);
+
+        });
+    }
+
+    $('figure.table').each(function () {
+        var newDiv = $('<div class="table-responsive"></div>');
+        newDiv.append($(this).contents());
+        $(this).replaceWith(newDiv);
+    });
+</script>
+
+    <script>
+        lightbox.option({
+            'resizeDuration': 200,
+            'alwaysShowNavOnTouchDevices': true,
+            'wrapAround': true,
+            'albumLabel': 'Resim %1/%2'
+        });
+
+        $(".search-form").on("submit",function () {
+            var q = $("[name='search']").val();
+            if (q.startsWith("#")) {
+                $("[name='search']").val(q.replace("#",""));
+                $("[name='search']").attr("name", "tag");
+            }
+
+            $(".search-form").submit();
+        });
+
+        function lightboxStartToParentWindow(obj) {
+            for (var i = 0; i < obj.length; i++) {
+                var lightboxName = "lightbox";
+                var url = $(obj[i]).attr("src");
+                $(obj[i]).wrap($('<a />', {
+                    href: url,
+                    "data-lightbox": lightboxName,
+                    "data-title": $(obj[i]).attr("title"),
+                    on: {
+                        click: function () {
+                            lightbox.start($(this));
+                            return false;
+                        }
+                    }
+                }));
+            }
+        }
+
+        /**
+        * All config. options available here:
+        * https://cookieconsent.orestbida.com/reference/configuration-reference.html
+        */
+
+        var cookieList = Cookies.get();
+        var cookieBodyList = [];
+        var defaultCookieList = ["_ga","_gid","_ga_281FVT3V9B"]
+        defaultCookieList.forEach(key => {
+            var obj = {};
+            obj.name = key;
+            obj.domain ='.akinsoft.net';
+            if (key.startsWith("_ga_")) {
+                var currCookie = Object.keys(cookieList).find(x=> x.startsWith(key))
+                if (currCookie)
+                    obj.key = currCookie;
+            }     
+            if (key == '_ga')
+            {
+                obj.expiration = "1 Yıl";
+                obj.description = "Google Analytics tarafından yüklenen _ga çerez, ziyaretçi, oturum ve kampanya verilerini hesaplar ve ayrıca sitenin analiz raporu için site kullanımını izler. Çerez, bilgileri anonim olarak saklar ve benzersiz ziyaretçileri tanımak için rastgele oluşturulmuş bir numara atar.";
+            } else if (key == '_gid')
+            {
+                obj.expiration = "1 Ay";
+                obj.description = "Google Analytics tarafından yüklenen _gid çerez, ziyaretçilerin bir web sitesini nasıl kullandığına ilişkin bilgileri depolarken aynı zamanda web sitesinin performansına ilişkin bir analiz raporu oluşturur. Toplanan verilerden bazıları ziyaretçi sayısını, kaynaklarını ve anonim olarak ziyaret ettikleri sayfaları içerir.";
+            } else if (key.startsWith("_ga_")) {
+                obj.expiration = "2 Yıl";
+                obj.description = "Oturum durumunu sürdürmek için kullanılır.";
+            }
+            cookieBodyList.push(obj);
+        });
+
+        var CAT_NECESSARY = "necessary";
+        var CAT_ANALYTICS = "analytics";
+        var SERVICE_ANALYTICS_STORAGE = 'analytics_storage'
+        // Define dataLayer and the gtag function.
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        // Set default consent to 'denied' (this should happen before changing any other dataLayer)
+        gtag('consent', 'default', {
+            [SERVICE_ANALYTICS_STORAGE]: 'denied',
+        });
+        function updateGtagConsent() {
+            gtag('consent', 'update', {
+                [SERVICE_ANALYTICS_STORAGE]: CookieConsent.acceptedService(SERVICE_ANALYTICS_STORAGE, CAT_ANALYTICS) ? 'granted' : 'denied',
+            });
+        }
+        
+        CookieConsent.run({
+            current_lang: 'tr',
+            autoclear_cookies: true,
+            hide_from_bots:true,
+            cookie_expiration: 182,
+            cookie_necessary_only_expiration: 7,
+            page_scripts: true,
+            gui_options: {
+                consent_modal: {
+                    layout: 'cloud',
+                    position: 'bottom center',
+                    transition: 'slide'
+                },
+                settings_modal: {
+                    layout: 'box',
+                    transition: 'slide'
+                }
+            },
+            categories: {
+                necessary: {
+                    enabled: true,  // this category is enabled by default
+                    readOnly: true  // this category cannot be disabled
+                },
+                analytics: {
+                    autoClear: {
+                        cookies: [
+                            {
+                                name: /^_ga/,   // regex: match all cookies starting with '_ga'
+                            },
+                            {
+                                name: '_gid',   // string: exact cookie name
+                            }
+                        ]
+                    },
+                    // See: https://cookieconsent.orestbida.com/reference/configuration-reference.html#category-services
+                    services: {
+                        [SERVICE_ANALYTICS_STORAGE]: {
+                            label: 'Analizlerle (ziyaret süresi gibi) ilgili depolamayı (çerezler gibi) etkinleştirir.',
+                        }
+                    }
+                }
+            },
+            language: {
+                default: 'tr',
+                translations: {
+                    tr: {
+                        consentModal: {
+                            title: ``,
+                            description: `İnternet sitemizde çerezlerden faydalanılmaktadır. Ayrıntılı bilgi için <span class="c-link">  <a rel="nofollow" data-toggle="modal" class="open-popup-link" href="https://www.akinsoft.com.tr/gizlilik.php" target="_blank" title="Gizlilik Politikamız">Gizlilik Politikamızı</a> ve <a rel="nofollow" data-toggle="modal" class="open-popup-link" href="https://www.akinsoft.com.tr/cerez.php?domain=bilgibankasi.akinsoft.net" target="_blank" title="Çerez Politikamız">Çerez Politikamızı</a> </span> inceleyebilirsiniz.`,
+                            acceptAllBtn: 'Kabul Et',
+                            acceptNecessaryBtn: 'Reddet',
+                            showPreferencesBtn: 'Ayarlar',
+                        },
+                        preferencesModal: {
+                            title: `<img src="https://www.akinsoft.com.tr/logo/images/akinsoft_yatay_logo/akinsoft_yatay_logo.webp" alt="Çerez Logo" class="lazy" style="height: 68px">`,
+                            acceptAllBtn: "Çerezleri Kabul Et",
+                            acceptNecessaryBtn: 'Reddet',
+                            savePreferencesBtn: "Kaydet",
+                            closeIconLabel: 'Kapat',
+                            sections: [
+                                {
+                                    title: "Çerez Tercihleri",
+                                    description: "Tercihlerinizi özelleştirin."
+                                },
+                                {
+                                    title: "Zorunlu Çerezler",
+                                    description: `Bu çerezler, web sitemizin çalışması için gereklidir ve sistemlerimizde kapatılamaz. Bunlar genellikle tarafınızca yapılan ve hizmet talebi anlamına gelen eylemlere yanıt olarak yerleştirilir, örneğin gizlilik tercihlerinizi ayarlamak, oturum açmak ya da formları doldurmak. Tarayıcınızı bu çerezleri engelleyecek ya da bu çerezlerle ilgili olarak size uyarıda bulunacak şekilde ayarlayabilirsiniz, ancak bu durumda sitenizin bazı kısımları çalışmayabilir. Bu çerezler sizi kişisel olarak tanımlayabilecek herhangi bir bilgi saklamamaktadır..`,
+                                    //this field will generate a toggle linked to the 'necessary' category
+                                    linkedCategory: CAT_NECESSARY,
+                                    cookieTable: {
+                                        headers: {
+                                            name: "Ad",
+                                            domain: "Alan Adı",
+                                            description: "Açıklama",
+                                            expiration: "Bitiş Zamanı"
+                                        },
+                                        body: [
+                                            {
+                                                name: "cc_cookie",
+                                                domain: ".akinsoft.net",
+                                                description: "Web sitemizi ziyaret eden kullanıcılarımızın çerez kullanım bilgilerini içeren çerezdir.",
+                                                expiration: "1 Hafta - 6 Ay"
+                                            },
+                                            {
+                                                name: "ASP_NET_SessionId",
+                                                domain: "bilgibankasi.akinsoft.net",
+                                                description: "Web sitesine ait Session değerini tutar.",
+                                                expiration: "1 Saat"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    title: "İşlevsel ve analitik çerezler",
+                                    description: "Bu çerezler web sitesinin daha zengin işlevsellik ve kişiselleştirme sunmasına olanak sağlar. Bunlar firmamız veya sayfamıza hizmetlerini eklediğimiz üçüncü taraf tedarikçiler tarafından yerleştirilebilir. Bu çerezler size sitemizde önceki ziyaret ve seçimlerinize dayanarak daha kişisel bir deneyim sunmayı amaçlar. Bu çerezlere izin vermediğiniz takdirde bazı hizmetler, hatta hiçbir hizmet düzgün çalışmayabilir.",
+                                    linkedCategory: CAT_ANALYTICS,
+                                    cookieTable: {
+                                        headers: {
+                                            name: "Ad",
+                                            domain: "Alan Adı",
+                                            description: "Açıklama",
+                                            expiration: "Bitiş Zamanı"
+                                        },
+                                        body: cookieBodyList
+                                    }
+                                },
+                            ]
+                        }
+                    }
+                }
+            }
+        });
+    
+        $(function () {
+            $('.open-popup-link').magnificPopup({
+                type: 'iframe',
+                iframe: {
+                    markup: '<style>.mfp-iframe-holder .mfp-content {max-width: 900px;height:500px}</style>' +
+                        '<div class="mfp-iframe-scaler" >' +
+                        '<div class="mfp-close"></div>' +
+                        '<iframe class="mfp-iframe" frameborder="0" allowfullscreen></iframe>' +
+                        '</div></div>'
+                }
+            });
+        });
+
+    </script>
+
+    <script type="application/ld+json" async>
+        {
+            "@context": "https://schema.org",
+            "@graph": [
+                {
+                    "@type": "Organization",
+                    "url": "https://bilgibankasi.akinsoft.net/",
+                    "logo": "https://www.akinsoft.com.tr/images/akinsoft_logo.png",
+                    "name": "AKIN Yazılım Bilgisayar İth. İhr. San. ve Tic. Ltd. Şti.",
+                    "alternateName": "AKINSOFT",
+                    "foundingDate": "1995",
+                    "founders": [{
+                        "@type": "Person",
+                        "jobTitle": "AKINSOFT ve AKINROBOTICS Yönetim Kurulu Başkanı",
+                        "name": "Özgür AKIN"
+                    }],
+                    "sameAs": [
+                        "https://www.facebook.com/akinsoft",
+                        "https://twitter.com/akinsoftyazilim",
+                        "https://www.instagram.com/akinsoft",
+                        "https://www.youtube.com/akinsoft",
+                        "https://www.linkedin.com/in/akinsoft"
+                    ]
+                }
+            ]
+        }
+    </script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-160665429-8"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'UA-160665429-8');
+        </script>
+
+
+</body>
+</html>

@@ -5,3 +5,7 @@ This folder contains project documentation. Start with the setup guide, then rev
 - `docs/setup/dev-setup.md`
 - `docs/architecture/overview.md`
 - `docs/workflows/kuruyemis-workflows.md`
+- `docs/workflows/printing.md`
+- `docs/workflows/weighed-barcodes.md`
+- `docs/printing/qz-tray.md`
+- `docs/fiscal/gmp3-notes.md`

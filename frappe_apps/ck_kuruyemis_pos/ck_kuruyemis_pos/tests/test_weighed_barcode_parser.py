@@ -60,6 +60,52 @@ def test_parse_price_barcode():
     assert parsed.weight is None
 
 
+def test_default_preset_weight_grams():
+    rule = WeighedBarcodeRule(
+        name="default-weight",
+        barcode_length=13,
+        prefix="21",
+        item_code_start=3,
+        item_code_length=5,
+        weight_start=8,
+        weight_length=5,
+        weight_divisor=1000,
+        check_ean13=True,
+    )
+
+    body = "21" + "12345" + "00150"
+    barcode = _make_ean13(body)
+
+    parsed = parse_weighed_barcode(barcode, [rule])
+
+    assert parsed is not None
+    assert parsed.item_code == "12345"
+    assert parsed.weight == Decimal("0.150")
+
+
+def test_default_preset_price_cents():
+    rule = WeighedBarcodeRule(
+        name="default-price",
+        barcode_length=13,
+        prefix="22",
+        item_code_start=3,
+        item_code_length=5,
+        price_start=8,
+        price_length=5,
+        price_divisor=100,
+        check_ean13=True,
+    )
+
+    body = "22" + "54321" + "01234"
+    barcode = _make_ean13(body)
+
+    parsed = parse_weighed_barcode(barcode, [rule])
+
+    assert parsed is not None
+    assert parsed.item_code == "54321"
+    assert parsed.price == Decimal("12.34")
+
+
 def test_strip_leading_zeros_and_prefix():
     rule = WeighedBarcodeRule(
         name="strip-zero",

@@ -32,6 +32,20 @@ class ParsedWeighedBarcode:
     rule_name: str
 
 
+SCALE_DIVISORS = {
+    "grams": 1000,
+    "kilograms": 1,
+    "cents": 100,
+    "lira": 1,
+}
+
+
+def divisor_for_scale_unit(unit: Optional[str]) -> Optional[int]:
+    if not unit:
+        return None
+    return SCALE_DIVISORS.get(unit.strip().lower())
+
+
 def ean13_check_digit(body: str) -> str:
     if len(body) != 12 or not body.isdigit():
         raise ValueError("EAN-13 body must be 12 digits")
