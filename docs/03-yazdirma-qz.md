@@ -81,5 +81,6 @@ POS Yazdırma Ayarları içinde:
   - “Raf Etiketi Yazdır (38x80)”
 - Alternatif: `docs/workflows/printing.md` ve `scripts/windows/09-smoke-test.ps1`
 - Gerçek baskı için: `DRY_RUN=0 .\scripts/windows/09-smoke-test.ps1 -SiteAdi kuruyemis.local`
+- Not: Gerçek baskı adımı Playwright + Chromium ister (Node.js 18+ gerekir).
 
 Sorun yaşıyorsanız: `docs/07-sorun-giderme.md`.

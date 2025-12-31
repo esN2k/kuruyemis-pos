@@ -66,11 +66,20 @@ foreach ($port in $optionalPorts) {
   }
 }
 
+$qzRequired = $true
+if ($env:CK_POS_QZ_ZORUNLU -and $env:CK_POS_QZ_ZORUNLU -eq "0") {
+  $qzRequired = $false
+}
+
 $qzUsed = Get-NetTCPConnection -State Listen -LocalPort $qzPort -ErrorAction SilentlyContinue
 if ($qzUsed) {
   Write-Ok "QZ Tray portu ($qzPort) kullanımda (QZ Tray çalışıyor olabilir)."
 } else {
-  Write-Uyari "QZ Tray portu ($qzPort) kapalı. Yazdırma için QZ Tray'i açın."
+  if ($qzRequired) {
+    Write-Uyari "QZ Tray portu ($qzPort) kapalı. Yazdırma için QZ Tray'i açın."
+  } else {
+    Write-Bilgi "QZ Tray portu ($qzPort) kapalı. (Gerçek baskı kapalı olduğu için uyarı verilmedi.)"
+  }
 }
 
 Write-Ok "Önkoşullar tamam."

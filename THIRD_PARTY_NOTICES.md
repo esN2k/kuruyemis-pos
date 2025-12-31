@@ -47,6 +47,11 @@ Bu proje; bazı açık kaynak bileşenleri ve kütüphaneleri kullanır. Bu dosy
 - Kaynak: https://github.com/lindell/JsBarcode
 - Lisans: **MIT**
 
+### 2.3 Playwright
+- Amaç: UI duman testi ve teslim öncesi doğrulama otomasyonu
+- Kaynak: https://github.com/microsoft/playwright
+- Lisans: **Apache-2.0**
+
 ---
 
 ## 3) Opsiyonel Frappe Modülleri

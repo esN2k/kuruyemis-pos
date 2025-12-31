@@ -1,0 +1,11 @@
+{
+  "name": "ck-kuruyemis-pos-tools",
+  "private": true,
+  "devDependencies": {
+    "playwright": "1.49.1"
+  },
+  "scripts": {
+    "ui-smoke": "node scripts/tools/ui-smoke.mjs",
+    "qz-print-test": "node scripts/tools/qz-print-test.mjs"
+  }
+}

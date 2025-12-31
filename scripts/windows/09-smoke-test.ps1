@@ -1,14 +1,20 @@
-﻿param(
+param(
   [string]$SiteAdi = "kuruyemis.local",
   [string]$SiteUrl,
   [string]$FisYazici,
   [string]$EtiketYazici,
-  [switch]$GercekBaski
+  [switch]$GercekBaski,
+  [int]$Strict = 0,
+  [int]$Quiet = 0
 )
 
 . "$PSScriptRoot\_ortak.ps1"
 
+Set-LogMode -Quiet:($Quiet -eq 1) -Strict:($Strict -eq 1)
+Reset-LogState
+
 $composeArgs = Get-ComposeArgs
+$repoRoot = Get-RepoRoot
 $doPrint = $GercekBaski -or ($env:DRY_RUN -eq "0")
 
 if (-not $SiteUrl) {
@@ -116,107 +122,182 @@ if ($opsiyonelModuller.Count -gt 0) {
 }
 
 if (-not $doPrint) {
-  Write-Uyari "DRY_RUN aktif. Yazdırma adımı atlandı. (Yazdırmak için DRY_RUN=0 veya -GercekBaski kullanın)"
-  Write-Ok "Duman testi tamamlandı (deneme modu)."
+  Write-Bilgi "DRY_RUN aktif. Yazdırma adımı atlandı."
+  Exit-If-StrictWarnings "Duman testi"
+  Write-Ok "Duman testi tamamlandı (DRY_RUN)."
   exit 0
 }
 
 $qzConn = Test-NetConnection -ComputerName "localhost" -Port 8182 -WarningAction SilentlyContinue
 if (-not $qzConn.TcpTestSucceeded) {
-  Write-Uyari "QZ Tray bağlantısı kapalı. Yazdırma adımı atlandı."
-  Write-Ok "Duman testi tamamlandı (yazdırma atlandı)."
-  exit 0
+  Write-Hata "QZ Tray bağlantısı kapalı." "QZ Tray'i başlatın ve tekrar deneyin."
+  exit 1
 }
 
-function Get-PrinterSetting {
-  param([string]$FieldName)
+function Get-PosSettings {
   try {
-    $output = docker compose @composeArgs exec backend bench --site $SiteAdi execute frappe.db.get_single_value --kwargs "{'doctype':'POS Printing Settings','fieldname':'$FieldName'}"
-    if ($LASTEXITCODE -ne 0) { return "" }
-    $line = $output | Select-Object -Last 1
-    $line = $line.Trim()
-    if ($line -and $line -ne "None") { return $line }
+    $raw = docker compose @composeArgs exec -T backend bench --site $SiteAdi execute ck_kuruyemis_pos.utils.get_pos_printing_settings
+    if ($LASTEXITCODE -ne 0) { return $null }
+    $line = $raw | Select-Object -Last 1
+    if (-not $line) { return $null }
+    return $line | ConvertFrom-Json
   } catch {
-    return ""
+    return $null
   }
-  return ""
 }
 
-if (-not $FisYazici) { $FisYazici = Get-PrinterSetting "receipt_printer_name" }
-if (-not $EtiketYazici) { $EtiketYazici = Get-PrinterSetting "label_printer_name" }
-if (-not $FisYazici) { $FisYazici = "ZY907" }
-if (-not $EtiketYazici) { $EtiketYazici = "X-Printer 490B" }
+$posSettings = Get-PosSettings
+$receiptAliases = if ($posSettings) { $posSettings.receipt_printer_aliases } else { "" }
+$labelAliases = if ($posSettings) { $posSettings.label_printer_aliases } else { "" }
+$labelPreset = if ($posSettings -and $posSettings.label_size_preset) { $posSettings.label_size_preset } else { "38x80_hizli" }
+if ($labelPreset -eq "38x80") { $labelPreset = "38x80_hizli" }
 
-$receiptPrinterSafe = $FisYazici.Replace("'", "\\'")
-$labelPrinterSafe = $EtiketYazici.Replace("'", "\\'")
+$receiptPrinter = if ($FisYazici) {
+  $FisYazici
+} elseif ($posSettings -and $posSettings.receipt_printer_name) {
+  $posSettings.receipt_printer_name
+} else {
+  "ZY907"
+}
 
-$htmlPath = Join-Path $env:TEMP "ck-kuruyemis-duman-testi.html"
+$labelPrinter = if ($EtiketYazici) {
+  $EtiketYazici
+} elseif ($posSettings -and $posSettings.label_printer_name) {
+  $posSettings.label_printer_name
+} else {
+  "X-Printer 490B"
+}
 
-$html = @"
-<!doctype html>
-<html lang="tr">
-<head>
-  <meta charset="utf-8" />
-  <title>CK Kuruyemiş POS - Duman Testi</title>
-</head>
-<body>
-  <h3>CK Kuruyemiş POS - Duman Testi</h3>
-  <div id="status">Baskı hazırlanıyor...</div>
-  <script src="${SiteUrl}/assets/ck_kuruyemis_pos/js/qz/vendor/qz-tray.js"></script>
-  <script>
-    const statusEl = document.getElementById('status');
-    const receiptPrinter = '${receiptPrinterSafe}';
-    const labelPrinter = '${labelPrinterSafe}';
+try {
+  $printers = Get-Printer -ErrorAction Stop
+  if (-not $printers -or $printers.Count -eq 0) {
+    Write-Hata "Windows yazıcı listesi boş." "Yazıcı sürücülerini kontrol edin."
+    exit 1
+  }
+} catch {
+  Write-Hata "Windows yazıcı listesi alınamadı." "Yazıcı sürücülerini kontrol edin."
+  exit 1
+}
 
-    const receiptData = ['\\x1B@',
-      'CK KURUYEMİŞ POS\\n',
-      'Bilgi Fişi (Mali Değil) - Duman Testi\\n',
-      '---------------------------\\n',
-      'Ürün: Antep Fıstığı\\n',
-      'Miktar: 0.250 kg\\n',
-      'Fiyat: 375.00 TRY/kg\\n',
-      'Tutar: 93.75 TRY\\n',
-      '---------------------------\\n',
-      'Teşekkürler!\\n\\n\\n',
-      '\\x1DV1'
-    ].join('');
+function Normalize-PrinterName {
+  param([string]$Value)
+  return ($Value | ForEach-Object { $_.ToString().Trim().ToLowerInvariant() })
+}
 
-    const labelData = [
-      'SIZE 38 mm,80 mm',
-      'GAP 2 mm,0',
-      'DENSITY 8',
-      'SPEED 4',
-      'DIRECTION 1',
-      'CLS',
-      'TEXT 20,20,"0",0,1,1,"Antep Fıstığı"',
-      'TEXT 20,50,"0",0,1,1,"0.250 kg"',
-      'TEXT 20,80,"0",0,1,1,"93.75 TRY"',
-      'BARCODE 20,120,"128",80,1,0,2,2,"2101234002508"',
-      'PRINT 1,1'
-    ].join('\\n');
+function Parse-Aliases {
+  param([string]$Text)
+  if (-not $Text) {
+    return @()
+  }
+  return $Text -split "[,;`n`r]+" | ForEach-Object { $_.Trim() } | Where-Object { $_ }
+}
 
-    function setStatus(msg, isError) {
-      statusEl.innerText = msg;
-      statusEl.style.color = isError ? 'red' : 'green';
+function Score-Match {
+  param([string]$PrinterName, [string]$Candidate)
+  $p = Normalize-PrinterName $PrinterName
+  $c = Normalize-PrinterName $Candidate
+  if (-not $p -or -not $c) { return 0 }
+  if ($p -eq $c) { return 3 }
+  if ($p.StartsWith($c) -or $c.StartsWith($p)) { return 2 }
+  if ($p.Contains($c) -or $c.Contains($p)) { return 1 }
+  return 0
+}
+
+function Find-BestPrinter {
+  param([string[]]$Printers, [string[]]$Candidates)
+  $best = $null
+  $bestScore = 0
+  $bestLength = [int]::MaxValue
+  foreach ($printer in $Printers) {
+    foreach ($candidate in $Candidates) {
+      $score = Score-Match $printer $candidate
+      if ($score -gt $bestScore -or ($score -eq $bestScore -and $printer.Length -lt $bestLength)) {
+        $best = $printer
+        $bestScore = $score
+        $bestLength = $printer.Length
+      }
     }
+  }
+  return $best
+}
 
-    qz.security.setCertificatePromise(() => Promise.resolve(null));
-    qz.security.setSignaturePromise(() => Promise.resolve(null));
+function Resolve-Printer {
+  param(
+    [string]$Label,
+    [string]$SelectedName,
+    [string]$AliasText,
+    [string[]]$Printers
+  )
+  if (-not $SelectedName) {
+    Write-Hata "$Label seçilmemiş." "POS Yazdırma Ayarları'ndan yazıcı seçin."
+    exit 1
+  }
+  $candidates = @($SelectedName) + (Parse-Aliases $AliasText)
+  $best = Find-BestPrinter $Printers $candidates
+  if (-not $best) {
+    Write-Hata "$Label QZ listesinde bulunamadı." "Yazıcı adını kontrol edin, QZ Tray izinlerini doğrulayın ve Windows yazıcıyı yeniden ekleyin."
+    exit 1
+  }
+  if ((Normalize-PrinterName $best) -eq (Normalize-PrinterName $SelectedName)) {
+    Write-Ok "$Label eşleşti: $best"
+  } else {
+    Write-Ok "$Label alias ile eşleşti: $best"
+  }
+  return $best
+}
 
-    qz.websocket.connect()
-      .then(() => qz.printers.find(receiptPrinter))
-      .then(printer => qz.print(qz.configs.create(printer, { encoding: 'utf-8' }), [receiptData]))
-      .then(() => qz.printers.find(labelPrinter))
-      .then(printer => qz.print(qz.configs.create(printer, { encoding: 'utf-8' }), [labelData]))
-      .then(() => setStatus('Baskı tamamlandı. Fiş ve etiket çıktısını kontrol edin.', false))
-      .catch(err => setStatus('Baskı hatası: ' + err, true));
-  </script>
-</body>
-</html>
-"@
+$printerNames = $printers | Select-Object -ExpandProperty Name
+$resolvedReceipt = Resolve-Printer "Fiş yazıcısı" $receiptPrinter $receiptAliases $printerNames
+$resolvedLabel = Resolve-Printer "Etiket yazıcısı" $labelPrinter $labelAliases $printerNames
 
-$html | Set-Content -Encoding UTF8 -Path $htmlPath
-Write-Bilgi "Test baskısı başlatılıyor... ($htmlPath)"
-Start-Process $htmlPath
-Write-Ok "Tarayıcı açıldı. Fiş ve etiket çıktısını kontrol edin."
+$printScript = Join-Path $repoRoot "scripts\tools\qz-print-test.mjs"
+if (-not (Test-Path $printScript)) {
+  Write-Hata "QZ test scripti bulunamadı." "scripts/tools/qz-print-test.mjs dosyasını kontrol edin."
+  exit 1
+}
+
+if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
+  Write-Hata "Node.js bulunamadı." "Node.js 18+ kurun ve tekrar deneyin."
+  exit 1
+}
+
+$packageLock = Join-Path $repoRoot "package-lock.json"
+if (-not (Test-Path $packageLock)) {
+  Write-Hata "Playwright kilit dosyası bulunamadı." "npm ci çalıştırmadan önce package-lock.json oluşturulmalı."
+  exit 1
+}
+
+$playwrightDir = Join-Path $repoRoot "node_modules\playwright"
+Push-Location $repoRoot
+try {
+  if (-not (Test-Path $playwrightDir)) {
+    Write-Bilgi "Playwright bağımlılıkları kuruluyor..."
+    npm ci --silent
+    if ($LASTEXITCODE -ne 0) {
+      Write-Hata "Playwright kurulumu başarısız." "npm ci çıktısını kontrol edin."
+      exit 1
+    }
+  }
+
+  Write-Bilgi "Playwright tarayıcıları kontrol ediliyor (Chromium)..."
+  npx playwright install chromium
+  if ($LASTEXITCODE -ne 0) {
+    Write-Hata "Playwright tarayıcı kurulumu başarısız." "npx playwright install chromium çıktısını kontrol edin."
+    exit 1
+  }
+
+  Write-Bilgi "QZ test baskısı başlatılıyor..."
+  node $printScript --base-url $SiteUrl --receipt "$resolvedReceipt" --label "$resolvedLabel" --preset "$labelPreset"
+  if ($LASTEXITCODE -ne 0) {
+    Write-Hata "QZ test baskısı başarısız." "QZ Tray ve yazıcı bağlantılarını kontrol edin."
+    exit 1
+  }
+} finally {
+  Pop-Location
+}
+
+Write-Ok "QZ test baskısı başarılı."
+
+Exit-If-StrictWarnings "Duman testi"
+Write-Ok "Duman testi tamamlandı."
 

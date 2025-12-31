@@ -25,6 +25,7 @@ def get_pos_printing_settings() -> dict:
         "receipt_printer_aliases": doc.receipt_printer_aliases or "",
         "label_printer_aliases": doc.label_printer_aliases or "",
         "qz_security_mode": doc.qz_security_mode or "DEV",
+        "label_size_preset": doc.label_size_preset or "38x80_hizli",
     }
     return frappe.as_json(data)
 

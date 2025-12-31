@@ -64,7 +64,7 @@ Beklenen sonuç: ERPNext + POS Awesome + CK Kuruyemiş POS yüklendi, migrate ta
 ```
 Beklenen sonuç: Tüm kontroller **OK**.
 
-Not: Gerçek baskı için `DRY_RUN=0 .\scripts\windows\09-smoke-test.ps1 -SiteAdi kuruyemis.local`.
+Not: Gerçek baskı için `DRY_RUN=0 .\scripts\windows\09-smoke-test.ps1 -SiteAdi kuruyemis.local`. (Node.js 18+ ve Playwright/Chromium gerekir)
 
 Sonraki adım: `docs/01-kurulum.md` ve `docs/06-operasyon.md`.
 

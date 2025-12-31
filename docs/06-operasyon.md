@@ -50,6 +50,15 @@ Gerçek baskı için:
 .\scripts\windows\11-saha-test.ps1 -SiteAdi kuruyemis.local -GercekBaski
 ```
 
+## Teslim Öncesi Kontrol
+```powershell
+.\scripts\windows\13-teslim-oncesi.ps1
+```
+Önemli parametreler:
+- `-GercekBaski 1`: QZ üzerinden gerçek baskı denemesi yapar (Playwright + Chromium gerekir).
+- `-Strict 1`: Uyarılar hata kabul edilir.
+- `-Quiet 1`: Bilgi loglarını azaltır.
+
 ## POS Awesome Güncelleme Notu
 - Repo: `https://github.com/defendicon/POS-Awesome-V15`
 - Deterministik kurulum adımları `scripts/windows/04-uygulamalari-kur.ps1` içinde uygulanır:

@@ -35,6 +35,9 @@ Opsiyonel modüller (varsayılan kurulumda yok):
 - Webapp Hardware Bridge (MIT)
 - WhatsApp entegrasyonları (MIT)
 
+Test/otomasyon araçları:
+- Playwright (Apache-2.0)
+
 Tüm üçüncü parti bileşenler için:
 - Repoda `THIRD_PARTY_NOTICES.md` dosyası tutulur.
 - Her bağımlılık için lisans bilgisi ve kaynak bağlantısı listelenir.

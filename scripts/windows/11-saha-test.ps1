@@ -1,9 +1,14 @@
 param(
   [string]$SiteAdi = "kuruyemis.local",
-  [switch]$GercekBaski
+  [switch]$GercekBaski,
+  [int]$Strict = 0,
+  [int]$Quiet = 0
 )
 
 . "$PSScriptRoot\_ortak.ps1"
+
+Set-LogMode -Quiet:($Quiet -eq 1) -Strict:($Strict -eq 1)
+Reset-LogState
 
 function Calistir-Adim {
   param(
@@ -23,9 +28,11 @@ function Calistir-Adim {
 
 Write-Bilgi "Saha test paketi başlıyor..."
 
-$doctorOk = Calistir-Adim "Doktor kontrolü" "$PSScriptRoot\05-doctor.ps1" @("-SiteAdi", $SiteAdi)
+$qzZorunlu = if ($GercekBaski) { 1 } else { 0 }
+$doctorArgs = @("-SiteAdi", $SiteAdi, "-Strict", $Strict, "-Quiet", $Quiet, "-QzZorunlu", $qzZorunlu)
+$doctorOk = Calistir-Adim "Doktor kontrolü" "$PSScriptRoot\05-doctor.ps1" $doctorArgs
 
-$smokeArgs = @("-SiteAdi", $SiteAdi)
+$smokeArgs = @("-SiteAdi", $SiteAdi, "-Strict", $Strict, "-Quiet", $Quiet)
 if ($GercekBaski) {
   $smokeArgs += "-GercekBaski"
 }
@@ -53,4 +60,5 @@ if (-not $doctorOk -or -not $smokeOk) {
   exit 1
 }
 
+Exit-If-StrictWarnings "Saha testi"
 Write-Ok "Saha testi tamamlandı."

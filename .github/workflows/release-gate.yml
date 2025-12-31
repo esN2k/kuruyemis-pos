@@ -1,0 +1,42 @@
+name: release-gate
+
+on:
+  workflow_dispatch:
+    inputs:
+      site:
+        description: "Site adı"
+        required: false
+        default: "kuruyemis.local"
+      admin_password:
+        description: "Admin şifresi"
+        required: false
+        default: "admin"
+      strict:
+        description: "Strict modu (1=aktif)"
+        required: false
+        default: "1"
+      quiet:
+        description: "Quiet modu (1=aktif)"
+        required: false
+        default: "1"
+      gercek_baski:
+        description: "Gerçek baskı (1=aktif)"
+        required: false
+        default: "0"
+
+jobs:
+  release-gate:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Teslim öncesi doğrulama
+        shell: pwsh
+        run: |
+          .\scripts\windows\13-teslim-oncesi.ps1 `
+            -SiteAdi "${{ inputs.site }}" `
+            -AdminSifresi "${{ inputs.admin_password }}" `
+            -Strict ${{ inputs.strict }} `
+            -Quiet ${{ inputs.quiet }} `
+            -GercekBaski ${{ inputs.gercek_baski }}

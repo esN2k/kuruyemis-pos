@@ -7,6 +7,7 @@ Amaç: Mağazada gerçek cihazlarla POS’un uçtan uca çalıştığını doğr
 - QZ Tray kurulu ve açık.
 - Yazıcı sürücüleri yüklü (ZY907, X‑Printer 490B).
 - CL3000 etiketli barkod basabiliyor.
+- Gerçek baskı testi için Node.js 18+ ve Playwright/Chromium kurulu olmalı.
 
 ## 1) Otomatik Kontroller (2 dk)
 ```powershell

@@ -1,9 +1,15 @@
-﻿param(
+param(
   [string]$SiteAdi = "kuruyemis.local",
-  [string]$SiteUrl
+  [string]$SiteUrl,
+  [int]$Strict = 0,
+  [int]$Quiet = 0,
+  [int]$QzZorunlu = 1
 )
 
 . "$PSScriptRoot\_ortak.ps1"
+
+Set-LogMode -Quiet:($Quiet -eq 1) -Strict:($Strict -eq 1)
+Reset-LogState
 
 $hasError = $false
 $repoRoot = Get-RepoRoot
@@ -102,7 +108,7 @@ function Check-Service {
       Write-Hata "Servis çalışmıyor: $Name" "02-baslat.ps1 ile servisleri başlatın."
       $script:hasError = $true
     } else {
-      Write-Uyari "Opsiyonel servis kapalı: $Name"
+      Write-Bilgi "Opsiyonel servis kapalı: $Name"
     }
     return
   }
@@ -112,7 +118,7 @@ function Check-Service {
       Write-Hata "Servis durumu sorunlu: $Name ($status)" "Docker loglarını kontrol edin."
       $script:hasError = $true
     } else {
-      Write-Uyari "Opsiyonel servis durumu: $Name ($status)"
+      Write-Bilgi "Opsiyonel servis durumu: $Name ($status)"
     }
   } else {
     Write-Ok "Servis çalışıyor: $Name"
@@ -184,7 +190,11 @@ $qzConn = Test-NetConnection -ComputerName "localhost" -Port $qzPort -WarningAct
 if ($qzConn.TcpTestSucceeded) {
   Write-Ok "QZ Tray bağlantısı açık (port $qzPort)."
 } else {
-  Write-Uyari "QZ Tray bağlantısı kapalı (port $qzPort)."
+  if ($QzZorunlu -eq 1) {
+    Write-Uyari "QZ Tray bağlantısı kapalı (port $qzPort)."
+  } else {
+    Write-Bilgi "QZ Tray bağlantısı kapalı (port $qzPort)."
+  }
 }
 
 $posSettings = $null
@@ -382,5 +392,9 @@ if ($hasError) {
   exit 1
 }
 
+Exit-If-StrictWarnings "Doktor kontrolü"
+
 Write-Ok "Doktor kontrolü tamamlandı."
+
+
 

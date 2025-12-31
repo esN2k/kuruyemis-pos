@@ -16,6 +16,49 @@ function Initialize-KonsolUtf8 {
 
 Initialize-KonsolUtf8
 
+$script:QuietMode = $false
+$script:StrictMode = $false
+$script:HadWarning = $false
+$script:LogFilePath = $env:CK_POS_LOG_FILE
+
+if ($env:CK_POS_QUIET -and $env:CK_POS_QUIET -ne "0") {
+  $script:QuietMode = $true
+}
+if ($env:CK_POS_STRICT -and $env:CK_POS_STRICT -ne "0") {
+  $script:StrictMode = $true
+}
+
+function Set-LogMode {
+  param([bool]$Quiet = $false, [bool]$Strict = $false)
+  $script:QuietMode = $Quiet
+  $script:StrictMode = $Strict
+}
+
+function Set-LogFilePath {
+  param([string]$Path)
+  $script:LogFilePath = $Path
+}
+
+function Reset-LogState {
+  $script:HadWarning = $false
+}
+
+function Get-HasWarning {
+  return $script:HadWarning
+}
+
+function Write-LogLine {
+  param([string]$Line)
+  if (-not $script:LogFilePath) {
+    return
+  }
+  try {
+    Add-Content -Path $script:LogFilePath -Value $Line -Encoding UTF8
+  } catch {
+    # Log yazımı hata verirse ana akışı bozmayalım.
+  }
+}
+
 $script:OrtakRoot = $PSScriptRoot
 if (-not $script:OrtakRoot -and $MyInvocation.PSCommandPath) {
   $script:OrtakRoot = Split-Path -Parent $MyInvocation.PSCommandPath
@@ -66,24 +109,46 @@ function Get-ComposeArgs {
 
 function Write-Bilgi {
   param([string]$Mesaj)
-  Write-Host "[BİLGİ] $Mesaj"
+  if ($script:QuietMode) {
+    return
+  }
+  $line = "[BİLGİ] $Mesaj"
+  Write-Host $line
+  Write-LogLine $line
 }
 
 function Write-Ok {
   param([string]$Mesaj)
-  Write-Host "[OK] $Mesaj"
+  $line = "[OK] $Mesaj"
+  Write-Host $line
+  Write-LogLine $line
 }
 
 function Write-Uyari {
   param([string]$Mesaj)
-  Write-Host "[UYARI] $Mesaj"
+  $script:HadWarning = $true
+  $line = "[UYARI] $Mesaj"
+  Write-Host $line
+  Write-LogLine $line
 }
 
 function Write-Hata {
   param([string]$Mesaj, [string]$Cozum = "")
-  Write-Host "[HATA] $Mesaj"
+  $line = "[HATA] $Mesaj"
+  Write-Host $line
+  Write-LogLine $line
   if ($Cozum) {
-    Write-Host "[ÇÖZÜM] $Cozum"
+    $solutionLine = "[ÇÖZÜM] $Cozum"
+    Write-Host $solutionLine
+    Write-LogLine $solutionLine
+  }
+}
+
+function Exit-If-StrictWarnings {
+  param([string]$Baslik = "İşlem")
+  if ($script:StrictMode -and $script:HadWarning) {
+    Write-Hata "$Baslik uyarılarla tamamlandı." "Strict modda uyarılar hata kabul edilir."
+    exit 2
   }
 }
 
