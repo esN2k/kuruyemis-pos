@@ -26,6 +26,11 @@ Demo verisi yüklemek için:
 ```
 Beklenen sonuç: ERPNext + POS Awesome + CK Kuruyemiş POS yüklendi, migrate tamamlandı ve TR varsayılanlar uygulandı.
 
+Opsiyonel modül örneği (QR/WhatsApp/WHB):
+```powershell
+.\scripts\windows\04-uygulamalari-kur.ps1 -SiteAdi kuruyemis.local -OpsiyonelModuller scan_me,whb
+```
+
 3) Yazıcıları tanıt ve test et
 - `http://kuruyemis.local:8080/app/pos_printer_setup`
 - POS Awesome menüsü:

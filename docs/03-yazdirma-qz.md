@@ -21,6 +21,8 @@ QZ Tray, tarayıcı ile yazıcı arasındaki köprüdür. POS Awesome, QZ Tray �
    - `http://kuruyemis.local:8080/app/pos_printer_setup`
    - Varsayılan fiş ve etiket yazıcılarını kaydedin.
    - Fiş ve etiket şablonunu (kuruyemiş / manav / şarküteri) seçin.
+   - Gerekirse yazıcı **alias** listesi girin (farklı adlarla eşleştirme için).
+   - QZ güvenlik modunu seçin (DEV/PROD).
 
 ## qz-tray.js Dosyası (Vendor)
 `qz-tray.js` dosyası otomatik indirilir. Gerekirse manuel:
@@ -49,6 +51,29 @@ Not: Dev modunda uyarı görmek normaldir.
 3) QZ Tray, imzayı doğrular ve yalnızca imzalı istekleri kabul eder.
 
 Önemli: Bu süreç için **QZ Premium Support gerekebilir**. Ayrıntılar için QZ lisans dokümanlarını inceleyin.
+
+## QZ Güvenlik Modu (DEV/PROD)
+POS Yazdırma Ayarları içinde:
+- **DEV (Geliştirme):** Uyarılar normaldir; hızlı kurulum için uygundur.
+- **PROD (Üretim):** Sertifika/imza zorunludur. Doctor bu durumda imza yoksa güçlü uyarı verir.
+
+## QZ Tray vs Webapp Hardware Bridge (WHB)
+İki yaklaşım da yazdırma köprüsü sağlar; seçim kullanım senaryosuna göre yapılır.
+
+**QZ Tray (önerilen varsayılan)**
+- Tarayıcı içinden yazdırma (POS Awesome).
+- Güvenlik: imza/sertifika gerektirir.
+- Hızlı kurulum ve saha desteği güçlü.
+
+**WHB (opsiyonel)**
+- Yerel servis ile **sessiz** yazdırma ve seri port erişimi.
+- QZ Tray yerine/yanında kullanılabilir.
+- Kurulum: `scripts/windows/12-whb-kurulum.ps1`
+- Varsayılan port: `12212`
+
+**Ne zaman hangisi?**
+- **Kasa ekranı tarayıcıda** çalışıyor ve hızlı kurulum istiyorsanız: **QZ Tray**.
+- **Sessiz yazdırma**, seri port veya daha düşük tarayıcı izinleri gerekiyorsa: **WHB** + `silent_print`.
 
 ## Test Baskısı
 - POS Awesome menü:

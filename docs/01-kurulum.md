@@ -76,3 +76,21 @@ Tek komut kurulumda da aynı parametreyi verebilirsiniz:
 Notlar:
 - Modül isimleri küçük harf ve virgülle ayrılmış olmalıdır.
 - “Bilinmeyen modül” uyarısı görürseniz isimleri tekrar kontrol edin.
+- WhatsApp için aynı anda **yalnızca biri** seçilir: `waba` veya `whatsapp`.
+
+Desteklenen opsiyonel modüller:
+- `insights` (Frappe Insights)
+- `scale` (ERPGulf Scale)
+- `print_designer` (Print Designer)
+- `scan_me` (Scan Me - QR/Barkod)
+- `silent_print` (Silent-Print-ERPNext)
+- `whb` (Webapp Hardware Bridge)
+- `waba` (Frappe WABA Integration)
+- `whatsapp` (Frappe WhatsApp)
+- `betterprint` (Frappe BetterPrint)
+- `beam` (AgriTheory Beam)
+
+WHB kurulumu için yardımcı adım:
+```powershell
+.\scripts\windows\12-whb-kurulum.ps1
+```

@@ -68,15 +68,55 @@ Bu proje; bazı açık kaynak bileşenleri ve kütüphaneleri kullanır. Bu dosy
 - Kaynak: https://github.com/frappe/print_designer
 - Lisans: **AGPL-3.0**
 
-### 3.4 ERPGulf GPos
+### 3.4 Frappe BetterPrint
+- Amaç: PDF/yazdırma kalitesi iyileştirmeleri
+- Kaynak: https://github.com/neocode-it/frappe_betterprint
+- Lisans: **AGPL-3.0**
+
+### 3.5 AgriTheory Beam
+- Amaç: Barkod tarama / depo operasyonları
+- Kaynak: https://github.com/agritheory/beam
+- Lisans: **MIT** (license.txt)
+
+### 3.6 Scan Me
+- Amaç: QR ve barkod üretimi/doğrulaması
+- Kaynak: https://github.com/Tusharp21/scan-me
+- Lisans: **MIT**
+
+### 3.7 Silent-Print-ERPNext
+- Amaç: Sessiz yazdırma (WHB ile)
+- Kaynak: https://github.com/roquegv/Silent-Print-ERPNext
+- Lisans: **MIT**
+
+### 3.8 Frappe WABA Integration
+- Amaç: WhatsApp Business API entegrasyonu
+- Kaynak: https://github.com/frappe/waba_integration
+- Lisans: **MIT** (license.txt)
+
+### 3.9 Frappe WhatsApp
+- Amaç: WhatsApp entegrasyonu (alternatif)
+- Kaynak: https://github.com/shridarpatil/frappe_whatsapp
+- Lisans: **MIT** (license.txt)
+
+### 3.10 ERPGulf GPos
 - Amaç: Alternatif POS uygulaması (gelecek opsiyonu)
 - Kaynak: https://github.com/ERPGulf/GPos
 - Lisans: **MIT**
 
-### 3.5 aisenyi/pasigono
+### 3.11 aisenyi/pasigono
 - Amaç: QZ Tray odaklı referans uygulama (inceleme amaçlı)
 - Kaynak: https://github.com/aisenyi/pasigono
 - Lisans: **Belirsiz (NOASSERTION)** → **varsayılan kurulum dışı**
+
+### 3.12 Webapp Hardware Bridge (WHB)
+- Amaç: Sessiz yazdırma ve seri port köprüsü
+- Kaynak: https://github.com/imTigger/webapp-hardware-bridge
+- Lisans: **MIT**
+
+### 3.13 frappe_qr_demo (uyarlanan yardımcı)
+- Amaç: QR/Barkod üretimi için demo mantığı (ck_kuruyemis_pos içine uyarlandı)
+- Kaynak: https://github.com/alyf-de/frappe_qr_demo
+- Lisans: **MIT**
 
 ---
 

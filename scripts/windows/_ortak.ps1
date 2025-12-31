@@ -103,3 +103,38 @@ function Ensure-Path {
   }
 }
 
+function Get-OpsiyonelModuller {
+  param([string]$SiteAdi)
+
+  if (-not $SiteAdi) {
+    return @()
+  }
+
+  $composeArgs = Get-ComposeArgs
+  $py = @"
+import json
+path = "sites/$SiteAdi/site_config.json"
+try:
+    with open(path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    val = data.get("ck_kuruyemis_pos_optional_modules", "")
+    if isinstance(val, list):
+        val = ",".join(val)
+    print(val or "")
+except Exception:
+    print("")
+"@
+  $cmd = "python - <<'PY'\n$py\nPY"
+  $raw = docker compose @composeArgs exec -T backend bash -lc $cmd 2>$null
+  if ($LASTEXITCODE -ne 0) {
+    return @()
+  }
+
+  $line = ($raw | Select-Object -Last 1).Trim()
+  if (-not $line) {
+    return @()
+  }
+
+  return $line -split "[,; ]+" | ForEach-Object { $_.Trim().ToLowerInvariant() } | Where-Object { $_ }
+}
+

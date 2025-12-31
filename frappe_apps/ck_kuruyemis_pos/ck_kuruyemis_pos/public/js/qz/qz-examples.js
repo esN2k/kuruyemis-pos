@@ -28,9 +28,32 @@
     barcode: "2101234002508",
   };
 
+  const LABEL_PRESETS = {
+    "38x80_hizli": {
+      label: t("38x80 (hızlı)"),
+      density: 8,
+      speed: 4,
+    },
+    "38x80_kaliteli": {
+      label: t("38x80 (kaliteli)"),
+      density: 12,
+      speed: 2,
+    },
+    "38x80": {
+      label: t("38x80 (hızlı)"),
+      density: 8,
+      speed: 4,
+    },
+  };
+
   function resolveTemplate(options) {
     const key = options && options.template ? String(options.template) : "kuruyemis";
     return TEMPLATES[key] || TEMPLATES.kuruyemis;
+  }
+
+  function resolvePreset(options) {
+    const key = options && options.preset ? String(options.preset) : "38x80_hizli";
+    return LABEL_PRESETS[key] || LABEL_PRESETS["38x80_hizli"];
   }
 
   async function receiptPayload(options) {
@@ -59,12 +82,13 @@
   function labelPayloadTspl(options) {
     const template = resolveTemplate(options);
     const header = `${template.label}`;
+    const preset = resolvePreset(options);
 
     return [
       "SIZE 38 mm,80 mm",
       "GAP 2 mm,0",
-      "DENSITY 8",
-      "SPEED 4",
+      `DENSITY ${preset.density}`,
+      `SPEED ${preset.speed}`,
       "DIRECTION 1",
       "CLS",
       `TEXT 20,10,\"0\",0,1,1,\"${header}\"`,

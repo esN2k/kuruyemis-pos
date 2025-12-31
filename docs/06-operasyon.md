@@ -67,6 +67,13 @@ Gerçek baskı için:
 - `fiscal-adapter`: `http://localhost:8090/health`
 - `hardware-bridge`: `http://localhost:8091/health`
 
+## Opsiyonel Modüller
+WHB kurulumu:
+```powershell
+.\scripts\windows\12-whb-kurulum.ps1
+```
+Kurulu opsiyonel modüller: `scripts/windows/05-doctor.ps1` içinde doğrulanır.
+
 ## Kodlama Standardı
 - Repo standardı: **UTF-8**
 - PowerShell scriptleri Windows PowerShell 5.1 uyumluluğu için **UTF-8 BOM** ile kaydedilir.

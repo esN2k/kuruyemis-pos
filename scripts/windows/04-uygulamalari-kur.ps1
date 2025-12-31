@@ -50,6 +50,23 @@ $scaleRepo = Get-VersionValue "SCALE_REPO" "https://github.com/ERPGulf/scale.git
 $scaleRef = Get-RequiredVersion "SCALE_REF" "ERPGulf Scale"
 $printDesignerRepo = Get-VersionValue "PRINT_DESIGNER_REPO" "https://github.com/frappe/print_designer.git"
 $printDesignerRef = Get-RequiredVersion "PRINT_DESIGNER_REF" "Print Designer"
+$whbRepo = Get-VersionValue "WHB_REPO" "https://github.com/imTigger/webapp-hardware-bridge.git"
+$whbRef = Get-RequiredVersion "WHB_REF" "Webapp Hardware Bridge"
+$whbVersion = Get-RequiredVersion "WHB_VERSION" "Webapp Hardware Bridge"
+$whbDownloadUrl = Get-RequiredVersion "WHB_DOWNLOAD_URL" "Webapp Hardware Bridge"
+$whbSha256 = Get-RequiredVersion "WHB_SHA256" "Webapp Hardware Bridge"
+$silentPrintRepo = Get-VersionValue "SILENT_PRINT_REPO" "https://github.com/roquegv/Silent-Print-ERPNext.git"
+$silentPrintRef = Get-RequiredVersion "SILENT_PRINT_REF" "Silent-Print-ERPNext"
+$scanMeRepo = Get-VersionValue "SCAN_ME_REPO" "https://github.com/Tusharp21/scan-me.git"
+$scanMeRef = Get-RequiredVersion "SCAN_ME_REF" "Scan Me"
+$wabaRepo = Get-VersionValue "WABA_REPO" "https://github.com/frappe/waba_integration.git"
+$wabaRef = Get-RequiredVersion "WABA_REF" "Frappe WABA Integration"
+$whatsappRepo = Get-VersionValue "WHATSAPP_REPO" "https://github.com/shridarpatil/frappe_whatsapp.git"
+$whatsappRef = Get-RequiredVersion "WHATSAPP_REF" "Frappe WhatsApp"
+$betterPrintRepo = Get-VersionValue "BETTERPRINT_REPO" "https://github.com/neocode-it/frappe_betterprint.git"
+$betterPrintRef = Get-RequiredVersion "BETTERPRINT_REF" "Frappe BetterPrint"
+$beamRepo = Get-VersionValue "BEAM_REPO" "https://github.com/agritheory/beam.git"
+$beamRef = Get-RequiredVersion "BEAM_REF" "AgriTheory Beam"
 
 $composeArgs = Get-ComposeArgs
 $backendId = docker compose @composeArgs ps -q backend
@@ -235,24 +252,90 @@ if ($OpsiyonelModuller) {
   $secimler = $OpsiyonelModuller -split "[,; ]+" | ForEach-Object { $_.Trim().ToLowerInvariant() } | Where-Object { $_ }
 }
 
+$secimler = $secimler | Sort-Object -Unique
+if ($secimler -contains "waba" -and $secimler -contains "whatsapp") {
+  Write-Hata "WhatsApp opsiyonu çakışması var." "Aynı anda yalnızca 'waba' veya 'whatsapp' seçilebilir."
+  exit 1
+}
+
+if ($secimler -contains "silent_print" -and -not ($secimler -contains "whb")) {
+  Write-Uyari "Silent-Print-ERPNext seçildi. Webapp Hardware Bridge kurulumu da önerilir."
+  $secimler += "whb"
+  $secimler = $secimler | Sort-Object -Unique
+}
+
 $opsiyonelKatalog = @{
   "insights" = @{
+    Type = "frappe"
     AppName = "insights"
     Label = "Frappe Insights"
     Repo = $insightsRepo
     Ref = $insightsRef
   }
   "scale" = @{
+    Type = "frappe"
     AppName = "scale"
     Label = "ERPGulf Scale"
     Repo = $scaleRepo
     Ref = $scaleRef
   }
   "print_designer" = @{
+    Type = "frappe"
     AppName = "print_designer"
     Label = "Print Designer"
     Repo = $printDesignerRepo
     Ref = $printDesignerRef
+  }
+  "whb" = @{
+    Type = "external"
+    Label = "Webapp Hardware Bridge"
+    Repo = $whbRepo
+    Ref = $whbRef
+    Version = $whbVersion
+    DownloadUrl = $whbDownloadUrl
+    Sha256 = $whbSha256
+  }
+  "silent_print" = @{
+    Type = "frappe"
+    AppName = "silent_print"
+    Label = "Silent-Print-ERPNext"
+    Repo = $silentPrintRepo
+    Ref = $silentPrintRef
+  }
+  "scan_me" = @{
+    Type = "frappe"
+    AppName = "scan_me"
+    Label = "Scan Me"
+    Repo = $scanMeRepo
+    Ref = $scanMeRef
+  }
+  "waba" = @{
+    Type = "frappe"
+    AppName = "waba_integration"
+    Label = "Frappe WABA Integration"
+    Repo = $wabaRepo
+    Ref = $wabaRef
+  }
+  "whatsapp" = @{
+    Type = "frappe"
+    AppName = "frappe_whatsapp"
+    Label = "Frappe WhatsApp"
+    Repo = $whatsappRepo
+    Ref = $whatsappRef
+  }
+  "betterprint" = @{
+    Type = "frappe"
+    AppName = "frappe_betterprint"
+    Label = "Frappe BetterPrint"
+    Repo = $betterPrintRepo
+    Ref = $betterPrintRef
+  }
+  "beam" = @{
+    Type = "frappe"
+    AppName = "beam"
+    Label = "AgriTheory Beam"
+    Repo = $beamRepo
+    Ref = $beamRef
   }
 }
 
@@ -265,10 +348,28 @@ if ($secimler.Count -gt 0) {
       continue
     }
     $ayar = $opsiyonelKatalog[$secim]
-    $appName = $ayar.AppName
     $label = $ayar.Label
+    if ($ayar.Type -eq "external") {
+      Write-Bilgi "$label kurulumu (harici bileşen)..."
+      & "$PSScriptRoot\12-whb-kurulum.ps1"
+      if ($LASTEXITCODE -ne 0) {
+        Write-Hata "$label kurulumu başarısız." "12-whb-kurulum.ps1 çıktısını kontrol edin."
+        exit 1
+      }
+      Write-Ok "$label hazır."
+      continue
+    }
+
+    $appName = $ayar.AppName
     Write-Bilgi "$label kurulumu başlıyor..."
     Ensure-AppRepo $appName $ayar.Repo $ayar.Ref $label
+    if ($secim -eq "betterprint") {
+      Write-Uyari "BetterPrint ek bağımlılıklar gerektirir (playwright + sistem kütüphaneleri)."
+      Write-Uyari "Gerekirse container içinde Playwright kurulumu yapın."
+    }
+    if ($secim -eq "beam") {
+      Write-Uyari "Beam modülü için ERPNext v15 uyumu sahada test edilmelidir."
+    }
     Write-Bilgi "$label bağımlılıkları kuruluyor..."
     docker compose @composeArgs exec @pipEnv backend bench setup requirements --app $appName
     if ($LASTEXITCODE -ne 0) {
@@ -279,6 +380,13 @@ if ($secimler.Count -gt 0) {
     Ensure-PythonModule $appName $label
     Ensure-AppInstalled $appName $label
     Write-Ok "$label hazır."
+  }
+
+  $modulListesi = $secimler -join ","
+  Write-Bilgi "Opsiyonel modül kaydı güncelleniyor..."
+  docker compose @composeArgs exec backend bench --site $SiteAdi set-config ck_kuruyemis_pos_optional_modules $modulListesi
+  if ($LASTEXITCODE -ne 0) {
+    Write-Uyari "Opsiyonel modül kaydı güncellenemedi."
   }
 } else {
   Write-Uyari "Opsiyonel modül seçilmedi. Gerekirse -OpsiyonelModuller kullanın."

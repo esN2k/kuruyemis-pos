@@ -12,20 +12,45 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
     `${__("Manav")}|manav`,
     `${__("Şarküteri")}|sarkuteri`,
   ].join("\n");
+  const LABEL_PRESET_OPTIONS = [
+    `${__("38x80 (hızlı)")}|38x80_hizli`,
+    `${__("38x80 (kaliteli)")}|38x80_kaliteli`,
+  ].join("\n");
+  const QZ_SECURITY_OPTIONS = [
+    `${__("DEV (Geliştirme)")}|DEV`,
+    `${__("PROD (Üretim)")}|PROD`,
+  ].join("\n");
   let jsBarcodePromise = null;
 
   const fieldGroup = new frappe.ui.FieldGroup({
     body: page.body,
     fields: [
       {
+        fieldname: "qz_security_mode",
+        label: __("QZ Security Mode"),
+        fieldtype: "Select",
+        options: QZ_SECURITY_OPTIONS,
+        default: "DEV",
+      },
+      {
         fieldname: "receipt_printer_name",
         label: __("Default Receipt Printer"),
         fieldtype: "Select",
       },
       {
+        fieldname: "receipt_printer_aliases",
+        label: __("Receipt Printer Aliases"),
+        fieldtype: "Small Text",
+      },
+      {
         fieldname: "label_printer_name",
         label: __("Default Label Printer"),
         fieldtype: "Select",
+      },
+      {
+        fieldname: "label_printer_aliases",
+        label: __("Label Printer Aliases"),
+        fieldtype: "Small Text",
       },
       {
         fieldname: "receipt_template",
@@ -49,7 +74,8 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
         fieldname: "label_size_preset",
         label: __("Label Size Preset"),
         fieldtype: "Select",
-        options: "38x80",
+        options: LABEL_PRESET_OPTIONS,
+        default: "38x80_hizli",
       },
       {
         fieldname: "btn_refresh",
@@ -202,8 +228,11 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
   async function saveSettings() {
     const values = fieldGroup.get_values();
     const doc = await loadSettings();
+    doc.qz_security_mode = values.qz_security_mode || "DEV";
     doc.receipt_printer_name = values.receipt_printer_name || "";
+    doc.receipt_printer_aliases = values.receipt_printer_aliases || "";
     doc.label_printer_name = values.label_printer_name || "";
+    doc.label_printer_aliases = values.label_printer_aliases || "";
     doc.receipt_template = values.receipt_template || "";
     doc.cash_drawer_command = values.cash_drawer_command || "";
     doc.label_template = values.label_template || "";
@@ -244,12 +273,16 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
 
   async function applySettingsToFields() {
     const doc = await loadSettings();
+    fieldGroup.set_value("qz_security_mode", doc.qz_security_mode || "DEV");
     fieldGroup.set_value("receipt_printer_name", doc.receipt_printer_name || "");
+    fieldGroup.set_value("receipt_printer_aliases", doc.receipt_printer_aliases || "");
     fieldGroup.set_value("label_printer_name", doc.label_printer_name || "");
+    fieldGroup.set_value("label_printer_aliases", doc.label_printer_aliases || "");
     fieldGroup.set_value("receipt_template", doc.receipt_template || "kuruyemis");
     fieldGroup.set_value("cash_drawer_command", doc.cash_drawer_command || "\\x1B\\x70\\x00\\x19\\xFA");
     fieldGroup.set_value("label_template", doc.label_template || "kuruyemis");
-    fieldGroup.set_value("label_size_preset", doc.label_size_preset || "38x80");
+    const preset = doc.label_size_preset === "38x80" ? "38x80_hizli" : doc.label_size_preset;
+    fieldGroup.set_value("label_size_preset", preset || "38x80_hizli");
   }
 
   async function testReceipt() {
@@ -281,7 +314,10 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
       }
       await window.ck_qz.printRaw(
         printer,
-        window.ck_qz_examples.labelPayloadTspl({ template: values.label_template })
+        window.ck_qz_examples.labelPayloadTspl({
+          template: values.label_template,
+          preset: values.label_size_preset,
+        })
       );
       showAlert(__("Label sent to printer: {0}", [printer]));
     } catch (err) {

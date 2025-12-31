@@ -34,11 +34,14 @@ $smokeOk = Calistir-Adim "Duman testi" "$PSScriptRoot\09-smoke-test.ps1" $smokeA
 Write-Host ""
 $doctorLabel = if ($doctorOk) { "OK" } else { "HATA" }
 $smokeLabel = if ($smokeOk) { "OK" } else { "HATA" }
+$opsiyonel = Get-OpsiyonelModuller -SiteAdi $SiteAdi
+$opsiyonelText = if ($opsiyonel.Count -gt 0) { $opsiyonel -join ", " } else { "Yok" }
 
 Write-Host "Özet:"
 Write-Host "- Site: $SiteAdi"
 Write-Host "- Doktor: $doctorLabel"
 Write-Host "- Duman Testi: $smokeLabel"
+Write-Host "- Opsiyonel Modüller: $opsiyonelText"
 if ($GercekBaski) {
   Write-Host "- Gerçek baskı: Evet"
 } else {

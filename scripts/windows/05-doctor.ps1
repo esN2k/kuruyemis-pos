@@ -51,6 +51,46 @@ if ($LASTEXITCODE -eq 0) {
   Write-Uyari "Uygulama listesi alınamadı."
 }
 
+$opsiyonelModuller = Get-OpsiyonelModuller -SiteAdi $SiteAdi
+if ($opsiyonelModuller.Count -gt 0) {
+  Write-Bilgi "Opsiyonel modüller tespit edildi: $($opsiyonelModuller -join ', ')"
+} else {
+  Write-Bilgi "Opsiyonel modül kaydı bulunamadı."
+}
+
+$opsiyonelUygulamalar = @{
+  "insights" = @{ App = "insights"; Label = "Frappe Insights" }
+  "scale" = @{ App = "scale"; Label = "ERPGulf Scale" }
+  "print_designer" = @{ App = "print_designer"; Label = "Print Designer" }
+  "silent_print" = @{ App = "silent_print"; Label = "Silent-Print-ERPNext" }
+  "scan_me" = @{ App = "scan_me"; Label = "Scan Me" }
+  "waba" = @{ App = "waba_integration"; Label = "Frappe WABA Integration" }
+  "whatsapp" = @{ App = "frappe_whatsapp"; Label = "Frappe WhatsApp" }
+  "betterprint" = @{ App = "frappe_betterprint"; Label = "Frappe BetterPrint" }
+  "beam" = @{ App = "beam"; Label = "AgriTheory Beam" }
+}
+
+if ($apps -and $opsiyonelModuller.Count -gt 0) {
+  foreach ($modul in $opsiyonelModuller) {
+    if (-not $opsiyonelUygulamalar.ContainsKey($modul)) {
+      continue
+    }
+    $entry = $opsiyonelUygulamalar[$modul]
+    $appName = $entry.App
+    $label = $entry.Label
+    if ($apps -match "(?m)^$appName$") {
+      Write-Ok "Opsiyonel uygulama kurulu: $label"
+    } else {
+      Write-Hata "Opsiyonel uygulama eksik: $label" "04-uygulamalari-kur.ps1 -OpsiyonelModuller $modul çalıştırın."
+      $hasError = $true
+    }
+  }
+}
+
+if ($opsiyonelModuller -contains "betterprint") {
+  Write-Uyari "BetterPrint aktif. Playwright ve sistem kütüphaneleri gerektirir; çıktı sorunlarında kurulum dokümanını kontrol edin."
+}
+
 function Check-Service {
   param(
     [string]$Name,
@@ -90,6 +130,22 @@ Check-Service "redis-cache" $true
 Check-Service "redis-queue" $true
 Check-Service "fiscal-adapter" $false
 Check-Service "hardware-bridge" $false
+
+if ($opsiyonelModuller -contains "waba" -and $opsiyonelModuller -contains "whatsapp") {
+  Write-Hata "WhatsApp opsiyonları çakışıyor." "Yalnızca 'waba' veya 'whatsapp' seçili olmalıdır."
+  $hasError = $true
+}
+
+if ($opsiyonelModuller -contains "whb" -or $opsiyonelModuller -contains "silent_print") {
+  $whbPort = 12212
+  $whbConn = Test-NetConnection -ComputerName "localhost" -Port $whbPort -WarningAction SilentlyContinue
+  if ($whbConn.TcpTestSucceeded) {
+    Write-Ok "WHB bağlantısı açık (port $whbPort)."
+  } else {
+    Write-Uyari "WHB bağlantısı kapalı (port $whbPort)." 
+    Write-Uyari "WHB uygulamasını başlatın veya 12-whb-kurulum.ps1 çalıştırın."
+  }
+}
 
 Write-Bilgi "MariaDB sürümü kontrol ediliyor..."
 $dbPassword = Get-DbPassword
@@ -131,6 +187,19 @@ if ($qzConn.TcpTestSucceeded) {
   Write-Uyari "QZ Tray bağlantısı kapalı (port $qzPort)."
 }
 
+$posSettings = $null
+try {
+  $raw = docker compose @composeArgs exec -T backend bench --site $SiteAdi execute ck_kuruyemis_pos.utils.get_pos_printing_settings
+  if ($LASTEXITCODE -eq 0) {
+    $jsonLine = $raw | Select-Object -Last 1
+    if ($jsonLine) {
+      $posSettings = $jsonLine | ConvertFrom-Json
+    }
+  }
+} catch {
+  $posSettings = $null
+}
+
 $qzVendor = Join-Path $repoRoot "frappe_apps\ck_kuruyemis_pos\ck_kuruyemis_pos\public\js\qz\vendor\qz-tray.js"
 if (Test-Path $qzVendor) {
   Write-Ok "qz-tray.js mevcut."
@@ -142,7 +211,12 @@ $qzWrapper = Join-Path $repoRoot "frappe_apps\ck_kuruyemis_pos\ck_kuruyemis_pos\
 if (Test-Path $qzWrapper) {
   $wrapperText = Get-Content -Raw -Path $qzWrapper
   if ($wrapperText -match "Promise\\.resolve\\(null\\)") {
-    Write-Uyari "QZ imzalama DEV modunda. Üretimde sertifika/imza zorunludur."
+    if ($posSettings -and $posSettings.qz_security_mode -eq "PROD") {
+      Write-Hata "QZ güvenlik modu PROD seçili ancak imza/sertifika tanımlı değil." "POS Yazdırma Ayarları'ndan DEV/PROD modunu kontrol edin ve üretimde imzalı istek kullanın."
+      $hasError = $true
+    } else {
+      Write-Uyari "QZ imzalama DEV modunda. Üretimde sertifika/imza zorunludur."
+    }
   } else {
     Write-Ok "QZ imzalama kontrolü: özel sertifika bekleniyor olabilir."
   }
@@ -159,6 +233,84 @@ try {
   }
 } catch {
   Write-Uyari "Windows yazıcı listesi alınamadı."
+}
+
+function Normalize-PrinterName {
+  param([string]$Value)
+  return ($Value | ForEach-Object { $_.ToString().Trim().ToLowerInvariant() })
+}
+
+function Parse-Aliases {
+  param([string]$Text)
+  if (-not $Text) {
+    return @()
+  }
+  return $Text -split "[,;`n`r]+" | ForEach-Object { $_.Trim() } | Where-Object { $_ }
+}
+
+function Score-Match {
+  param([string]$PrinterName, [string]$Candidate)
+  $p = Normalize-PrinterName $PrinterName
+  $c = Normalize-PrinterName $Candidate
+  if (-not $p -or -not $c) { return 0 }
+  if ($p -eq $c) { return 3 }
+  if ($p.StartsWith($c) -or $c.StartsWith($p)) { return 2 }
+  if ($p.Contains($c) -or $c.Contains($p)) { return 1 }
+  return 0
+}
+
+function Find-BestPrinter {
+  param([string[]]$Printers, [string[]]$Candidates)
+  $best = $null
+  $bestScore = 0
+  $bestLength = [int]::MaxValue
+  foreach ($printer in $Printers) {
+    foreach ($candidate in $Candidates) {
+      $score = Score-Match $printer $candidate
+      if ($score -gt $bestScore -or ($score -eq $bestScore -and $printer.Length -lt $bestLength)) {
+        $best = $printer
+        $bestScore = $score
+        $bestLength = $printer.Length
+      }
+    }
+  }
+  return $best
+}
+
+function Check-PrinterMapping {
+  param(
+    [string]$Label,
+    [string]$SelectedName,
+    [string]$AliasText,
+    [string[]]$Printers
+  )
+  if (-not $SelectedName) {
+    Write-Uyari "$Label seçilmemiş."
+    return
+  }
+  if (-not $Printers -or $Printers.Count -eq 0) {
+    Write-Uyari "$Label doğrulanamadı (yazıcı listesi boş)."
+    return
+  }
+
+  $candidates = @($SelectedName) + (Parse-Aliases $AliasText)
+  $best = Find-BestPrinter $Printers $candidates
+  if ($best) {
+    if ((Normalize-PrinterName $best) -eq (Normalize-PrinterName $SelectedName)) {
+      Write-Ok "$Label eşleşti: $best"
+    } else {
+      Write-Ok "$Label alias ile eşleşti: $best"
+    }
+  } else {
+    Write-Hata "$Label QZ listesinde bulunamadı." "Yazıcı adını kontrol edin, QZ Tray izinlerini doğrulayın ve Windows yazıcıyı yeniden ekleyin."
+    $script:hasError = $true
+  }
+}
+
+if ($qzConn.TcpTestSucceeded -and $printers -and $posSettings) {
+  $printerNames = $printers | Select-Object -ExpandProperty Name
+  Check-PrinterMapping "Fiş yazıcısı" $posSettings.receipt_printer_name $posSettings.receipt_printer_aliases $printerNames
+  Check-PrinterMapping "Etiket yazıcısı" $posSettings.label_printer_name $posSettings.label_printer_aliases $printerNames
 }
 
 foreach ($svc in @(@("fiscal-adapter", 8090), @("hardware-bridge", 8091))) {

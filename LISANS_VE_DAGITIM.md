@@ -27,6 +27,14 @@ Bu proje; aşağıdaki açık kaynak bileşenleri çekirdek olarak kullanır:
   - QZ Tray API/demo örnekleri (örn. sample.html) kamu malı (Public Domain) olabilir.
   - qz.io üzerinden indirilen bazı binary dağıtımlarda "Premium Support / sertifika" modeli bulunabilir.
 
+Opsiyonel modüller (varsayılan kurulumda yok):
+- Frappe BetterPrint (AGPL v3)
+- AgriTheory Beam (MIT)
+- Scan Me (MIT)
+- Silent-Print-ERPNext (MIT)
+- Webapp Hardware Bridge (MIT)
+- WhatsApp entegrasyonları (MIT)
+
 Tüm üçüncü parti bileşenler için:
 - Repoda `THIRD_PARTY_NOTICES.md` dosyası tutulur.
 - Her bağımlılık için lisans bilgisi ve kaynak bağlantısı listelenir.

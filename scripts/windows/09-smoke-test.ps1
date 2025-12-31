@@ -40,6 +40,81 @@ if ($lastLine -match "missing" -and $lastLine -match "\[\]") {
   exit 1
 }
 
+Write-Bilgi "Fiş/etiket payload üretimi kontrol ediliyor..."
+$payloadsRaw = docker compose @composeArgs exec backend bench --site $SiteAdi execute ck_kuruyemis_pos.utils.get_sample_print_payloads
+if ($LASTEXITCODE -ne 0) {
+  Write-Hata "Payload üretimi başarısız." "Site adını ve uygulama kurulumunu kontrol edin."
+  exit 1
+}
+$payloadLine = $payloadsRaw | Select-Object -Last 1
+try {
+  $payloads = $payloadLine | ConvertFrom-Json
+  if (-not $payloads.receipt -or -not $payloads.label) {
+    Write-Hata "Payload üretimi başarısız." "Fiş veya etiket payload boş."
+    exit 1
+  }
+  Write-Ok "Payload üretimi OK (fiş + etiket)."
+} catch {
+  Write-Hata "Payload çıktısı okunamadı." "JSON çıktısını ve uygulama sürümünü kontrol edin."
+  exit 1
+}
+
+$opsiyonelModuller = Get-OpsiyonelModuller -SiteAdi $SiteAdi
+if ($opsiyonelModuller.Count -gt 0) {
+  Write-Bilgi "Opsiyonel modül kontrolleri başlıyor..."
+  $apps = docker compose @composeArgs exec backend bench --site $SiteAdi list-apps
+  $opsiyonelUygulamalar = @{
+    "insights" = @{ App = "insights"; Label = "Frappe Insights" }
+    "scale" = @{ App = "scale"; Label = "ERPGulf Scale" }
+    "print_designer" = @{ App = "print_designer"; Label = "Print Designer" }
+    "silent_print" = @{ App = "silent_print"; Label = "Silent-Print-ERPNext" }
+    "scan_me" = @{ App = "scan_me"; Label = "Scan Me" }
+    "waba" = @{ App = "waba_integration"; Label = "Frappe WABA Integration" }
+    "whatsapp" = @{ App = "frappe_whatsapp"; Label = "Frappe WhatsApp" }
+    "betterprint" = @{ App = "frappe_betterprint"; Label = "Frappe BetterPrint" }
+    "beam" = @{ App = "beam"; Label = "AgriTheory Beam" }
+  }
+
+  $optionalError = $false
+  foreach ($modul in $opsiyonelModuller) {
+    if (-not $opsiyonelUygulamalar.ContainsKey($modul)) {
+      continue
+    }
+    $entry = $opsiyonelUygulamalar[$modul]
+    $appName = $entry.App
+    $label = $entry.Label
+    if ($apps -match "(?m)^$appName$") {
+      Write-Ok "Opsiyonel uygulama doğrulandı: $label"
+    } else {
+      Write-Hata "Opsiyonel uygulama eksik: $label" "04-uygulamalari-kur.ps1 -OpsiyonelModuller $modul çalıştırın."
+      $optionalError = $true
+    }
+  }
+
+  if ($opsiyonelModuller -contains "waba" -and $opsiyonelModuller -contains "whatsapp") {
+    Write-Hata "WhatsApp opsiyonları çakışıyor." "Yalnızca 'waba' veya 'whatsapp' seçili olmalıdır."
+    $optionalError = $true
+  }
+
+  if ($opsiyonelModuller -contains "whb" -or $opsiyonelModuller -contains "silent_print") {
+    $whbPort = 12212
+    $whbConn = Test-NetConnection -ComputerName "localhost" -Port $whbPort -WarningAction SilentlyContinue
+    if ($whbConn.TcpTestSucceeded) {
+      Write-Ok "WHB bağlantısı açık (port $whbPort)."
+    } else {
+      Write-Hata "WHB bağlantısı kapalı (port $whbPort)." "WHB uygulamasını başlatın veya 12-whb-kurulum.ps1 çalıştırın."
+      $optionalError = $true
+    }
+  }
+
+  if ($optionalError) {
+    Write-Hata "Opsiyonel modül kontrolleri başarısız." "Eksikleri giderip duman testini yeniden çalıştırın."
+    exit 1
+  }
+} else {
+  Write-Bilgi "Opsiyonel modül kontrolü atlandı (kayıt yok)."
+}
+
 if (-not $doPrint) {
   Write-Uyari "DRY_RUN aktif. Yazdırma adımı atlandı. (Yazdırmak için DRY_RUN=0 veya -GercekBaski kullanın)"
   Write-Ok "Duman testi tamamlandı (deneme modu)."

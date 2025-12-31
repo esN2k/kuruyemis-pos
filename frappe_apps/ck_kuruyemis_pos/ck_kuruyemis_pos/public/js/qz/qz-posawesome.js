@@ -5,10 +5,13 @@
   const DEFAULTS = {
     receiptPrinter: "ZY907",
     labelPrinter: "X-Printer 490B",
-    labelSizePreset: "38x80",
+    labelSizePreset: "38x80_hizli",
     receiptTemplate: "kuruyemis",
     labelTemplate: "kuruyemis",
     drawerCommand: "\\x1B\\x70\\x00\\x19\\xFA",
+    receiptAliases: "",
+    labelAliases: "",
+    qzSecurityMode: "DEV",
   };
   const SETTINGS_DOCTYPE = "POS Printing Settings";
   let settingsCache = null;
@@ -84,6 +87,9 @@
       receiptTemplate: DEFAULTS.receiptTemplate,
       labelTemplate: DEFAULTS.labelTemplate,
       drawerCommand: DEFAULTS.drawerCommand,
+      receiptAliases: DEFAULTS.receiptAliases,
+      labelAliases: DEFAULTS.labelAliases,
+      qzSecurityMode: DEFAULTS.qzSecurityMode,
     };
 
     if (!window.frappe || !frappe.call) {
@@ -101,7 +107,13 @@
         receiptTemplate: data.receipt_template || defaults.receiptTemplate,
         labelTemplate: data.label_template || defaults.labelTemplate,
         drawerCommand: data.cash_drawer_command || defaults.drawerCommand,
+        receiptAliases: data.receipt_printer_aliases || defaults.receiptAliases,
+        labelAliases: data.label_printer_aliases || defaults.labelAliases,
+        qzSecurityMode: data.qz_security_mode || defaults.qzSecurityMode,
       };
+      if (settingsCache.labelSizePreset === "38x80") {
+        settingsCache.labelSizePreset = "38x80_hizli";
+      }
       return settingsCache;
     } catch (err) {
       console.warn(__("Loading printer settings failed"), err);
@@ -135,17 +147,82 @@
     return window.ck_qz_examples.receiptPayload({ template });
   }
 
-  async function getLabelPayload(template) {
+  async function getLabelPayload(template, preset) {
     if (!window.ck_qz_examples || !window.ck_qz_examples.labelPayloadTspl) {
       throw new Error(__("Label payload not ready"));
     }
-    return window.ck_qz_examples.labelPayloadTspl({ template });
+    return window.ck_qz_examples.labelPayloadTspl({ template, preset });
+  }
+
+  function normalizeName(value) {
+    return String(value || "").trim().toLowerCase();
+  }
+
+  function parseAliases(text) {
+    if (!text) {
+      return [];
+    }
+    return String(text)
+      .split(/[\n,;]+/)
+      .map((alias) => alias.trim())
+      .filter((alias) => alias);
+  }
+
+  function scoreMatch(printerName, candidate) {
+    const printerNorm = normalizeName(printerName);
+    const candidateNorm = normalizeName(candidate);
+    if (!printerNorm || !candidateNorm) {
+      return 0;
+    }
+    if (printerNorm === candidateNorm) {
+      return 3;
+    }
+    if (printerNorm.startsWith(candidateNorm) || candidateNorm.startsWith(printerNorm)) {
+      return 2;
+    }
+    if (printerNorm.includes(candidateNorm) || candidateNorm.includes(printerNorm)) {
+      return 1;
+    }
+    return 0;
+  }
+
+  function findBestPrinter(printers, candidates) {
+    let best = null;
+    let bestScore = 0;
+    let bestLength = Number.POSITIVE_INFINITY;
+    printers.forEach((printer) => {
+      candidates.forEach((candidate) => {
+        const score = scoreMatch(printer, candidate);
+        if (score > bestScore || (score === bestScore && printer.length < bestLength)) {
+          best = printer;
+          bestScore = score;
+          bestLength = printer.length;
+        }
+      });
+    });
+    return best;
+  }
+
+  async function resolvePrinterName(requestedName, aliasText) {
+    if (!window.ck_qz || !window.ck_qz.listPrinters) {
+      return requestedName;
+    }
+    const printers = await window.ck_qz.listPrinters();
+    if (!printers || !printers.length) {
+      return requestedName;
+    }
+    const candidates = [requestedName, ...parseAliases(aliasText)];
+    const best = findBestPrinter(printers, candidates);
+    return best || requestedName;
   }
 
   async function printReceipt() {
     try {
       const settings = await loadSettings();
-      const printer = settings.receiptPrinter || DEFAULTS.receiptPrinter;
+      const printer = await resolvePrinterName(
+        settings.receiptPrinter || DEFAULTS.receiptPrinter,
+        settings.receiptAliases
+      );
       const payload = await getReceiptPayload(settings.receiptTemplate || DEFAULTS.receiptTemplate);
       await window.ck_qz.printRaw(printer, payload);
       notify(__("Receipt sent to printer: {0}", [printer]));
@@ -158,8 +235,14 @@
   async function printLabel() {
     try {
       const settings = await loadSettings();
-      const printer = settings.labelPrinter || DEFAULTS.labelPrinter;
-      const payload = await getLabelPayload(settings.labelTemplate || DEFAULTS.labelTemplate);
+      const printer = await resolvePrinterName(
+        settings.labelPrinter || DEFAULTS.labelPrinter,
+        settings.labelAliases
+      );
+      const payload = await getLabelPayload(
+        settings.labelTemplate || DEFAULTS.labelTemplate,
+        settings.labelSizePreset || DEFAULTS.labelSizePreset
+      );
       await window.ck_qz.printRaw(printer, payload);
       notify(__("Label sent to printer: {0}", [printer]));
     } catch (err) {
@@ -171,7 +254,10 @@
   async function openDrawer() {
     try {
       const settings = await loadSettings();
-      const printer = settings.receiptPrinter || DEFAULTS.receiptPrinter;
+      const printer = await resolvePrinterName(
+        settings.receiptPrinter || DEFAULTS.receiptPrinter,
+        settings.receiptAliases
+      );
       const command = settings.drawerCommand || DEFAULTS.drawerCommand;
       if (!command) {
         notify(__("Cash drawer command missing"), true);

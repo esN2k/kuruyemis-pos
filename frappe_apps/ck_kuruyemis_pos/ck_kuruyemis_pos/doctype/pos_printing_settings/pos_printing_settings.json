@@ -5,19 +5,37 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "qz_security_mode",
   "receipt_printer_name",
+  "receipt_printer_aliases",
   "receipt_template",
   "cash_drawer_command",
   "label_printer_name",
+  "label_printer_aliases",
   "label_template",
   "label_size_preset"
  ],
  "fields": [
   {
+   "default": "DEV",
+   "fieldname": "qz_security_mode",
+   "fieldtype": "Select",
+   "label": "QZ Güvenlik Modu",
+   "options": "DEV (Geliştirme)|DEV\nPROD (Üretim)|PROD",
+   "reqd": 0
+  },
+  {
    "fieldname": "receipt_printer_name",
    "fieldtype": "Data",
    "label": "Varsayılan Fiş Yazıcısı",
    "description": "ZY907 için Windows yazıcı adı",
+   "reqd": 0
+  },
+  {
+   "fieldname": "receipt_printer_aliases",
+   "fieldtype": "Small Text",
+   "label": "Fiş Yazıcısı Alias Listesi",
+   "description": "Alternatif yazıcı adları (satır veya virgülle ayırın).",
    "reqd": 0
   },
   {
@@ -44,6 +62,13 @@
    "reqd": 0
   },
   {
+   "fieldname": "label_printer_aliases",
+   "fieldtype": "Small Text",
+   "label": "Etiket Yazıcısı Alias Listesi",
+   "description": "Alternatif yazıcı adları (satır veya virgülle ayırın).",
+   "reqd": 0
+  },
+  {
    "default": "kuruyemis",
    "fieldname": "label_template",
    "fieldtype": "Select",
@@ -52,10 +77,11 @@
    "reqd": 0
   },
   {
+   "default": "38x80_hizli",
    "fieldname": "label_size_preset",
    "fieldtype": "Select",
    "label": "Etiket Boyutu Preseti",
-   "options": "38x80",
+   "options": "38x80 (hızlı)|38x80_hizli\n38x80 (kaliteli)|38x80_kaliteli",
    "reqd": 0
   }
  ],

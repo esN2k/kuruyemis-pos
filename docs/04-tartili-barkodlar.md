@@ -53,3 +53,37 @@ Beklenen sonuç: Eşleşen kural, PLU ve ağırlık/fiyat bilgileri Türkçe ola
 - `Ürün Kodu Hedefi` alanı: `Tartı PLU` (önerilen)
 
 Ayrıntı: `docs/workflows/weighed-barcodes.md`
+
+## Opsiyonel: Scan Me ile QR/Barkod
+`scan_me` modülü kuruluysa Print Format içinde QR/Barkod üretimi yapılabilir.
+
+Örnek Print Format snippet (QR):
+```jinja
+{% set qr_data = doc.name %}
+<img src="{{ scan_me.utils.jinja_functions.qr(qr_data) }}" style="width:120px;height:120px;" />
+```
+
+Örnek Print Format snippet (EAN-13):
+```jinja
+{% set barkod = doc.barcode or doc.item_code %}
+<img src="{{ scan_me.utils.jinja_functions.barcode(barkod, barcode_type='ean13') }}" style="width:220px;height:80px;" />
+```
+
+Not: `scan_me` opsiyonel modüldür ve varsayılan kurulumda gelmez.
+
+## Çekirdek Yardımcı Modül (frappe_qr_demo uyarlaması)
+`ck_kuruyemis_pos.print_helpers` modülü, Print Format içinde QR/Barkod üretimi için küçük yardımcı fonksiyonlar sağlar.
+
+QR örneği:
+```jinja
+{% set qr_data = doc.name %}
+<img src="{{ ck_kuruyemis_pos.print_helpers.qr_data_url(qr_data) }}" style="width:120px;height:120px;" />
+```
+
+Barcode (Code128) örneği:
+```jinja
+{% set barkod = doc.barcode or doc.item_code %}
+{{ ck_kuruyemis_pos.print_helpers.barcode_svg(barkod) }}
+```
+
+Not: Bu yardımcılar, `qrcode` ve `python-barcode` paketleri yüklüyse çalışır. En kolay yol `scan_me` modülünü kurmaktır.
