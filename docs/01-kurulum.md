@@ -60,3 +60,19 @@ Adım adım kurulum:
 ```
 
 Hızlı başlangıç için: `docs/00-hizli-baslangic.md`.
+
+## 7) Opsiyonel modüller
+Opsiyonel modüller **varsayılan kurulumda gelmez**. İsterseniz kurulum sırasında seçebilirsiniz:
+
+```powershell
+.\scripts\windows\04-uygulamalari-kur.ps1 -SiteAdi kuruyemis.local -OpsiyonelModuller insights,scale,print_designer
+```
+
+Tek komut kurulumda da aynı parametreyi verebilirsiniz:
+```powershell
+.\scripts\windows\kur.ps1 -OpsiyonelModuller insights,scale
+```
+
+Notlar:
+- Modül isimleri küçük harf ve virgülle ayrılmış olmalıdır.
+- “Bilinmeyen modül” uyarısı görürseniz isimleri tekrar kontrol edin.

@@ -34,119 +34,140 @@
    "fieldname": "rule_name",
    "fieldtype": "Data",
    "label": "Kural Adı",
+   "description": "Kuralı tanımlayan kısa ad (örn. CL3000 Ağırlık 20)",
    "reqd": 1
   },
   {
    "default": "1",
    "fieldname": "enabled",
    "fieldtype": "Check",
-   "label": "Etkin"
+   "label": "Etkin",
+   "description": "Etkinse barkod eşleştirmesi yapılır"
   },
   {
    "default": "0",
    "fieldname": "priority",
    "fieldtype": "Int",
-   "label": "Öncelik"
+   "label": "Öncelik",
+   "description": "Büyük sayı daha önce uygulanır"
   },
   {
    "default": "13",
    "fieldname": "barcode_length",
    "fieldtype": "Int",
-   "label": "Barkod Uzunluğu"
+   "label": "Barkod Uzunluğu",
+   "description": "EAN-13 için 13"
   },
   {
    "fieldname": "prefix",
    "fieldtype": "Data",
-   "label": "Önek"
+   "label": "Önek",
+   "description": "Örn: 20 (ağırlık) veya 21 (fiyat)"
   },
   {
    "fieldname": "segments",
    "fieldtype": "Table",
    "label": "Parçalar",
+   "description": "Yeni segment ekleyerek PLU/ağırlık/fiyat alanlarını tanımlayın",
    "options": "Weighed Barcode Segment"
   },
   {
    "fieldname": "item_code_start",
    "fieldtype": "Int",
-   "label": "Ürün Kodu Başlangıcı (1 tabanlı)"
+   "label": "Ürün Kodu Başlangıcı (1 tabanlı)",
+   "description": "PLU başlangıç pozisyonu (örn. 3)"
   },
   {
    "fieldname": "item_code_length",
    "fieldtype": "Int",
-   "label": "Ürün Kodu Uzunluğu"
+   "label": "Ürün Kodu Uzunluğu",
+   "description": "PLU uzunluğu (örn. 5)"
   },
   {
    "default": "scale_plu",
    "fieldname": "item_code_target",
    "fieldtype": "Select",
    "label": "Ürün Kodu Hedefi",
+   "description": "PLU'nun Item Code mu yoksa Tartı PLU mu olduğunu seçin",
    "options": "Ürün Kodu|item_code\nTartı PLU|scale_plu"
   },
   {
    "fieldname": "item_code_prefix",
    "fieldtype": "Data",
-   "label": "Ürün Kodu Öneki"
+   "label": "Ürün Kodu Öneki",
+   "description": "PLU başına eklenecek sabit metin"
   },
   {
    "default": "0",
    "fieldname": "item_code_strip_leading_zeros",
    "fieldtype": "Check",
-   "label": "Baştaki Sıfırları Kaldır"
+   "label": "Baştaki Sıfırları Kaldır",
+   "description": "PLU başındaki 0'ları atar"
   },
   {
    "fieldname": "weight_start",
    "fieldtype": "Int",
-   "label": "Ağırlık Başlangıcı (1 tabanlı)"
+   "label": "Ağırlık Başlangıcı (1 tabanlı)",
+   "description": "Ağırlık segment başlangıcı (örn. 8)"
   },
   {
    "fieldname": "weight_length",
    "fieldtype": "Int",
-   "label": "Ağırlık Uzunluğu"
+   "label": "Ağırlık Uzunluğu",
+   "description": "Ağırlık segment uzunluğu (örn. 5)"
   },
   {
    "default": "1000",
    "fieldname": "weight_divisor",
    "fieldtype": "Int",
-   "label": "Ağırlık Bölümü"
+   "label": "Ağırlık Bölümü",
+   "description": "Gram için 1000, kilogram için 1"
   },
   {
    "fieldname": "weight_scale_unit",
    "fieldtype": "Select",
    "label": "Ağırlık Ölçek Birimi",
+   "description": "Bölme katsayısı otomatik güncellenir",
    "options": "Gram|grams\nKilogram|kilograms"
   },
   {
    "fieldname": "price_start",
    "fieldtype": "Int",
-   "label": "Fiyat Başlangıcı (1 tabanlı)"
+   "label": "Fiyat Başlangıcı (1 tabanlı)",
+   "description": "Fiyat segment başlangıcı (örn. 8)"
   },
   {
    "fieldname": "price_length",
    "fieldtype": "Int",
-   "label": "Fiyat Uzunluğu"
+   "label": "Fiyat Uzunluğu",
+   "description": "Fiyat segment uzunluğu (örn. 5)"
   },
   {
    "default": "100",
    "fieldname": "price_divisor",
    "fieldtype": "Int",
-   "label": "Fiyat Bölümü"
+   "label": "Fiyat Bölümü",
+   "description": "Kuruş için 100, lira için 1"
   },
   {
    "fieldname": "price_scale_unit",
    "fieldtype": "Select",
    "label": "Fiyat Ölçek Birimi",
+   "description": "Bölme katsayısı otomatik güncellenir",
    "options": "Kuruş|cents\nLira|lira"
   },
   {
    "default": "1",
    "fieldname": "check_ean13",
    "fieldtype": "Check",
-   "label": "EAN-13 Kontrol Basamağını Doğrula"
+   "label": "EAN-13 Kontrol Basamağını Doğrula",
+   "description": "EAN-13 check digit kontrolü yapılır"
   },
   {
    "fieldname": "notes",
    "fieldtype": "Small Text",
-   "label": "Notlar"
+   "label": "Notlar",
+   "description": "Kural hakkında kısa açıklama"
   }
  ],
  "index_web_pages_for_search": 1,

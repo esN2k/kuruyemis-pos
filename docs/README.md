@@ -14,6 +14,7 @@ Başlangıç: `docs/00-hizli-baslangic.md`
 - `docs/08-acilis-checklist.md`
 - `docs/09-surum-notlari.md`
 - `docs/10-saha-testi.md`
+- `docs/11-frappe-oss-firsatlar.md`
 - `docs/kalite-kriterleri.md`
 
 Ekler:

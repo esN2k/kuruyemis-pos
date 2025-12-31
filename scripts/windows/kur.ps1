@@ -4,7 +4,8 @@ param(
   [string]$MariaDBRootSifresi,
   [switch]$OpsiyonelServisler,
   [switch]$OpsiyonelServisleriAtla,
-  [switch]$DemoVeriYukle
+  [switch]$DemoVeriYukle,
+  [string]$OpsiyonelModuller
 )
 
 . "$PSScriptRoot\_ortak.ps1"
@@ -46,6 +47,9 @@ Calistir-Adim "Site oluştur" "$PSScriptRoot\03-site-olustur.ps1" $siteArgs
 $installArgs = @("-SiteAdi", $SiteAdi)
 if ($DemoVeriYukle) {
   $installArgs += "-DemoVeriYukle"
+}
+if ($OpsiyonelModuller) {
+  $installArgs += @("-OpsiyonelModuller", $OpsiyonelModuller)
 }
 Calistir-Adim "Uygulamaları kur" "$PSScriptRoot\04-uygulamalari-kur.ps1" $installArgs
 Calistir-Adim "Doktor kontrolü" "$PSScriptRoot\05-doctor.ps1" @("-SiteAdi", $SiteAdi)

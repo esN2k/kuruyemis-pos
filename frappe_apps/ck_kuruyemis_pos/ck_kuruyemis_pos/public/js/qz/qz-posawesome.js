@@ -8,6 +8,7 @@
     labelSizePreset: "38x80",
     receiptTemplate: "kuruyemis",
     labelTemplate: "kuruyemis",
+    drawerCommand: "\\x1B\\x70\\x00\\x19\\xFA",
   };
   const SETTINGS_DOCTYPE = "POS Printing Settings";
   let settingsCache = null;
@@ -82,6 +83,7 @@
       labelSizePreset: DEFAULTS.labelSizePreset,
       receiptTemplate: DEFAULTS.receiptTemplate,
       labelTemplate: DEFAULTS.labelTemplate,
+      drawerCommand: DEFAULTS.drawerCommand,
     };
 
     if (!window.frappe || !frappe.call) {
@@ -98,6 +100,7 @@
         labelSizePreset: data.label_size_preset || defaults.labelSizePreset,
         receiptTemplate: data.receipt_template || defaults.receiptTemplate,
         labelTemplate: data.label_template || defaults.labelTemplate,
+        drawerCommand: data.cash_drawer_command || defaults.drawerCommand,
       };
       return settingsCache;
     } catch (err) {
@@ -112,6 +115,17 @@
       return "";
     }
     return err.message || String(err);
+  }
+
+  function decodeEscapes(value) {
+    if (!value) {
+      return "";
+    }
+    return value
+      .replace(/\\x([0-9a-fA-F]{2})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)))
+      .replace(/\\n/g, "\n")
+      .replace(/\\r/g, "\r")
+      .replace(/\\t/g, "\t");
   }
 
   async function getReceiptPayload(template) {
@@ -154,6 +168,24 @@
     }
   }
 
+  async function openDrawer() {
+    try {
+      const settings = await loadSettings();
+      const printer = settings.receiptPrinter || DEFAULTS.receiptPrinter;
+      const command = settings.drawerCommand || DEFAULTS.drawerCommand;
+      if (!command) {
+        notify(__("Cash drawer command missing"), true);
+        return;
+      }
+      const payload = decodeEscapes(command);
+      await window.ck_qz.printRaw(printer, payload);
+      notify(__("Cash drawer opened"));
+    } catch (err) {
+      console.error(err);
+      notify(__("Cash drawer open failed: {0}", [formatError(err)]), true);
+    }
+  }
+
   function addAction(page, label, action) {
     if (page.add_inner_button) {
       page.add_inner_button(label, action);
@@ -184,7 +216,8 @@
 
     const addedReceipt = addAction(page, __("Print Non-Fiscal Receipt"), printReceipt);
     const addedLabel = addAction(page, __("Print Shelf Label"), printLabel);
-    page.__ck_qz_actions_added = addedReceipt || addedLabel;
+    const addedDrawer = addAction(page, __("Open Cash Drawer"), openDrawer);
+    page.__ck_qz_actions_added = addedReceipt || addedLabel || addedDrawer;
   }
 
   function bindRoute() {

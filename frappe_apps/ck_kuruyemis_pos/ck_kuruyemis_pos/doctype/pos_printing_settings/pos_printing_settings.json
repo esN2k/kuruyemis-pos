@@ -7,6 +7,7 @@
  "field_order": [
   "receipt_printer_name",
   "receipt_template",
+  "cash_drawer_command",
   "label_printer_name",
   "label_template",
   "label_size_preset"
@@ -25,6 +26,14 @@
    "fieldtype": "Select",
    "label": "Fiş Şablonu",
    "options": "Kuruyemiş|kuruyemis\nManav|manav\nŞarküteri|sarkuteri",
+   "reqd": 0
+  },
+  {
+   "default": "\\x1B\\x70\\x00\\x19\\xFA",
+   "fieldname": "cash_drawer_command",
+   "fieldtype": "Small Text",
+   "label": "Çekmece Aç Komutu",
+   "description": "ESC/POS pulse komutu (ör. \\\\x1B\\\\x70\\\\x00\\\\x19\\\\xFA)",
    "reqd": 0
   },
   {

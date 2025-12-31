@@ -7,7 +7,11 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
 
   const SETTINGS_DOCTYPE = "POS Printing Settings";
   const JSBARCODE_PATH = "/assets/ck_kuruyemis_pos/js/qz/vendor/jsbarcode.all.min.js";
-  const TEMPLATE_OPTIONS = "Kuruyemiş|kuruyemis\nManav|manav\nŞarküteri|sarkuteri";
+  const TEMPLATE_OPTIONS = [
+    `${__("Kuruyemiş")}|kuruyemis`,
+    `${__("Manav")}|manav`,
+    `${__("Şarküteri")}|sarkuteri`,
+  ].join("\n");
   let jsBarcodePromise = null;
 
   const fieldGroup = new frappe.ui.FieldGroup({
@@ -28,6 +32,12 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
         label: __("Receipt Template"),
         fieldtype: "Select",
         options: TEMPLATE_OPTIONS,
+      },
+      {
+        fieldname: "cash_drawer_command",
+        label: __("Cash Drawer Command"),
+        fieldtype: "Small Text",
+        default: "\\x1B\\x70\\x00\\x19\\xFA",
       },
       {
         fieldname: "label_template",
@@ -195,6 +205,7 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
     doc.receipt_printer_name = values.receipt_printer_name || "";
     doc.label_printer_name = values.label_printer_name || "";
     doc.receipt_template = values.receipt_template || "";
+    doc.cash_drawer_command = values.cash_drawer_command || "";
     doc.label_template = values.label_template || "";
     doc.label_size_preset = values.label_size_preset || "";
 
@@ -236,6 +247,7 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
     fieldGroup.set_value("receipt_printer_name", doc.receipt_printer_name || "");
     fieldGroup.set_value("label_printer_name", doc.label_printer_name || "");
     fieldGroup.set_value("receipt_template", doc.receipt_template || "kuruyemis");
+    fieldGroup.set_value("cash_drawer_command", doc.cash_drawer_command || "\\x1B\\x70\\x00\\x19\\xFA");
     fieldGroup.set_value("label_template", doc.label_template || "kuruyemis");
     fieldGroup.set_value("label_size_preset", doc.label_size_preset || "38x80");
   }
@@ -365,13 +377,16 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
     return `${price} TRY`;
   }
 
-  function renderValidationMessage(message, indicator) {
+  function renderValidationMessage(message, indicator, hint) {
     const resultEl = document.getElementById("ck-barcode-validate-result");
     if (!resultEl) {
       return;
     }
     const color = indicator === "red" ? "#ef4444" : indicator === "orange" ? "#f97316" : "#16a34a";
-    resultEl.innerHTML = `<div style="color:${color};font-weight:600;">${escapeHtml(message)}</div>`;
+    const hintHtml = hint
+      ? `<div style="margin-top:6px;color:#6b7280;">${escapeHtml(hint)}</div>`
+      : "";
+    resultEl.innerHTML = `<div style="color:${color};font-weight:600;">${escapeHtml(message)}</div>${hintHtml}`;
   }
 
   function renderValidationResult(data) {
@@ -407,7 +422,11 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
       );
       const data = response.message || {};
       if (!data.ok) {
-        renderValidationMessage(data.message || __("Barcode validation failed"), "red");
+        renderValidationMessage(
+          data.message || __("Barcode validation failed"),
+          "red",
+          data.hint || ""
+        );
         return;
       }
       renderValidationResult(data);

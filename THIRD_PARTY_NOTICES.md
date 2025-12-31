@@ -49,14 +49,45 @@ Bu proje; bazı açık kaynak bileşenleri ve kütüphaneleri kullanır. Bu dosy
 
 ---
 
-## 3) Bu projede bağımlılıklar nasıl kullanılır?
+## 3) Opsiyonel Frappe Modülleri
+
+> Bu bölümdeki modüller **varsayılan kurulumda gelmez**. Sadece ihtiyaç halinde kurulmalıdır.
+
+### 3.1 Frappe Insights
+- Amaç: Yönetici dashboard ve raporlama
+- Kaynak: https://github.com/frappe/insights
+- Lisans: **AGPL-3.0**
+
+### 3.2 ERPGulf Scale
+- Amaç: Tartılı barkod/terazi odaklı ayarlar
+- Kaynak: https://github.com/ERPGulf/scale
+- Lisans: **MIT**
+
+### 3.3 Frappe Print Designer
+- Amaç: Yazdırma şablonu tasarımı
+- Kaynak: https://github.com/frappe/print_designer
+- Lisans: **AGPL-3.0**
+
+### 3.4 ERPGulf GPos
+- Amaç: Alternatif POS uygulaması (gelecek opsiyonu)
+- Kaynak: https://github.com/ERPGulf/GPos
+- Lisans: **MIT**
+
+### 3.5 aisenyi/pasigono
+- Amaç: QZ Tray odaklı referans uygulama (inceleme amaçlı)
+- Kaynak: https://github.com/aisenyi/pasigono
+- Lisans: **Belirsiz (NOASSERTION)** → **varsayılan kurulum dışı**
+
+---
+
+## 4) Bu projede bağımlılıklar nasıl kullanılır?
 - Çekirdek bileşenler (ERPNext / POS Awesome / QZ Tray) projeye temel sağlar.
 - Bizim özel kodlarımız ayrı bir uygulama olarak tutulur (örn. `ck_kuruyemis_pos`).
 - Üçüncü parti projeler mümkün olduğunca upstream üzerinden bağımlılık olarak alınır.
 
 ---
 
-## 4) Lisans uyumu için bakım kuralı
+## 5) Lisans uyumu için bakım kuralı
 Yeni bir kütüphane/araç eklendiğinde:
 1) Bu dosyaya şu formatta eklenir: Ad / Amaç / Kaynak / Lisans / Bağlantı
 2) Lisans "Unknown / belirsiz" ise:
@@ -66,14 +97,14 @@ Yeni bir kütüphane/araç eklendiğinde:
 
 ---
 
-## 5) Lisans metinleri nerede?
+## 6) Lisans metinleri nerede?
 - Bu repoda `LICENSE` dosyası: projemizin lisansı
 - Üçüncü taraf projelerin lisans metinleri: ilgili upstream repolarda
 - Gerekli durumlarda upstream lisans dosyaları "vendor" klasöründe ayrıca korunabilir
 
 ---
 
-## 6) İletişim / Düzeltme
+## 7) İletişim / Düzeltme
 Bu dosyada eksik/yanlış bir lisans veya atıf görürseniz lütfen issue açın:
 - Hangi bileşen?
 - Lisans kaynağı bağlantısı?

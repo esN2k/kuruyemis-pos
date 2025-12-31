@@ -154,18 +154,38 @@ def get_item_details(*args, **kwargs):
 def validate_weighed_barcode(barcode: str) -> dict:
     candidate = (barcode or "").strip()
     if not candidate:
-        return {"ok": False, "message": frappe._("Barkod boş olamaz.")}
+        return {
+            "ok": False,
+            "message": frappe._("Barkod boş olamaz."),
+            "hint": frappe._("Örnek: 2012345001501"),
+        }
     if not candidate.isdigit():
-        return {"ok": False, "message": frappe._("Barkod sadece rakamlardan oluşmalıdır.")}
+        return {
+            "ok": False,
+            "message": frappe._("Barkod sadece rakamlardan oluşmalıdır."),
+            "hint": frappe._("Örnek: 2012345001501"),
+        }
     if len(candidate) != 13:
-        return {"ok": False, "message": frappe._("Barkod 13 haneli olmalıdır.")}
+        return {
+            "ok": False,
+            "message": frappe._("Barkod 13 haneli olmalıdır."),
+            "hint": frappe._("Örnek: 2012345001501"),
+        }
 
     rules = _load_rules_from_db()
     parsed = parse_weighed_barcode(candidate, rules)
     if not parsed:
         if not ean13_is_valid(candidate):
-            return {"ok": False, "message": frappe._("EAN-13 kontrol basamağı hatalı.")}
-        return {"ok": False, "message": frappe._("Barkod hiçbir kuralla eşleşmedi.")}
+            return {
+                "ok": False,
+                "message": frappe._("EAN-13 kontrol basamağı hatalı."),
+                "hint": frappe._("Etiket doğru basıldı mı kontrol edin."),
+            }
+        return {
+            "ok": False,
+            "message": frappe._("Barkod hiçbir kuralla eşleşmedi."),
+            "hint": frappe._("Prefix 20 (ağırlık) veya 21 (fiyat) olmalı."),
+        }
 
     matched_rule = next((rule for rule in rules if rule.name == parsed.rule_name), None)
     weight_segment = _slice_segment(
