@@ -141,8 +141,15 @@ function Ensure-FrontendAssets {
   $hasPackage = docker compose @composeArgs exec backend bash -lc "test -f apps/$AppName/package.json"
   if ($LASTEXITCODE -eq 0) {
     Write-Bilgi "$Label ön uç bağımlılıkları (yarn) kuruluyor..."
-    $yarnCmd = "cd apps/$AppName && if command -v yarn >/dev/null 2>&1; then if [ -f yarn.lock ]; then yarn install --frozen-lockfile; else yarn install; fi; else echo 'Yarn bulunamadı'; exit 1; fi"
-    docker compose @composeArgs exec backend bash -lc $yarnCmd
+    $installPrereqsCmd = "if ! command -v npm >/dev/null 2>&1; then apt-get update && apt-get install -y npm; fi && if ! command -v yarn >/dev/null 2>&1; then npm install -g yarn; fi"
+    docker compose @composeArgs exec --user root backend bash -lc $installPrereqsCmd
+    if ($LASTEXITCODE -ne 0) {
+      Write-Hata "$Label önkoşul kurulumu başarısız (npm/yarn)." "Docker loglarını kontrol edin."
+      exit 1
+    }
+
+    $yarnInstallCmd = "cd apps/$AppName && if [ -f yarn.lock ]; then yarn install --frozen-lockfile; else yarn install; fi"
+    docker compose @composeArgs exec backend bash -lc $yarnInstallCmd
     if ($LASTEXITCODE -ne 0) {
       Write-Hata "$Label yarn kurulumu başarısız." "Yarn kurulumunu ve ağ bağlantısını kontrol edin."
       exit 1
@@ -187,7 +194,7 @@ if ($needsClone) {
     docker compose @composeArgs exec backend bash -lc "git -C apps/posawesome fetch --all"
     docker compose @composeArgs exec backend bash -lc "git -C apps/posawesome checkout $posAwesomeRef"
     if ($LASTEXITCODE -ne 0) {
-      Write-Hata "POS Awesome pini güncellenemedi." "POS Awesome klasörünü ve git erişimini kontrol edin."
+      Write-Hata "$Label pini güncellenemedi." "Uygulama klasörünü ve git erişimini kontrol edin."
       exit 1
     }
   } else {
@@ -206,7 +213,7 @@ function Ensure-PythonModule {
   docker compose @composeArgs exec backend bash -lc "python -c \"import $ModuleName\""
   if ($LASTEXITCODE -ne 0) {
     Write-Bilgi "$Label paketleri kuruluyor..."
-    docker compose @composeArgs exec @pipEnv backend bench setup requirements --app $ModuleName
+    docker compose @composeArgs exec @pipEnv backend bench setup requirements $ModuleName
     if ($LASTEXITCODE -ne 0) {
       Write-Hata "$Label paket kurulumu başarısız." "Docker loglarını kontrol edin."
       exit 1
@@ -220,7 +227,7 @@ function Ensure-PythonModule {
 }
 
 Write-Bilgi "POS Awesome bağımlılıkları kuruluyor..."
-docker compose @composeArgs exec @pipEnv backend bench setup requirements --app posawesome
+docker compose @composeArgs exec @pipEnv backend bench setup requirements posawesome
 if ($LASTEXITCODE -ne 0) {
   Write-Hata "POS Awesome bağımlılıkları kurulamadı." "Docker loglarını kontrol edin."
   exit 1
@@ -371,7 +378,7 @@ if ($secimler.Count -gt 0) {
       Write-Uyari "Beam modülü için ERPNext v15 uyumu sahada test edilmelidir."
     }
     Write-Bilgi "$label bağımlılıkları kuruluyor..."
-    docker compose @composeArgs exec @pipEnv backend bench setup requirements --app $appName
+    docker compose @composeArgs exec @pipEnv backend bench setup requirements $appName
     if ($LASTEXITCODE -ne 0) {
       Write-Hata "$label bağımlılıkları kurulamadı." "Docker loglarını kontrol edin."
       exit 1

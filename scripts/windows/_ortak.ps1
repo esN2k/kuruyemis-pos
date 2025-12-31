@@ -1,4 +1,7 @@
-﻿$ErrorActionPreference = "Stop"
+﻿$OutputEncoding = [System.Text.Encoding]::UTF8
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+
+$ErrorActionPreference = "Stop"
 
 function Initialize-KonsolUtf8 {
   $utf8 = New-Object System.Text.UTF8Encoding($false)
