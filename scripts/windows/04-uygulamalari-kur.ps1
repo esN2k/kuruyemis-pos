@@ -1,5 +1,6 @@
-﻿param(
-  [Parameter(Mandatory = $true)][string]$SiteAdi
+param(
+  [Parameter(Mandatory = True)][string],
+  [switch]
 )
 
 . "$PSScriptRoot\_ortak.ps1"
@@ -164,5 +165,18 @@ if ($LASTEXITCODE -ne 0) {
   exit 1
 }
 
+if ($DemoVeriYukle) {
+  Write-Bilgi "Demo verileri yükleniyor..."
+  docker compose @composeArgs exec backend bench --site $SiteAdi execute ck_kuruyemis_pos.demo_data.load_demo_data
+  if ($LASTEXITCODE -ne 0) {
+    Write-Hata "Demo verileri yüklenemedi." "Docker loglarını ve site durumunu kontrol edin."
+    exit 1
+  }
+  Write-Ok "Demo verileri yüklendi."
+} else {
+  Write-Uyari "Demo verisi atlandı. Gerekirse -DemoVeriYukle ile tekrar çalıştırın."
+}
+
 Write-Ok "Uygulamalar kuruldu ve varsayılanlar ayarlandı."
+
 

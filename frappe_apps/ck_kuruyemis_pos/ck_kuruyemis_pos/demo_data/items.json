@@ -1,0 +1,22 @@
+[
+  {"item_code": "KRY-001", "item_name": "Antep Fıstığı", "item_group": "Kuruyemiş", "stock_uom": "Kg", "scale_plu": "20001", "price": 375.0},
+  {"item_code": "KRY-002", "item_name": "Fındık İç", "item_group": "Kuruyemiş", "stock_uom": "Kg", "scale_plu": "20002", "price": 320.0},
+  {"item_code": "KRY-003", "item_name": "Badem İç", "item_group": "Kuruyemiş", "stock_uom": "Kg", "scale_plu": "20003", "price": 290.0},
+  {"item_code": "KRY-004", "item_name": "Ceviz İç", "item_group": "Kuruyemiş", "stock_uom": "Kg", "scale_plu": "20004", "price": 260.0},
+  {"item_code": "KRY-005", "item_name": "Kaju", "item_group": "Kuruyemiş", "stock_uom": "Kg", "scale_plu": "20005", "price": 360.0},
+  {"item_code": "KRY-006", "item_name": "Kabak Çekirdeği", "item_group": "Kuruyemiş", "stock_uom": "Kg", "scale_plu": "20006", "price": 180.0},
+  {"item_code": "KRY-007", "item_name": "Ayçekirdeği", "item_group": "Kuruyemiş", "stock_uom": "Kg", "scale_plu": "20007", "price": 120.0},
+  {"item_code": "KRY-008", "item_name": "Leblebi (Sarı)", "item_group": "Kuruyemiş", "stock_uom": "Kg", "scale_plu": "20008", "price": 110.0},
+  {"item_code": "KRY-009", "item_name": "Leblebi (Çıtır)", "item_group": "Kuruyemiş", "stock_uom": "Kg", "scale_plu": "20009", "price": 125.0},
+  {"item_code": "KRY-010", "item_name": "Kuru Kayısı", "item_group": "Kuru Meyve", "stock_uom": "Kg", "scale_plu": "20010", "price": 210.0},
+  {"item_code": "KRY-011", "item_name": "Kuru Üzüm", "item_group": "Kuru Meyve", "stock_uom": "Kg", "scale_plu": "20011", "price": 160.0},
+  {"item_code": "KRY-012", "item_name": "Hurma", "item_group": "Kuru Meyve", "stock_uom": "Kg", "scale_plu": "20012", "price": 190.0},
+  {"item_code": "KRY-013", "item_name": "Lokum Sade", "item_group": "Lokum ve Şekerleme", "stock_uom": "Adet", "price": 25.0},
+  {"item_code": "KRY-014", "item_name": "Lokum Fındıklı", "item_group": "Lokum ve Şekerleme", "stock_uom": "Adet", "price": 30.0},
+  {"item_code": "KRY-015", "item_name": "Tahin Helvası", "item_group": "Lokum ve Şekerleme", "stock_uom": "Adet", "price": 45.0},
+  {"item_code": "KRY-016", "item_name": "Nohut", "item_group": "Bakliyat", "stock_uom": "Kg", "scale_plu": "20016", "price": 90.0},
+  {"item_code": "KRY-017", "item_name": "Kırmızı Mercimek", "item_group": "Bakliyat", "stock_uom": "Kg", "scale_plu": "20017", "price": 85.0},
+  {"item_code": "KRY-018", "item_name": "Toz Biber", "item_group": "Baharat", "stock_uom": "Kg", "scale_plu": "20018", "price": 140.0},
+  {"item_code": "KRY-019", "item_name": "Karabiber", "item_group": "Baharat", "stock_uom": "Kg", "scale_plu": "20019", "price": 180.0},
+  {"item_code": "KRY-020", "item_name": "Çikolatalı Draje", "item_group": "Atıştırmalık", "stock_uom": "Adet", "price": 20.0}
+]

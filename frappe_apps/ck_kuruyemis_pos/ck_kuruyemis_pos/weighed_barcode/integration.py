@@ -6,8 +6,10 @@ from erpnext.stock.get_item_details import get_item_details as erpnext_get_item_
 from ck_kuruyemis_pos.weighed_barcode.parser import (
     ParsedWeighedBarcode,
     WeighedBarcodeRule,
+    ean13_is_valid,
     divisor_for_scale_unit,
     parse_weighed_barcode,
+    _slice_segment,
 )
 
 
@@ -146,3 +148,48 @@ def get_item_details(*args, **kwargs):
                 kwargs.pop("barcode", None)
                 kwargs["scanned_barcode"] = barcode
     return erpnext_get_item_details(*args, **kwargs)
+
+
+@frappe.whitelist()
+def validate_weighed_barcode(barcode: str) -> dict:
+    candidate = (barcode or "").strip()
+    if not candidate:
+        return {"ok": False, "message": frappe._("Barkod boş olamaz.")}
+    if not candidate.isdigit():
+        return {"ok": False, "message": frappe._("Barkod sadece rakamlardan oluşmalıdır.")}
+    if len(candidate) != 13:
+        return {"ok": False, "message": frappe._("Barkod 13 haneli olmalıdır.")}
+
+    rules = _load_rules_from_db()
+    parsed = parse_weighed_barcode(candidate, rules)
+    if not parsed:
+        if not ean13_is_valid(candidate):
+            return {"ok": False, "message": frappe._("EAN-13 kontrol basamağı hatalı.")}
+        return {"ok": False, "message": frappe._("Barkod hiçbir kuralla eşleşmedi.")}
+
+    matched_rule = next((rule for rule in rules if rule.name == parsed.rule_name), None)
+    weight_segment = _slice_segment(
+        candidate,
+        matched_rule.weight_start if matched_rule else None,
+        matched_rule.weight_length if matched_rule else None,
+    )
+    price_segment = _slice_segment(
+        candidate,
+        matched_rule.price_start if matched_rule else None,
+        matched_rule.price_length if matched_rule else None,
+    )
+
+    return {
+        "ok": True,
+        "rule_name": parsed.rule_name,
+        "prefix": matched_rule.prefix if matched_rule else "",
+        "item_code_target": parsed.item_code_target,
+        "raw_item_code": parsed.raw_item_code,
+        "item_code": parsed.item_code,
+        "weight": str(parsed.weight) if parsed.weight is not None else None,
+        "price": str(parsed.price) if parsed.price is not None else None,
+        "weight_segment": weight_segment,
+        "price_segment": price_segment,
+        "weight_divisor": matched_rule.weight_divisor if matched_rule else None,
+        "price_divisor": matched_rule.price_divisor if matched_rule else None,
+    }

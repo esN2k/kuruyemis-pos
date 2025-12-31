@@ -7,6 +7,7 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
 
   const SETTINGS_DOCTYPE = "POS Printing Settings";
   const JSBARCODE_PATH = "/assets/ck_kuruyemis_pos/js/qz/vendor/jsbarcode.all.min.js";
+  const TEMPLATE_OPTIONS = "Kuruyemiş|kuruyemis\nManav|manav\nŞarküteri|sarkuteri";
   let jsBarcodePromise = null;
 
   const fieldGroup = new frappe.ui.FieldGroup({
@@ -21,6 +22,18 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
         fieldname: "label_printer_name",
         label: __("Default Label Printer"),
         fieldtype: "Select",
+      },
+      {
+        fieldname: "receipt_template",
+        label: __("Receipt Template"),
+        fieldtype: "Select",
+        options: TEMPLATE_OPTIONS,
+      },
+      {
+        fieldname: "label_template",
+        label: __("Label Template"),
+        fieldtype: "Select",
+        options: TEMPLATE_OPTIONS,
       },
       {
         fieldname: "label_size_preset",
@@ -105,6 +118,40 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
     </div>
   `);
 
+  const validationTitle = document.createElement("h3");
+  validationTitle.textContent = __("Barcode Validation");
+  validationTitle.style.marginTop = "24px";
+  page.body.appendChild(validationTitle);
+
+  const validationGroup = new frappe.ui.FieldGroup({
+    body: page.body,
+    fields: [
+      {
+        fieldname: "validate_barcode",
+        label: __("Barcode to Validate"),
+        fieldtype: "Data",
+      },
+      {
+        fieldname: "btn_validate_barcode",
+        label: __("Validate Barcode"),
+        fieldtype: "Button",
+      },
+      {
+        fieldname: "validation_result",
+        fieldtype: "HTML",
+      },
+    ],
+  });
+
+  validationGroup.make();
+
+  const validationField = validationGroup.get_field("validation_result");
+  validationField.$wrapper.html(`
+    <div style="border:1px solid #e5e7eb;padding:12px;border-radius:8px;max-width:420px;">
+      <div id="ck-barcode-validate-result"></div>
+    </div>
+  `);
+
   function showAlert(message, indicator) {
     if (frappe.show_alert) {
       frappe.show_alert({ message, indicator: indicator || "green" });
@@ -147,6 +194,8 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
     const doc = await loadSettings();
     doc.receipt_printer_name = values.receipt_printer_name || "";
     doc.label_printer_name = values.label_printer_name || "";
+    doc.receipt_template = values.receipt_template || "";
+    doc.label_template = values.label_template || "";
     doc.label_size_preset = values.label_size_preset || "";
 
     try {
@@ -186,6 +235,8 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
     const doc = await loadSettings();
     fieldGroup.set_value("receipt_printer_name", doc.receipt_printer_name || "");
     fieldGroup.set_value("label_printer_name", doc.label_printer_name || "");
+    fieldGroup.set_value("receipt_template", doc.receipt_template || "kuruyemis");
+    fieldGroup.set_value("label_template", doc.label_template || "kuruyemis");
     fieldGroup.set_value("label_size_preset", doc.label_size_preset || "38x80");
   }
 
@@ -197,7 +248,9 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
         frappe.msgprint({ message: __("Select a receipt printer first"), indicator: "orange" });
         return;
       }
-      const payload = await window.ck_qz_examples.receiptPayload();
+      const payload = await window.ck_qz_examples.receiptPayload({
+        template: values.receipt_template,
+      });
       await window.ck_qz.printRaw(printer, payload);
       showAlert(__("Receipt sent to printer: {0}", [printer]));
     } catch (err) {
@@ -214,7 +267,10 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
         frappe.msgprint({ message: __("Select a label printer first"), indicator: "orange" });
         return;
       }
-      await window.ck_qz.printRaw(printer, window.ck_qz_examples.labelPayloadTspl());
+      await window.ck_qz.printRaw(
+        printer,
+        window.ck_qz_examples.labelPayloadTspl({ template: values.label_template })
+      );
       showAlert(__("Label sent to printer: {0}", [printer]));
     } catch (err) {
       console.error(err);
@@ -270,10 +326,102 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
     }
   }
 
+  function escapeHtml(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function formatWeight(data) {
+    if (!data.weight) {
+      return "-";
+    }
+    const weight = Number(data.weight);
+    if (Number.isNaN(weight)) {
+      return escapeHtml(data.weight);
+    }
+    if (Number(data.weight_divisor) === 1000) {
+      const grams = Math.round(weight * 1000);
+      return `${grams} g (${weight.toFixed(3)} kg)`;
+    }
+    return `${weight} kg`;
+  }
+
+  function formatPrice(data) {
+    if (!data.price) {
+      return "-";
+    }
+    const price = Number(data.price);
+    if (Number.isNaN(price)) {
+      return escapeHtml(data.price);
+    }
+    if (Number(data.price_divisor) === 100) {
+      const cents = data.price_segment ? Number(data.price_segment) : Math.round(price * 100);
+      return `${price.toFixed(2)} TRY (${cents} ${__("Kuruş")})`;
+    }
+    return `${price} TRY`;
+  }
+
+  function renderValidationMessage(message, indicator) {
+    const resultEl = document.getElementById("ck-barcode-validate-result");
+    if (!resultEl) {
+      return;
+    }
+    const color = indicator === "red" ? "#ef4444" : indicator === "orange" ? "#f97316" : "#16a34a";
+    resultEl.innerHTML = `<div style="color:${color};font-weight:600;">${escapeHtml(message)}</div>`;
+  }
+
+  function renderValidationResult(data) {
+    const resultEl = document.getElementById("ck-barcode-validate-result");
+    if (!resultEl) {
+      return;
+    }
+    const target =
+      data.item_code_target === "scale_plu" ? __("Scale PLU") : __("Item Code");
+    const lines = [
+      `<div><strong>${__("Matched Rule")}:</strong> ${escapeHtml(data.rule_name)}</div>`,
+      `<div><strong>${__("Prefix")}:</strong> ${escapeHtml(data.prefix || "-")}</div>`,
+      `<div><strong>${__("Item Code Target")}:</strong> ${escapeHtml(target)}</div>`,
+      `<div><strong>${__("Raw Item Code")}:</strong> ${escapeHtml(data.raw_item_code)}</div>`,
+      `<div><strong>${__("Parsed Item Code")}:</strong> ${escapeHtml(data.item_code)}</div>`,
+      `<div><strong>${__("Weight")}:</strong> ${formatWeight(data)}</div>`,
+      `<div><strong>${__("Price")}:</strong> ${formatPrice(data)}</div>`,
+    ];
+    resultEl.innerHTML = lines.join("");
+  }
+
+  async function validateBarcode() {
+    const values = validationGroup.get_values();
+    const barcode = (values.validate_barcode || "").trim();
+    if (!barcode) {
+      renderValidationMessage(__("Please enter a barcode to validate"), "orange");
+      return;
+    }
+    try {
+      const response = await frappe.call(
+        "ck_kuruyemis_pos.weighed_barcode.integration.validate_weighed_barcode",
+        { barcode }
+      );
+      const data = response.message || {};
+      if (!data.ok) {
+        renderValidationMessage(data.message || __("Barcode validation failed"), "red");
+        return;
+      }
+      renderValidationResult(data);
+    } catch (err) {
+      console.error(err);
+      renderValidationMessage(__("Barcode validation failed"), "red");
+    }
+  }
+
   fieldGroup.get_field("btn_refresh").$input.on("click", refreshPrinters);
   fieldGroup.get_field("btn_save").$input.on("click", saveSettings);
   fieldGroup.get_field("btn_test_receipt").$input.on("click", testReceipt);
   fieldGroup.get_field("btn_test_label").$input.on("click", testLabel);
+  validationGroup.get_field("btn_validate_barcode").$input.on("click", validateBarcode);
 
   ["preview_item_name", "preview_price", "preview_plu", "preview_barcode"].forEach((fieldname) => {
     const field = previewGroup.get_field(fieldname);

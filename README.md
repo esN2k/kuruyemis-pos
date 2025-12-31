@@ -11,6 +11,11 @@ Aşağıdaki adımlar Windows içindir. Her adımın sonunda beklenen sonuç bel
 ```
 Beklenen sonuç: Kurulum tamamlanır, doktor + duman testi çalışır.
 
+Demo verisi yüklemek için:
+```powershell
+.\scripts\windows\kur.ps1 -DemoVeriYukle
+```
+
 2) Adım adım kurulum (isteğe bağlı)
 ```powershell
 .\scripts\windows\00-onkosul-kontrol.ps1
@@ -55,6 +60,22 @@ graph LR
 - `05-doctor.ps1` **OK** döner
 - `09-smoke-test.ps1` barkod + test fiş + test etiketi doğrular
 - `docs/08-acilis-checklist.md` kutucukları tamamlanır
+
+## Sık Sorulan Sorular
+**Q: QZ Tray uyarısı görünüyor, sorun mu?**  
+**A:** Geliştirme ortamında uyarı normaldir. Üretimde imzalı istek gerekir (`docs/03-yazdirma-qz.md`).
+
+**Q: Site açılmıyor (`http://kuruyemis.local:8080`)?**  
+**A:** `.\scripts\windows\05-doctor.ps1` çalıştırın ve servis durumunu kontrol edin.
+
+**Q: POS Awesome güncellemeleri görünmüyor?**  
+**A:** Tarayıcı site verilerini temizleyin ve sayfayı yenileyin (`docs/07-sorun-giderme.md`).
+
+**Q: Tartılı barkod sepete düşmüyor?**  
+**A:** Üründe `scale_plu` alanını doldurun ve kuralın etkin olduğundan emin olun.
+
+**Q: Demo verisi nasıl yüklenir?**  
+**A:** `.\scripts\windows\04-uygulamalari-kur.ps1 -SiteAdi kuruyemis.local -DemoVeriYukle` çalıştırın.
 
 ## Lisans Raporu
 Lisans raporu üretimi (Windows):

@@ -6,7 +6,9 @@
  "engine": "InnoDB",
  "field_order": [
   "receipt_printer_name",
+  "receipt_template",
   "label_printer_name",
+  "label_template",
   "label_size_preset"
  ],
  "fields": [
@@ -18,10 +20,26 @@
    "reqd": 0
   },
   {
+   "default": "kuruyemis",
+   "fieldname": "receipt_template",
+   "fieldtype": "Select",
+   "label": "Fiş Şablonu",
+   "options": "Kuruyemiş|kuruyemis\nManav|manav\nŞarküteri|sarkuteri",
+   "reqd": 0
+  },
+  {
    "fieldname": "label_printer_name",
    "fieldtype": "Data",
    "label": "Varsayılan Etiket Yazıcısı",
    "description": "X-Printer 490B için Windows yazıcı adı",
+   "reqd": 0
+  },
+  {
+   "default": "kuruyemis",
+   "fieldname": "label_template",
+   "fieldtype": "Select",
+   "label": "Etiket Şablonu",
+   "options": "Kuruyemiş|kuruyemis\nManav|manav\nŞarküteri|sarkuteri",
    "reqd": 0
   },
   {

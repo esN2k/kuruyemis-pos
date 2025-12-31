@@ -1,9 +1,10 @@
-﻿param(
+param(
   [string]$SiteAdi = "kuruyemis.local",
   [string]$YoneticiSifresi = "admin",
   [string]$MariaDBRootSifresi,
   [switch]$OpsiyonelServisler,
-  [switch]$OpsiyonelServisleriAtla
+  [switch]$OpsiyonelServisleriAtla,
+  [switch]$DemoVeriYukle
 )
 
 . "$PSScriptRoot\_ortak.ps1"
@@ -42,9 +43,14 @@ if ($MariaDBRootSifresi) {
   $siteArgs += @("-MariaDBRootSifresi", $MariaDBRootSifresi)
 }
 Calistir-Adim "Site oluştur" "$PSScriptRoot\03-site-olustur.ps1" $siteArgs
-Calistir-Adim "Uygulamaları kur" "$PSScriptRoot\04-uygulamalari-kur.ps1" @("-SiteAdi", $SiteAdi)
+$installArgs = @("-SiteAdi", $SiteAdi)
+if ($DemoVeriYukle) {
+  $installArgs += "-DemoVeriYukle"
+}
+Calistir-Adim "Uygulamaları kur" "$PSScriptRoot\04-uygulamalari-kur.ps1" $installArgs
 Calistir-Adim "Doktor kontrolü" "$PSScriptRoot\05-doctor.ps1" @("-SiteAdi", $SiteAdi)
 Calistir-Adim "Duman testi (DRY_RUN)" "$PSScriptRoot\09-smoke-test.ps1" @("-SiteAdi", $SiteAdi)
 
 Write-Ok "Kurulum tamamlandı. Sonraki adım: http://$SiteAdi:8080/"
+
 

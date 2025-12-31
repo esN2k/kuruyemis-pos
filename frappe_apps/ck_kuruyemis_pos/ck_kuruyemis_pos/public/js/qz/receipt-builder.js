@@ -5,6 +5,20 @@
   const VENDOR_PATH = "/assets/ck_kuruyemis_pos/js/qz/vendor/receipt-printer-encoder.umd.js";
   let loadPromise = null;
   const t = (text) => (window.__ ? __(text) : text);
+  const TEMPLATES = {
+    kuruyemis: {
+      label: t("Kuruyemiş"),
+      footer: t("Afiyet olsun!"),
+    },
+    manav: {
+      label: t("Manav"),
+      footer: t("Taze ve doğal ürünler!"),
+    },
+    sarkuteri: {
+      label: t("Şarküteri"),
+      footer: t("Lezzetli seçimler!"),
+    },
+  };
 
   function loadScript(src) {
     return new Promise((resolve, reject) => {
@@ -27,6 +41,11 @@
     return loadPromise.then(() => window.ReceiptPrinterEncoder);
   }
 
+  function resolveTemplate(options) {
+    const key = options && options.template ? String(options.template) : "kuruyemis";
+    return TEMPLATES[key] || TEMPLATES.kuruyemis;
+  }
+
   function bytesToHex(bytes) {
     return Array.from(bytes)
       .map((value) => value.toString(16).padStart(2, "0"))
@@ -35,14 +54,16 @@
   }
 
   function normalizeData(options) {
+    const template = resolveTemplate(options);
     const defaults = {
       storeName: t("CK Kuruyemiş POS"),
+      templateLabel: template.label,
       title: t("Bilgi Fişi (Mali Değil)"),
       itemName: t("Antep Fıstığı"),
       qty: t("0.250 kg"),
       unitPrice: t("375.00 TRY/kg"),
       total: t("93.75 TRY"),
-      footer: t("Teşekkürler!"),
+      footer: template.footer,
     };
     return Object.assign({}, defaults, options || {});
   }
@@ -62,6 +83,8 @@
       .bold(true)
       .text(data.storeName)
       .bold(false)
+      .newline()
+      .text(data.templateLabel)
       .newline()
       .text(data.title)
       .newline()
@@ -93,6 +116,7 @@
     const data = normalizeData(options);
     const lines = [
       `${data.storeName}\n`,
+      `${data.templateLabel}\n`,
       `${data.title}\n`,
       "---------------------------\n",
       `${t("Ürün")}: ${data.itemName}\n`,

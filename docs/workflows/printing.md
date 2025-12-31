@@ -2,7 +2,7 @@
 
 ## Demo Akışı
 1) QZ Tray açık olmalı (tray ikonu görünür).
-2) `http://kuruyemis.local:8080/app/pos_printer_setup` sayfasında yazıcıları seçin.
+2) `http://kuruyemis.local:8080/app/pos_printer_setup` sayfasında yazıcıları ve şablonları seçin.
 3) POS Awesome menüsünden:
    - “Bilgi Fişi Yazdır (Mali Değil)”
    - “Raf Etiketi Yazdır (38x80)”

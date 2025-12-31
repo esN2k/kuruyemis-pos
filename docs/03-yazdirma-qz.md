@@ -20,6 +20,7 @@ QZ Tray, tarayıcı ile yazıcı arasındaki köprüdür. POS Awesome, QZ Tray �
 3) Uygulamada yazıcı ayarı
    - `http://kuruyemis.local:8080/app/pos_printer_setup`
    - Varsayılan fiş ve etiket yazıcılarını kaydedin.
+   - Fiş ve etiket şablonunu (kuruyemiş / manav / şarküteri) seçin.
 
 ## qz-tray.js Dosyası (Vendor)
 `qz-tray.js` dosyası otomatik indirilir. Gerekirse manuel:

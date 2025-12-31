@@ -13,6 +13,7 @@ Başlangıç: `docs/00-hizli-baslangic.md`
 - `docs/07-sorun-giderme.md`
 - `docs/08-acilis-checklist.md`
 - `docs/09-surum-notlari.md`
+- `docs/10-saha-testi.md`
 - `docs/kalite-kriterleri.md`
 
 Ekler:

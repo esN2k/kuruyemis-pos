@@ -8,6 +8,11 @@ Amaç: 5 dakika içinde POS'u ayağa kaldırmak, yazdırmayı test etmek ve tart
 ```
 Beklenen sonuç: Kurulum tamamlanır, doktor + duman testi çalışır.
 
+Demo verisi yüklemek için:
+```powershell
+.\scripts\windows\kur.ps1 -DemoVeriYukle
+```
+
 ## 1) Önkoşul kontrolü
 ```powershell
 .\scripts\windows\00-onkosul-kontrol.ps1
@@ -62,3 +67,13 @@ Beklenen sonuç: Tüm kontroller **OK**.
 Not: Gerçek baskı için `DRY_RUN=0 .\scripts\windows\09-smoke-test.ps1 -SiteAdi kuruyemis.local`.
 
 Sonraki adım: `docs/01-kurulum.md` ve `docs/06-operasyon.md`.
+
+## Sık Sorulan Sorular
+**Q: QZ Tray uyarısı görünüyor, sorun mu?**  
+**A:** Geliştirme ortamında uyarı normaldir. Üretimde imzalı istek gerekir.
+
+**Q: Site açılmıyor (`http://kuruyemis.local:8080`)?**  
+**A:** `.\scripts\windows\05-doctor.ps1` çalıştırın ve servis durumunu kontrol edin.
+
+**Q: Demo verisi nasıl yüklenir?**  
+**A:** `.\scripts\windows\04-uygulamalari-kur.ps1 -SiteAdi kuruyemis.local -DemoVeriYukle` çalıştırın.

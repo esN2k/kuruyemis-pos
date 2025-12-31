@@ -6,6 +6,8 @@
     receiptPrinter: "ZY907",
     labelPrinter: "X-Printer 490B",
     labelSizePreset: "38x80",
+    receiptTemplate: "kuruyemis",
+    labelTemplate: "kuruyemis",
   };
   const SETTINGS_DOCTYPE = "POS Printing Settings";
   let settingsCache = null;
@@ -78,6 +80,8 @@
       receiptPrinter: DEFAULTS.receiptPrinter,
       labelPrinter: DEFAULTS.labelPrinter,
       labelSizePreset: DEFAULTS.labelSizePreset,
+      receiptTemplate: DEFAULTS.receiptTemplate,
+      labelTemplate: DEFAULTS.labelTemplate,
     };
 
     if (!window.frappe || !frappe.call) {
@@ -92,6 +96,8 @@
         receiptPrinter: data.receipt_printer_name || defaults.receiptPrinter,
         labelPrinter: data.label_printer_name || defaults.labelPrinter,
         labelSizePreset: data.label_size_preset || defaults.labelSizePreset,
+        receiptTemplate: data.receipt_template || defaults.receiptTemplate,
+        labelTemplate: data.label_template || defaults.labelTemplate,
       };
       return settingsCache;
     } catch (err) {
@@ -108,25 +114,25 @@
     return err.message || String(err);
   }
 
-  async function getReceiptPayload() {
+  async function getReceiptPayload(template) {
     if (!window.ck_qz_examples || !window.ck_qz_examples.receiptPayload) {
       throw new Error(__("Receipt payload not ready"));
     }
-    return window.ck_qz_examples.receiptPayload();
+    return window.ck_qz_examples.receiptPayload({ template });
   }
 
-  async function getLabelPayload() {
+  async function getLabelPayload(template) {
     if (!window.ck_qz_examples || !window.ck_qz_examples.labelPayloadTspl) {
       throw new Error(__("Label payload not ready"));
     }
-    return window.ck_qz_examples.labelPayloadTspl();
+    return window.ck_qz_examples.labelPayloadTspl({ template });
   }
 
   async function printReceipt() {
     try {
       const settings = await loadSettings();
       const printer = settings.receiptPrinter || DEFAULTS.receiptPrinter;
-      const payload = await getReceiptPayload();
+      const payload = await getReceiptPayload(settings.receiptTemplate || DEFAULTS.receiptTemplate);
       await window.ck_qz.printRaw(printer, payload);
       notify(__("Receipt sent to printer: {0}", [printer]));
     } catch (err) {
@@ -139,7 +145,7 @@
     try {
       const settings = await loadSettings();
       const printer = settings.labelPrinter || DEFAULTS.labelPrinter;
-      const payload = await getLabelPayload();
+      const payload = await getLabelPayload(settings.labelTemplate || DEFAULTS.labelTemplate);
       await window.ck_qz.printRaw(printer, payload);
       notify(__("Label sent to printer: {0}", [printer]));
     } catch (err) {

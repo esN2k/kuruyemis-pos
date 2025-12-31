@@ -44,6 +44,10 @@ PP IIIII IIIII C
 2) Barkodu POS'ta tarayın
 3) Beklenen: ürün sepete otomatik düşer, miktar/fiyat dolu gelir
 
+## POS İçinde Barkod Doğrulama
+`/app/pos_printer_setup` sayfasındaki **Barkod Doğrulama** alanına barkodu girin.  
+Beklenen sonuç: Eşleşen kural, PLU ve ağırlık/fiyat bilgileri Türkçe olarak görünür.
+
 ## Konfigürasyon
 - DocType: **Tartılı Barkod Kuralı**
 - `Ürün Kodu Hedefi` alanı: `Tartı PLU` (önerilen)

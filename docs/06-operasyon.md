@@ -41,6 +41,15 @@ Beklenen: `support_bundle/` altında zip.
 .\scripts\windows\05-doctor.ps1 -SiteAdi kuruyemis.local
 ```
 
+## Saha Testi
+```powershell
+.\scripts\windows\11-saha-test.ps1 -SiteAdi kuruyemis.local
+```
+Gerçek baskı için:
+```powershell
+.\scripts\windows\11-saha-test.ps1 -SiteAdi kuruyemis.local -GercekBaski
+```
+
 ## POS Awesome Güncelleme Notu
 - Repo: `https://github.com/defendicon/POS-Awesome-V15`
 - Deterministik kurulum adımları `scripts/windows/04-uygulamalari-kur.ps1` içinde uygulanır:
