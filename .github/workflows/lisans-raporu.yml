@@ -1,0 +1,109 @@
+name: lisans-raporu
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+  schedule:
+    - cron: "0 3 * * 0"
+  workflow_dispatch:
+
+jobs:
+  lisans-raporu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Python lisans raporları
+        run: |
+          set -e
+          mkdir -p docs/lisans-raporlari
+          for svc in fiscal-adapter hardware-bridge; do
+            python -m venv "/tmp/venv-${svc}"
+            source "/tmp/venv-${svc}/bin/activate"
+            pip install --quiet --upgrade pip
+            pip install --quiet -r "services/${svc}/requirements.txt"
+            pip install --quiet pip-licenses
+            pip-licenses --format=csv --output-file "docs/lisans-raporlari/python-${svc}.csv"
+            pip-licenses --format=json --output-file "docs/lisans-raporlari/python-${svc}.json"
+            deactivate
+            rm -rf "/tmp/venv-${svc}"
+          done
+
+      - name: Node lisans raporu
+        run: |
+          set -e
+          if ! find . -name package.json -not -path "*/node_modules/*" | grep -q .; then
+            echo "Bu repoda package.json bulunamadı; Node lisans raporu üretilmedi." > docs/lisans-raporlari/node-yok.txt
+            exit 0
+          fi
+          npm install -g license-checker
+          for pkg in $(find . -name package.json -not -path "*/node_modules/*"); do
+            dir=$(dirname "$pkg")
+            name=$(basename "$dir")
+            if [ -f "$dir/package-lock.json" ]; then
+              npm ci --prefix "$dir"
+            elif [ -f "$dir/yarn.lock" ]; then
+              yarn --cwd "$dir" install --frozen-lockfile
+            elif [ -f "$dir/pnpm-lock.yaml" ]; then
+              pnpm --dir "$dir" install --frozen-lockfile
+            else
+              npm install --prefix "$dir"
+            fi
+            license-checker --production --json --out "docs/lisans-raporlari/node-${name}.json" --start "$dir"
+          done
+
+      - name: Belirsiz lisans kontrolü
+        run: |
+          python - <<'PY'
+          import json
+          import glob
+          import sys
+
+          def iter_items(path):
+            with open(path, "r", encoding="utf-8") as f:
+              data = json.load(f)
+            if isinstance(data, dict):
+              return list(data.values())
+            if isinstance(data, list):
+              return data
+            return [data]
+
+          def has_unknown(items):
+            for item in items:
+              lic = str(item.get("License") or item.get("licenses") or "").strip()
+              if not lic or "UNKNOWN" in lic or "UNLICENSED" in lic or "NOASSERTION" in lic or "SEE LICENSE" in lic:
+                return True
+            return False
+
+          files = glob.glob("docs/lisans-raporlari/*.json")
+          bad = [p for p in files if has_unknown(iter_items(p))]
+          if bad:
+            print("Belirsiz lisans tespit edildi:", ", ".join(bad))
+            sys.exit(1)
+          PY
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lisans-raporlari
+          path: docs/lisans-raporlari
+
+      - name: Lisans raporlarını PR olarak aç
+        if: github.event_name != 'pull_request'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "Lisans raporlarını güncelle"
+          title: "Lisans raporlarını güncelle"
+          body: |
+            Bu PR otomatik olarak oluşturuldu.
+
+            Güncellenen raporlar:
+            - Python lisans raporları (fiscal-adapter, hardware-bridge)
+            - Node lisans raporları (varsa)
+          branch: "bot/lisans-raporu"
+          add-paths: |
+            docs/lisans-raporlari/**

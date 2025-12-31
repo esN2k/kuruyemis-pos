@@ -14,6 +14,48 @@ jobs:
           python-version: "3.11"
       - name: Bağımlılıkları kur
         run: pip install pytest ruff black
+      - name: UTF-8 kontrolü
+        run: |
+          python - <<'PY'
+          import glob
+          import os
+          import sys
+
+          patterns = ["Ã¶", "Ã¼", "Ã§", "ÃŸ", "Ã–", "Ãœ", "Ã‡", "ÅŸ", "Åž", "Ä±", "ÄŸ"]
+          targets = [
+              "README.md",
+              "THIRD_PARTY_NOTICES.md",
+              "LISANS_VE_DAGITIM.md",
+          ]
+          targets += glob.glob("docs/**/*.md", recursive=True)
+          targets += glob.glob("scripts/**/*.ps1", recursive=True)
+          targets += glob.glob("frappe_apps/**/translations/*.csv", recursive=True)
+
+          bad = []
+          mojibake = []
+          skip_mojibake = {"scripts/windows/05-doctor.ps1"}
+          for path in targets:
+            if not os.path.exists(path):
+              continue
+            try:
+              with open(path, "rb") as f:
+                data = f.read()
+              text = data.decode("utf-8", errors="strict")
+            except Exception:
+              bad.append(path)
+              continue
+            if path.replace("\\", "/") in skip_mojibake:
+              continue
+            if any(p in text for p in patterns):
+              mojibake.append(path)
+
+          if bad:
+            print("UTF-8 kodlama hatası:", ", ".join(bad))
+            sys.exit(1)
+          if mojibake:
+            print("Bozuk Türkçe karakter şüphesi:", ", ".join(mojibake))
+            sys.exit(1)
+          PY
       - name: Ruff kontrolü
         run: ruff check frappe_apps/ck_kuruyemis_pos services
       - name: Black kontrolü

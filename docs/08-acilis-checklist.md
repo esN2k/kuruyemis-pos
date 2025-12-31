@@ -1,13 +1,13 @@
 # 08 - Açılış Checklist
 
-Yazdırıp kasada kullanın.
+Bu liste yazdırılabilir ve sahada kutucuk işaretlemek içindir.
 
-- [ ] Elektrik ve ağ bağlantıları kontrol edildi
-- [ ] Docker servisleri ayakta (`02-baslat.ps1`)
-- [ ] QZ Tray çalışıyor (tray ikonu görünür)
-- [ ] Fiş yazıcısı test baskısı alındı
-- [ ] Raf etiketi test baskısı alındı
-- [ ] CL3000 tartıdan barkod okunup sepete düştü
-- [ ] M530 manuel mali fiş akışı çalışıyor
-- [ ] Kasa kullanıcıları giriş yapabildi
-- [ ] Gün sonu için yedekleme planı hazır
+- [ ] Docker servisleri ayakta
+- [ ] Site açılıyor (`http://kuruyemis.local:8080`)
+- [ ] POS Awesome giriş yapılabiliyor
+- [ ] Tartılı barkod kuralı aktif (prefix 20/21)
+- [ ] Barkod taramada ürün sepete düşüyor
+- [ ] QZ Tray açık ve yazıcı listesi geliyor
+- [ ] Bilgi fişi (mali değil) test baskısı alındı
+- [ ] Raf etiketi (38x80) test baskısı alındı
+- [ ] M530 üzerinde manuel mali fiş akışı doğrulandı

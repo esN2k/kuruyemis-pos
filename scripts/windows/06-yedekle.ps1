@@ -1,4 +1,4 @@
-param(
+﻿param(
   [Parameter(Mandatory = $true)][string]$SiteAdi
 )
 
@@ -37,3 +37,4 @@ try {
   Write-Hata "Yedek dosyaları kopyalanamadı." "Docker yetkilerini ve site adını kontrol edin."
   exit 1
 }
+

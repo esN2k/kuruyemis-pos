@@ -1,4 +1,4 @@
-param(
+﻿param(
   [switch]$QzYenile
 )
 
@@ -82,3 +82,4 @@ if ($QzYenile -or -not (Test-Path $qzVendor)) {
 } else {
   Write-Ok "qz-tray.js zaten mevcut."
 }
+

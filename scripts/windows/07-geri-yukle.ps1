@@ -1,4 +1,4 @@
-param(
+﻿param(
   [Parameter(Mandatory = $true)][string]$SiteAdi,
   [Parameter(Mandatory = $true)][string]$YedekKlasoru
 )
@@ -52,3 +52,4 @@ try {
   Write-Hata "Geri yükleme başarısız." "Yedek dosyalarını ve site adını kontrol edin."
   exit 1
 }
+

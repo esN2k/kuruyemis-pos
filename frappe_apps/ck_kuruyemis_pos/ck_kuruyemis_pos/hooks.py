@@ -5,8 +5,9 @@ app_description = "Kuruyemiş POS özelleştirmeleri ve tartılı barkod iş ak�
 app_email = "ops@example.com"
 app_license = "GPLv3"
 
-# Desk-only JS assets for QZ Tray demo in POS Awesome.
+# Desk-only JS assets for QZ Tray actions in POS Awesome.
 app_include_js = [
+    "/assets/ck_kuruyemis_pos/js/qz/receipt-builder.js",
     "/assets/ck_kuruyemis_pos/js/qz/qz-wrapper.js",
     "/assets/ck_kuruyemis_pos/js/qz/qz-examples.js",
     "/assets/ck_kuruyemis_pos/js/qz/qz-posawesome.js",

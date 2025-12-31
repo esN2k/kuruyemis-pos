@@ -1,28 +1,28 @@
-version: "3.8"
-
 services:
   backend:
     volumes:
-      - ../frappe_apps/ck_kuruyemis_pos:/home/frappe/frappe-bench/apps/ck_kuruyemis_pos
+      - ../../frappe_apps/ck_kuruyemis_pos:/home/frappe/frappe-bench/apps/ck_kuruyemis_pos
   frontend:
     volumes:
-      - ../frappe_apps/ck_kuruyemis_pos:/home/frappe/frappe-bench/apps/ck_kuruyemis_pos
+      - ../../frappe_apps/ck_kuruyemis_pos:/home/frappe/frappe-bench/apps/ck_kuruyemis_pos
+    ports:
+      - "8080:8080"
   websocket:
     volumes:
-      - ../frappe_apps/ck_kuruyemis_pos:/home/frappe/frappe-bench/apps/ck_kuruyemis_pos
+      - ../../frappe_apps/ck_kuruyemis_pos:/home/frappe/frappe-bench/apps/ck_kuruyemis_pos
   queue-short:
     volumes:
-      - ../frappe_apps/ck_kuruyemis_pos:/home/frappe/frappe-bench/apps/ck_kuruyemis_pos
+      - ../../frappe_apps/ck_kuruyemis_pos:/home/frappe/frappe-bench/apps/ck_kuruyemis_pos
   queue-long:
     volumes:
-      - ../frappe_apps/ck_kuruyemis_pos:/home/frappe/frappe-bench/apps/ck_kuruyemis_pos
+      - ../../frappe_apps/ck_kuruyemis_pos:/home/frappe/frappe-bench/apps/ck_kuruyemis_pos
   scheduler:
     volumes:
-      - ../frappe_apps/ck_kuruyemis_pos:/home/frappe/frappe-bench/apps/ck_kuruyemis_pos
+      - ../../frappe_apps/ck_kuruyemis_pos:/home/frappe/frappe-bench/apps/ck_kuruyemis_pos
   fiscal-adapter:
     profiles: ["optional"]
     build:
-      context: ../services/fiscal-adapter
+      context: ../../services/fiscal-adapter
     ports:
       - "8090:8090"
     environment:
@@ -33,6 +33,6 @@ services:
   hardware-bridge:
     profiles: ["optional"]
     build:
-      context: ../services/hardware-bridge
+      context: ../../services/hardware-bridge
     ports:
       - "8091:8091"

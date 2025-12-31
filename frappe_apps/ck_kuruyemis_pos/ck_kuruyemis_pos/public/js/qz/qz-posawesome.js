@@ -108,11 +108,26 @@
     return err.message || String(err);
   }
 
+  async function getReceiptPayload() {
+    if (!window.ck_qz_examples || !window.ck_qz_examples.receiptPayload) {
+      throw new Error(__("Receipt payload not ready"));
+    }
+    return window.ck_qz_examples.receiptPayload();
+  }
+
+  async function getLabelPayload() {
+    if (!window.ck_qz_examples || !window.ck_qz_examples.labelPayloadTspl) {
+      throw new Error(__("Label payload not ready"));
+    }
+    return window.ck_qz_examples.labelPayloadTspl();
+  }
+
   async function printReceipt() {
     try {
       const settings = await loadSettings();
       const printer = settings.receiptPrinter || DEFAULTS.receiptPrinter;
-      await window.ck_qz.printRaw(printer, window.ck_qz_examples.receiptPayload());
+      const payload = await getReceiptPayload();
+      await window.ck_qz.printRaw(printer, payload);
       notify(__("Receipt sent to printer: {0}", [printer]));
     } catch (err) {
       console.error(err);
@@ -124,7 +139,8 @@
     try {
       const settings = await loadSettings();
       const printer = settings.labelPrinter || DEFAULTS.labelPrinter;
-      await window.ck_qz.printRaw(printer, window.ck_qz_examples.labelPayloadTspl());
+      const payload = await getLabelPayload();
+      await window.ck_qz.printRaw(printer, payload);
       notify(__("Label sent to printer: {0}", [printer]));
     } catch (err) {
       console.error(err);

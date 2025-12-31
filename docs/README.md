@@ -17,4 +17,7 @@ Başlangıç: `docs/00-hizli-baslangic.md`
 
 Ekler:
 - `docs/fiscal/gmp3-notes.md`
+- `docs/printing/qz-tray.md`
 - `docs/workflows/kuruyemis-workflows.md`
+- `docs/workflows/printing.md`
+- `docs/lisans-raporlari/README.md`

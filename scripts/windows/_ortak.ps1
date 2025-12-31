@@ -1,8 +1,34 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
+
+function Initialize-KonsolUtf8 {
+  $utf8 = New-Object System.Text.UTF8Encoding($false)
+  $global:OutputEncoding = $utf8
+  [Console]::OutputEncoding = $utf8
+  [Console]::InputEncoding = $utf8
+  if ($Host.Name -eq "ConsoleHost") {
+    try {
+      & cmd /c "chcp 65001 >nul" | Out-Null
+    } catch {
+      # Kod sayfası değiştirilemezse sessizce devam et.
+    }
+  }
+}
+
+Initialize-KonsolUtf8
+
+$script:OrtakRoot = $PSScriptRoot
+if (-not $script:OrtakRoot -and $MyInvocation.PSCommandPath) {
+  $script:OrtakRoot = Split-Path -Parent $MyInvocation.PSCommandPath
+}
+if (-not $script:OrtakRoot -and $MyInvocation.MyCommand.Path) {
+  $script:OrtakRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+}
 
 function Get-RepoRoot {
-  $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-  return (Resolve-Path (Join-Path $scriptDir "..\.."))
+  if (-not $script:OrtakRoot) {
+    throw "Ortak script yolu bulunamadı. scripts/windows/_ortak.ps1 konumunu kontrol edin."
+  }
+  return (Resolve-Path (Join-Path $script:OrtakRoot "..\.."))
 }
 
 function Get-InfraDir {
@@ -13,11 +39,27 @@ function Get-FrappeDockerDir {
   return (Join-Path (Get-InfraDir) "frappe_docker")
 }
 
+function Get-DbPassword {
+  $envPath = Join-Path (Get-FrappeDockerDir) ".env"
+  if (Test-Path $envPath) {
+    $line = Get-Content $envPath | Where-Object { $_ -match '^DB_PASSWORD=' } | Select-Object -First 1
+    if ($line) {
+      $value = $line.Split('=', 2)[1]
+      if ($value) {
+        return $value
+      }
+    }
+  }
+  return "123"
+}
+
 function Get-ComposeArgs {
   $infraDir = Get-InfraDir
   $frappeDockerDir = Get-FrappeDockerDir
   return @(
     "-f", (Join-Path $frappeDockerDir "compose.yaml"),
+    "-f", (Join-Path $frappeDockerDir "overrides\\compose.mariadb.yaml"),
+    "-f", (Join-Path $frappeDockerDir "overrides\\compose.redis.yaml"),
     "-f", (Join-Path $infraDir "docker-compose.override.yaml")
   )
 }
@@ -60,3 +102,4 @@ function Ensure-Path {
     exit 1
   }
 }
+

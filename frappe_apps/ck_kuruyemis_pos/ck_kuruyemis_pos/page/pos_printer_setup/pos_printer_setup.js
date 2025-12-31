@@ -6,6 +6,8 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
   });
 
   const SETTINGS_DOCTYPE = "POS Printing Settings";
+  const JSBARCODE_PATH = "/assets/ck_kuruyemis_pos/js/qz/vendor/jsbarcode.all.min.js";
+  let jsBarcodePromise = null;
 
   const fieldGroup = new frappe.ui.FieldGroup({
     body: page.body,
@@ -51,10 +53,83 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
 
   fieldGroup.make();
 
+  const previewTitle = document.createElement("h3");
+  previewTitle.textContent = __("Label Preview");
+  previewTitle.style.marginTop = "24px";
+  page.body.appendChild(previewTitle);
+
+  const previewGroup = new frappe.ui.FieldGroup({
+    body: page.body,
+    fields: [
+      {
+        fieldname: "preview_item_name",
+        label: __("Label Preview Item Name"),
+        fieldtype: "Data",
+        default: "Antep Fıstığı",
+      },
+      {
+        fieldname: "preview_price",
+        label: __("Label Preview Price"),
+        fieldtype: "Data",
+        default: "93.75",
+      },
+      {
+        fieldname: "preview_plu",
+        label: __("Label Preview PLU"),
+        fieldtype: "Data",
+        default: "12345",
+      },
+      {
+        fieldname: "preview_barcode",
+        label: __("Label Preview Barcode"),
+        fieldtype: "Data",
+        default: "2101234002508",
+      },
+      {
+        fieldname: "preview_html",
+        fieldtype: "HTML",
+      },
+    ],
+  });
+
+  previewGroup.make();
+
+  const previewField = previewGroup.get_field("preview_html");
+  previewField.$wrapper.html(`
+    <div style="border:1px solid #e5e7eb;padding:12px;border-radius:8px;max-width:320px;">
+      <div id="ck-label-preview-name" style="font-weight:600;font-size:14px;"></div>
+      <div id="ck-label-preview-price" style="margin-top:4px;font-size:13px;"></div>
+      <div id="ck-label-preview-plu" style="margin-top:4px;color:#6b7280;font-size:12px;"></div>
+      <svg id="ck-label-preview-barcode"></svg>
+      <div id="ck-label-preview-note" style="margin-top:6px;color:#ef4444;font-size:12px;"></div>
+    </div>
+  `);
+
   function showAlert(message, indicator) {
     if (frappe.show_alert) {
       frappe.show_alert({ message, indicator: indicator || "green" });
     }
+  }
+
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.async = true;
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  }
+
+  function ensureJsBarcode() {
+    if (window.JsBarcode) {
+      return Promise.resolve();
+    }
+    if (!jsBarcodePromise) {
+      jsBarcodePromise = loadScript(JSBARCODE_PATH);
+    }
+    return jsBarcodePromise;
   }
 
   async function loadSettings() {
@@ -122,7 +197,8 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
         frappe.msgprint({ message: __("Select a receipt printer first"), indicator: "orange" });
         return;
       }
-      await window.ck_qz.printRaw(printer, window.ck_qz_examples.receiptPayload());
+      const payload = await window.ck_qz_examples.receiptPayload();
+      await window.ck_qz.printRaw(printer, payload);
       showAlert(__("Receipt sent to printer: {0}", [printer]));
     } catch (err) {
       console.error(err);
@@ -146,13 +222,69 @@ frappe.pages["pos_printer_setup"].on_page_load = function (wrapper) {
     }
   }
 
+  async function renderPreview() {
+    const values = previewGroup.get_values();
+    const itemName = values.preview_item_name || "";
+    const price = values.preview_price || "";
+    const plu = values.preview_plu || "";
+    const barcode = values.preview_barcode || "";
+
+    const nameEl = document.getElementById("ck-label-preview-name");
+    const priceEl = document.getElementById("ck-label-preview-price");
+    const pluEl = document.getElementById("ck-label-preview-plu");
+    const noteEl = document.getElementById("ck-label-preview-note");
+    const barcodeEl = document.getElementById("ck-label-preview-barcode");
+
+    if (nameEl) nameEl.textContent = itemName ? itemName : __("Label Preview Item Name");
+    if (priceEl) priceEl.textContent = price ? `${price} TRY` : __("Label Preview Price");
+    if (pluEl) pluEl.textContent = plu ? `PLU: ${plu}` : "";
+    if (noteEl) noteEl.textContent = "";
+
+    if (!barcode) {
+      if (noteEl) noteEl.textContent = __("Label Preview Barcode Missing");
+      if (barcodeEl) barcodeEl.innerHTML = "";
+      return;
+    }
+
+    if (barcode.length !== 13) {
+      if (noteEl) noteEl.textContent = __("Label Preview Barcode Invalid");
+      if (barcodeEl) barcodeEl.innerHTML = "";
+      return;
+    }
+
+    try {
+      await ensureJsBarcode();
+      if (window.JsBarcode && barcodeEl) {
+        window.JsBarcode(barcodeEl, barcode, {
+          format: "EAN13",
+          displayValue: true,
+          width: 2,
+          height: 60,
+          fontSize: 12,
+          margin: 0,
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      if (noteEl) noteEl.textContent = __("Label Preview Barcode Render Failed");
+    }
+  }
+
   fieldGroup.get_field("btn_refresh").$input.on("click", refreshPrinters);
   fieldGroup.get_field("btn_save").$input.on("click", saveSettings);
   fieldGroup.get_field("btn_test_receipt").$input.on("click", testReceipt);
   fieldGroup.get_field("btn_test_label").$input.on("click", testLabel);
 
+  ["preview_item_name", "preview_price", "preview_plu", "preview_barcode"].forEach((fieldname) => {
+    const field = previewGroup.get_field(fieldname);
+    if (field && field.$input) {
+      field.$input.on("input", renderPreview);
+    }
+  });
+
   (async () => {
     await refreshPrinters();
     await applySettingsToFields();
+    await renderPreview();
   })();
 };

@@ -1,6 +1,7 @@
 /*
-  Minimal QZ Tray wrapper used by POS Awesome demo buttons.
+  Minimal QZ Tray wrapper used by POS Awesome actions.
   Requires qz-tray.js loaded before or via dynamic loader.
+  Optional: window.ck_qz_security can override certificate/signature promises.
 */
 (function () {
   "use strict";
@@ -29,17 +30,20 @@
     return loadPromise;
   }
 
-  function setDevSecurity() {
+  function setSecurity() {
     if (!window.qz || !qz.security) {
       return;
     }
-    qz.security.setCertificatePromise(() => Promise.resolve(null));
-    qz.security.setSignaturePromise(() => Promise.resolve(null));
+    const security = window.ck_qz_security || {};
+    const certificatePromise = security.certificatePromise || (() => Promise.resolve(null));
+    const signaturePromise = security.signaturePromise || (() => Promise.resolve(null));
+    qz.security.setCertificatePromise(certificatePromise);
+    qz.security.setSignaturePromise(signaturePromise);
   }
 
   async function connect() {
     await ensureQzLoaded();
-    setDevSecurity();
+    setSecurity();
     if (!qz.websocket.isActive()) {
       await qz.websocket.connect();
     }

@@ -1,4 +1,4 @@
-param(
+﻿param(
   [string]$SiteAdi = "kuruyemis.local",
   [string]$SiteUrl,
   [string]$FisYazici,
@@ -12,32 +12,31 @@ $composeArgs = Get-ComposeArgs
 $doPrint = $GercekBaski -or ($env:DRY_RUN -eq "0")
 
 if (-not $SiteUrl) {
-  $SiteUrl = "http://$SiteAdi:8080"
+  $SiteUrl = "http://${SiteAdi}:8080"
 }
 
 Write-Bilgi "Duman testi başlıyor..."
 
 Write-Bilgi "Pytest çalıştırılıyor..."
-try {
-  docker compose @composeArgs exec backend bash -lc "pip -q install pytest && PYTHONPATH=/home/frappe/frappe-bench/apps/ck_kuruyemis_pos pytest /home/frappe/frappe-bench/apps/ck_kuruyemis_pos/ck_kuruyemis_pos/tests"
+docker compose @composeArgs exec backend bash -lc "pip -q install pytest && PYTHONPATH=/home/frappe/frappe-bench/apps/ck_kuruyemis_pos pytest /home/frappe/frappe-bench/apps/ck_kuruyemis_pos/ck_kuruyemis_pos/tests"
+if ($LASTEXITCODE -eq 0) {
   Write-Ok "Pytest başarılı."
-} catch {
+} else {
   Write-Hata "Pytest başarısız." "Test çıktısını kontrol edin."
   exit 1
 }
 
 Write-Bilgi "Barkod presetleri kontrol ediliyor..."
-try {
-  $result = docker compose @composeArgs exec backend bench --site $SiteAdi execute ck_kuruyemis_pos.utils.check_weighed_barcode_presets
-  $lastLine = $result | Select-Object -Last 1
-  if ($lastLine -match "missing" -and $lastLine -match "\[\]") {
-    Write-Ok "Tartılı barkod presetleri mevcut."
-  } else {
-    Write-Hata "Tartılı barkod presetleri eksik." "04-uygulamalari-kur.ps1 çalıştırın."
-    exit 1
-  }
-} catch {
+$result = docker compose @composeArgs exec backend bench --site $SiteAdi execute ck_kuruyemis_pos.utils.check_weighed_barcode_presets
+if ($LASTEXITCODE -ne 0) {
   Write-Hata "Preset kontrolü başarısız." "Site adını ve servisleri kontrol edin."
+  exit 1
+}
+$lastLine = $result | Select-Object -Last 1
+if ($lastLine -match "missing" -and $lastLine -match "\[\]") {
+  Write-Ok "Tartılı barkod presetleri mevcut."
+} else {
+  Write-Hata "Tartılı barkod presetleri eksik." "04-uygulamalari-kur.ps1 çalıştırın."
   exit 1
 }
 
@@ -58,6 +57,7 @@ function Get-PrinterSetting {
   param([string]$FieldName)
   try {
     $output = docker compose @composeArgs exec backend bench --site $SiteAdi execute frappe.db.get_single_value --kwargs "{'doctype':'POS Printing Settings','fieldname':'$FieldName'}"
+    if ($LASTEXITCODE -ne 0) { return "" }
     $line = $output | Select-Object -Last 1
     $line = $line.Trim()
     if ($line -and $line -ne "None") { return $line }
@@ -95,7 +95,7 @@ $html = @"
 
     const receiptData = ['\\x1B@',
       'CK KURUYEMİŞ POS\\n',
-      'Mali olmayan fiş (duman testi)\\n',
+      'Bilgi Fişi (Mali Değil) - Duman Testi\\n',
       '---------------------------\\n',
       'Ürün: Antep Fıstığı\\n',
       'Miktar: 0.250 kg\\n',
@@ -133,7 +133,7 @@ $html = @"
       .then(printer => qz.print(qz.configs.create(printer, { encoding: 'utf-8' }), [receiptData]))
       .then(() => qz.printers.find(labelPrinter))
       .then(printer => qz.print(qz.configs.create(printer, { encoding: 'utf-8' }), [labelData]))
-      .then(() => setStatus('Baskı tamamlandı. Fiş ve etiket çıktılarını kontrol edin.', false))
+      .then(() => setStatus('Baskı tamamlandı. Fiş ve etiket çıktısını kontrol edin.', false))
       .catch(err => setStatus('Baskı hatası: ' + err, true));
   </script>
 </body>

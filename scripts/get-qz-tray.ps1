@@ -1,4 +1,4 @@
-param(
+﻿param(
   [string]$Version,
   [string]$VersionsEnv = (Join-Path $PSScriptRoot "..\infra\versions.env"),
   [string]$OutputPath = (Join-Path $PSScriptRoot "..\frappe_apps\ck_kuruyemis_pos\ck_kuruyemis_pos\public\js\qz\vendor\qz-tray.js"),
@@ -49,3 +49,4 @@ if (Test-Path $DocPath) {
   }
   Set-Content -Encoding UTF8 -Path $DocPath -Value $content
 }
+

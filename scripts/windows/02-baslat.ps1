@@ -1,4 +1,4 @@
-param(
+﻿param(
   [switch]$OpsiyonelServisler,
   [switch]$WithOptionalServices
 )
@@ -13,10 +13,10 @@ if ($useOptional) {
 }
 
 Write-Bilgi "Docker servisleri başlatılıyor..."
-try {
-  docker compose @composeArgs up -d
-  Write-Ok "Servisler ayakta."
-} catch {
-  Write-Hata "Docker servisleri başlatılamadı." "Docker Desktop çalışıyor mu kontrol edin."
+docker compose @composeArgs up -d
+if ($LASTEXITCODE -ne 0) {
+  Write-Hata "Docker servisleri başlatılamadı." "Docker Desktop çalışıyor mu ve compose hatalarını kontrol edin."
   exit 1
 }
+Write-Ok "Servisler ayakta."
+

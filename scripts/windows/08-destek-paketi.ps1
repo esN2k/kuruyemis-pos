@@ -1,4 +1,4 @@
-param(
+﻿param(
   [string]$SiteAdi = "kuruyemis.local"
 )
 
@@ -56,3 +56,4 @@ try {
   Write-Hata "Destek paketi ziplenemedi." "Disk alanını ve izinleri kontrol edin."
   exit 1
 }
+

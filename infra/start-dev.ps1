@@ -1,4 +1,4 @@
-param(
+﻿param(
   [switch]$WithOptionalServices
 )
 
@@ -9,3 +9,4 @@ if ($WithOptionalServices) {
 } else {
   & $target
 }
+

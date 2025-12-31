@@ -1,4 +1,4 @@
-. "$PSScriptRoot\_ortak.ps1"
+﻿. "$PSScriptRoot\_ortak.ps1"
 
 Write-Bilgi "Önkoşul kontrolü başlıyor..."
 
@@ -7,21 +7,19 @@ Test-Komut "git" "Git bulunamadı."
 
 Write-Ok "Git erişilebilir."
 
-try {
-  docker info | Out-Null
-  Write-Ok "Docker Desktop çalışıyor."
-} catch {
+docker info *> $null
+if ($LASTEXITCODE -ne 0) {
   Write-Hata "Docker Desktop çalışmıyor." "Docker Desktop'ı başlatın ve tekrar deneyin."
   exit 1
 }
+Write-Ok "Docker Desktop çalışıyor."
 
-try {
-  docker compose version | Out-Null
-  Write-Ok "Docker Compose kullanılabilir."
-} catch {
-  Write-Hata "Docker Compose bulunamadı." "Docker Desktop güncelleyin veya Docker Compose eklentisini kurun."
+docker compose version *> $null
+if ($LASTEXITCODE -ne 0) {
+  Write-Hata "Docker Compose bulunamadı." "Docker Desktop'ı güncelleyin veya Docker Compose eklentisini kurun."
   exit 1
 }
+Write-Ok "Docker Compose kullanılabilir."
 
 if (Get-Command wsl -ErrorAction SilentlyContinue) {
   try {
@@ -76,3 +74,4 @@ if ($qzUsed) {
 }
 
 Write-Ok "Önkoşullar tamam."
+

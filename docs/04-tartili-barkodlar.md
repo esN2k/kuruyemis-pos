@@ -2,15 +2,15 @@
 
 Bu doküman CL3000 tartıdan çıkan tartılı barkodların nasıl çözümlendiğini anlatır.
 
-## EAN‑13 Tartılı Barkod Mantığı
+## EAN-13 Tartılı Barkod Mantığı
 Örnek düzen (13 hane):
 ```
-PP II IIIII C
+PP IIIII IIIII C
 ```
 - `PP`: Prefix (20 veya 21)
 - `IIIII`: PLU (5 hane) → `scale_plu`
 - `IIIII`: Ağırlık (gram) veya Fiyat (kuruş)
-- `C`: EAN‑13 kontrol basamağı
+- `C`: EAN-13 kontrol basamağı
 
 ## Varsayılan Presetler
 1) **Prefix 20** → Ağırlık (gram)

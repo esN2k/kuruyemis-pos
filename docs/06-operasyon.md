@@ -41,9 +41,23 @@ Beklenen: `support_bundle/` altında zip.
 .\scripts\windows\05-doctor.ps1 -SiteAdi kuruyemis.local
 ```
 
+## POS Awesome Güncelleme Notu
+- Repo: `https://github.com/defendicon/POS-Awesome-V15`
+- Deterministik kurulum adımları `scripts/windows/04-uygulamalari-kur.ps1` içinde uygulanır:
+  - `bench get-app`
+  - `bench setup requirements`
+  - `yarn install`
+  - `bench build --app posawesome`
+  - `bench --site <site> migrate`
+- Cache temizliği için `docs/07-sorun-giderme.md` bölümüne bakın.
+
 ## Opsiyonel Servisler
 ```powershell
 .\scripts\windows\02-baslat.ps1 -OpsiyonelServisler
 ```
 - `fiscal-adapter`: `http://localhost:8090/health`
 - `hardware-bridge`: `http://localhost:8091/health`
+
+## Kodlama Standardı
+- Repo standardı: **UTF-8**
+- PowerShell scriptleri Windows PowerShell 5.1 uyumluluğu için **UTF-8 BOM** ile kaydedilir.

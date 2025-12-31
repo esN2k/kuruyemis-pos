@@ -19,8 +19,8 @@ POS -> fiscal-adapter -> M530 (Ethernet)
 ```
 
 ## Hata ve Geri Dönüş
-- Adaptör hata verirse **manuel mali fiş** akışına dönülür
-- Hata logları destek paketine eklenir
+- Adaptör hata verirse **manuel mali fiş** akışına dönülür.
+- Hata logları destek paketine eklenir.
 
 ## Yapılacaklar
 - GMP3 mesaj çerçeveleme
