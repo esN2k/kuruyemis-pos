@@ -43,7 +43,7 @@ def get_sample_print_payloads() -> dict:
         "---------------------------",
         "Afiyet olsun!",
     ]
-    receipt_payload = "\x1B@" + "\n".join(receipt_lines) + "\n\n\n" + "\x1DV1"
+    receipt_payload = "\x1b@" + "\n".join(receipt_lines) + "\n\n\n" + "\x1dV1"
 
     label_payload = "\n".join(
         [

@@ -99,11 +99,11 @@ function Ensure-AppRepo {
   )
 
   $checkCmd = "test -d apps/$AppName/.git"
-  docker compose @composeArgs exec backend bash -lc $checkCmd
+  docker compose @composeArgs exec -T backend bash -lc $checkCmd
   $needsClone = $LASTEXITCODE -ne 0
 
   if (-not $needsClone) {
-    $remoteUrl = docker compose @composeArgs exec backend bash -lc "git -C apps/$AppName remote get-url origin" | Select-Object -Last 1
+    $remoteUrl = docker compose @composeArgs exec -T backend bash -lc "git -C apps/$AppName remote get-url origin" | Select-Object -Last 1
     $remoteNorm = Normalize-GitUrl $remoteUrl
     $expectedNorm = Normalize-GitUrl $RepoUrl
     if ($remoteNorm -ne $expectedNorm) {
@@ -114,18 +114,20 @@ function Ensure-AppRepo {
 
   if ($needsClone) {
     Write-Bilgi "$Label indiriliyor ($Ref)..."
-    docker compose @composeArgs exec backend bash -lc "rm -rf apps/$AppName"
-    docker compose @composeArgs exec @pipEnv backend bench get-app --branch $Ref $RepoUrl
+    docker compose @composeArgs exec -T backend bash -lc "rm -rf apps/$AppName"
+    docker compose @composeArgs exec -T @pipEnv backend bench get-app --branch $Ref $RepoUrl
     if ($LASTEXITCODE -ne 0) {
       Write-Hata "$Label indirilemedi." "İnternet bağlantısını ve Docker loglarını kontrol edin."
       exit 1
     }
   } else {
-    $currentRef = docker compose @composeArgs exec backend bash -lc "git -C apps/$AppName rev-parse HEAD" | Select-Object -Last 1
+    $currentRef = docker compose @composeArgs exec -T backend bash -lc "git -C apps/$AppName rev-parse HEAD" | Select-Object -Last 1
+    $currentRef = $currentRef.Trim()
+    $Ref = $Ref.Trim()
     if ($currentRef -ne $Ref) {
       Write-Uyari "$Label pini güncelleniyor: $currentRef -> $Ref"
-      docker compose @composeArgs exec backend bash -lc "git -C apps/$AppName fetch --all"
-      docker compose @composeArgs exec backend bash -lc "git -C apps/$AppName checkout $Ref"
+      docker compose @composeArgs exec -T backend bash -lc "git -C apps/$AppName fetch --all"
+      docker compose @composeArgs exec -T backend bash -lc "git -C apps/$AppName checkout $Ref"
       if ($LASTEXITCODE -ne 0) {
         Write-Hata "$Label pini güncellenemedi." "Uygulama klasörünü ve git erişimini kontrol edin."
         exit 1
@@ -138,39 +140,70 @@ function Ensure-AppRepo {
 
 function Ensure-FrontendAssets {
   param([string]$AppName, [string]$Label)
-  $hasPackage = docker compose @composeArgs exec backend bash -lc "test -f apps/$AppName/package.json"
-  if ($LASTEXITCODE -eq 0) {
-    Write-Bilgi "$Label ön uç bağımlılıkları (yarn) kuruluyor..."
-    $installPrereqsCmd = "if ! command -v npm >/dev/null 2>&1; then apt-get update && apt-get install -y npm; fi && if ! command -v yarn >/dev/null 2>&1; then npm install -g yarn; fi"
-    docker compose @composeArgs exec --user root backend bash -lc $installPrereqsCmd
-    if ($LASTEXITCODE -ne 0) {
-      Write-Hata "$Label önkoşul kurulumu başarısız (npm/yarn)." "Docker loglarını kontrol edin."
-      exit 1
-    }
-
-    $yarnInstallCmd = "cd apps/$AppName && if [ -f yarn.lock ]; then yarn install --frozen-lockfile; else yarn install; fi"
-    docker compose @composeArgs exec backend bash -lc $yarnInstallCmd
-    if ($LASTEXITCODE -ne 0) {
-      Write-Hata "$Label yarn kurulumu başarısız." "Yarn kurulumunu ve ağ bağlantısını kontrol edin."
-      exit 1
-    }
-
-    Write-Bilgi "$Label asset build çalıştırılıyor..."
-    docker compose @composeArgs exec backend bench build --app $AppName
-    if ($LASTEXITCODE -ne 0) {
-      Write-Hata "$Label build başarısız." "Docker loglarını kontrol edin."
-      exit 1
-    }
+  
+  # package.json varlığını kontrol et
+  docker compose @composeArgs exec -T backend bash -lc "test -f apps/$AppName/package.json"
+  if ($LASTEXITCODE -ne 0) {
+    Write-Bilgi "$Label için package.json bulunamadı, frontend build atlanıyor."
+    return
   }
+  
+  Write-Bilgi "$Label için Node.js/Yarn ortamı hazırlanıyor..."
+  
+  # Node.js ve Yarn kurulumunu deterministik hale getir
+  $setupNodeYarnCmd = @"
+set -e
+# Node.js kontrolü
+if ! command -v node >/dev/null 2>&1; then
+  echo "[HATA] Node.js bulunamadı. Frappe Docker imajı Node.js içermeli."
+  exit 1
+fi
+# Corepack ile Yarn kurulumu (modern yöntem)
+if ! command -v yarn >/dev/null 2>&1; then
+  echo "Yarn bulunamadı, corepack ile aktive ediliyor..."
+  corepack enable || {
+    echo "Corepack başarısız, npm ile yarn kuruluyor..."
+    npm install -g yarn
+  }
+fi
+# Yarn versiyonunu doğrula
+yarn --version || {
+  echo "[HATA] Yarn kurulumu başarısız."
+  exit 1
+}
+"@
+  
+  docker compose @composeArgs exec -T backend bash -lc $setupNodeYarnCmd
+  if ($LASTEXITCODE -ne 0) {
+    Write-Hata "$Label için Node.js/Yarn ortamı hazırlanamadı." "Container içinde Node.js kurulu olmalı."
+    exit 1
+  }
+  
+  Write-Bilgi "$Label ön uç bağımlılıkları (yarn install) kuruluyor..."
+  $yarnInstallCmd = "cd apps/$AppName && yarn install --network-timeout 100000"
+  docker compose @composeArgs exec -T backend bash -lc $yarnInstallCmd
+  if ($LASTEXITCODE -ne 0) {
+    Write-Hata "$Label yarn install başarısız." "Ağ bağlantısını kontrol edin veya yarn cache temizleyin."
+    exit 1
+  }
+  
+  Write-Bilgi "$Label asset build çalıştırılıyor (bench build)..."
+  docker compose @composeArgs exec -T backend bench build --app $AppName
+  if ($LASTEXITCODE -ne 0) {
+    Write-Hata "$Label bench build başarısız." "Docker loglarını kontrol edin."
+    exit 1
+  }
+  
+  Write-Ok "$Label frontend build tamamlandı."
 }
 
 Write-Bilgi "POS Awesome uygulaması kontrol ediliyor..."
 $checkCmd = "test -f apps/posawesome/posawesome/__init__.py"
-docker compose @composeArgs exec backend bash -lc $checkCmd
+docker compose @composeArgs exec -T backend bash -lc $checkCmd
 $needsClone = $LASTEXITCODE -ne 0
 
 if (-not $needsClone) {
-  $remoteUrl = docker compose @composeArgs exec backend bash -lc "git -C apps/posawesome remote get-url origin" | Select-Object -Last 1
+  $remoteUrl = docker compose @composeArgs exec -T backend bash -lc "git -C apps/posawesome remote get-url origin" | Select-Object -Last 1
   $remoteNorm = Normalize-GitUrl $remoteUrl
   $expectedNorm = Normalize-GitUrl $posAwesomeRepo
   if ($remoteNorm -ne $expectedNorm) {
@@ -181,20 +214,22 @@ if (-not $needsClone) {
 
 if ($needsClone) {
   Write-Bilgi "POS Awesome indiriliyor ($posAwesomeRef)..."
-  docker compose @composeArgs exec backend bash -lc "rm -rf apps/posawesome"
-  docker compose @composeArgs exec @pipEnv backend bench get-app --branch $posAwesomeRef $posAwesomeRepo
+  docker compose @composeArgs exec -T backend bash -lc "rm -rf apps/posawesome"
+  docker compose @composeArgs exec -T @pipEnv backend bench get-app --branch $posAwesomeRef $posAwesomeRepo
   if ($LASTEXITCODE -ne 0) {
     Write-Hata "POS Awesome indirilemedi." "İnternet bağlantısını ve Docker loglarını kontrol edin."
     exit 1
   }
 } else {
-  $currentRef = docker compose @composeArgs exec backend bash -lc "git -C apps/posawesome rev-parse HEAD" | Select-Object -Last 1
+  $currentRef = docker compose @composeArgs exec -T backend bash -lc "git -C apps/posawesome rev-parse HEAD" | Select-Object -Last 1
+  $currentRef = $currentRef.Trim()
+  $posAwesomeRef = $posAwesomeRef.Trim()
   if ($currentRef -ne $posAwesomeRef) {
     Write-Uyari "POS Awesome pini güncelleniyor: $currentRef -> $posAwesomeRef"
-    docker compose @composeArgs exec backend bash -lc "git -C apps/posawesome fetch --all"
-    docker compose @composeArgs exec backend bash -lc "git -C apps/posawesome checkout $posAwesomeRef"
+    docker compose @composeArgs exec -T backend bash -lc "git -C apps/posawesome fetch --all"
+    docker compose @composeArgs exec -T backend bash -lc "git -C apps/posawesome checkout $posAwesomeRef"
     if ($LASTEXITCODE -ne 0) {
-      Write-Hata "$Label pini güncellenemedi." "Uygulama klasörünü ve git erişimini kontrol edin."
+      Write-Hata "POS Awesome pini güncellenemedi." "Uygulama klasörünü ve git erişimini kontrol edin."
       exit 1
     }
   } else {
@@ -202,7 +237,7 @@ if ($needsClone) {
   }
 }
 
-$installedApps = docker compose @composeArgs exec backend bench --site $SiteAdi list-apps
+$installedApps = docker compose @composeArgs exec -T backend bench --site $SiteAdi list-apps
 if ($LASTEXITCODE -ne 0) {
   Write-Hata "Uygulama listesi alınamadı." "Site adını ve servisleri kontrol edin."
   exit 1
@@ -210,15 +245,15 @@ if ($LASTEXITCODE -ne 0) {
 
 function Ensure-PythonModule {
   param([string]$ModuleName, [string]$Label)
-  docker compose @composeArgs exec backend bash -lc "python -c \"import $ModuleName\""
+  docker compose @composeArgs exec -T backend bash -lc "python -c \"import $ModuleName\""
   if ($LASTEXITCODE -ne 0) {
     Write-Bilgi "$Label paketleri kuruluyor..."
-    docker compose @composeArgs exec @pipEnv backend bench setup requirements $ModuleName
+    docker compose @composeArgs exec -T @pipEnv backend bench setup requirements $ModuleName
     if ($LASTEXITCODE -ne 0) {
       Write-Hata "$Label paket kurulumu başarısız." "Docker loglarını kontrol edin."
       exit 1
     }
-    docker compose @composeArgs exec backend bash -lc "python -c \"import $ModuleName\""
+    docker compose @composeArgs exec -T backend bash -lc "python -c \"import $ModuleName\""
     if ($LASTEXITCODE -ne 0) {
       Write-Hata "$Label modülü yüklenemedi." "POS Awesome klasörü ve bağımlılıklarını kontrol edin."
       exit 1
@@ -227,7 +262,7 @@ function Ensure-PythonModule {
 }
 
 Write-Bilgi "POS Awesome bağımlılıkları kuruluyor..."
-docker compose @composeArgs exec @pipEnv backend bench setup requirements posawesome
+docker compose @composeArgs exec -T @pipEnv backend bench setup requirements posawesome
 if ($LASTEXITCODE -ne 0) {
   Write-Hata "POS Awesome bağımlılıkları kurulamadı." "Docker loglarını kontrol edin."
   exit 1
@@ -241,7 +276,7 @@ function Ensure-AppInstalled {
     Write-Ok "$Label zaten kurulu."
   } else {
     Write-Bilgi "$Label kuruluyor..."
-    docker compose @composeArgs exec @pipEnv backend bench --site $SiteAdi install-app $AppName
+    docker compose @composeArgs exec -T @pipEnv backend bench --site $SiteAdi install-app $AppName
     if ($LASTEXITCODE -ne 0) {
       Write-Hata "$Label kurulamadı." "Docker loglarını ve site durumunu kontrol edin."
       exit 1
@@ -391,7 +426,7 @@ if ($secimler.Count -gt 0) {
 
   $modulListesi = $secimler -join ","
   Write-Bilgi "Opsiyonel modül kaydı güncelleniyor..."
-  docker compose @composeArgs exec backend bench --site $SiteAdi set-config ck_kuruyemis_pos_optional_modules $modulListesi
+  docker compose @composeArgs exec -T backend bench --site $SiteAdi set-config ck_kuruyemis_pos_optional_modules $modulListesi
   if ($LASTEXITCODE -ne 0) {
     Write-Uyari "Opsiyonel modül kaydı güncellenemedi."
   }
@@ -400,14 +435,14 @@ if ($secimler.Count -gt 0) {
 }
 
 Write-Bilgi "Migrasyon çalıştırılıyor..."
-docker compose @composeArgs exec backend bench --site $SiteAdi migrate
+docker compose @composeArgs exec -T backend bench --site $SiteAdi migrate
 if ($LASTEXITCODE -ne 0) {
   Write-Hata "Migrasyon başarısız." "Docker loglarını ve site durumunu kontrol edin."
   exit 1
 }
 
 Write-Bilgi "TR varsayılanları uygulanıyor (dil, saat dilimi, para birimi)..."
-docker compose @composeArgs exec backend bench --site $SiteAdi execute ck_kuruyemis_pos.utils.set_tr_defaults
+docker compose @composeArgs exec -T backend bench --site $SiteAdi execute ck_kuruyemis_pos.utils.set_tr_defaults
 if ($LASTEXITCODE -ne 0) {
   Write-Hata "TR varsayılanları uygulanamadı." "Site durumunu ve logları kontrol edin."
   exit 1
@@ -415,7 +450,7 @@ if ($LASTEXITCODE -ne 0) {
 
 if ($DemoVeriYukle) {
   Write-Bilgi "Demo verileri yükleniyor..."
-  docker compose @composeArgs exec backend bench --site $SiteAdi execute ck_kuruyemis_pos.demo_data.load_demo_data
+  docker compose @composeArgs exec -T backend bench --site $SiteAdi execute ck_kuruyemis_pos.demo_data.load_demo_data
   if ($LASTEXITCODE -ne 0) {
     Write-Hata "Demo verileri yüklenemedi." "Docker loglarını ve site durumunu kontrol edin."
     exit 1

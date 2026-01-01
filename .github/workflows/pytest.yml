@@ -27,6 +27,7 @@ jobs:
               "THIRD_PARTY_NOTICES.md",
               "LISANS_VE_DAGITIM.md",
           ]
+          targets += glob.glob("*.md", recursive=False)
           targets += glob.glob("docs/**/*.md", recursive=True)
           targets += glob.glob("scripts/**/*.ps1", recursive=True)
           targets += glob.glob("frappe_apps/**/translations/*.csv", recursive=True)

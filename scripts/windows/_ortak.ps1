@@ -102,11 +102,33 @@ function Get-DbPassword {
 function Get-ComposeArgs {
   $infraDir = Get-InfraDir
   $frappeDockerDir = Get-FrappeDockerDir
+  
+  # Frappe Docker compose dosyalarını kontrol et
+  $baseCompose = Join-Path $frappeDockerDir "compose.yaml"
+  if (-not (Test-Path $baseCompose)) {
+    Write-Hata "Compose dosyası bulunamadı: $baseCompose" "Önce scripts\windows\01-bootstrap.ps1 çalıştırın."
+    exit 1
+  }
+  
+  $mariadbCompose = Join-Path $frappeDockerDir "overrides\compose.mariadb.yaml"
+  $redisCompose = Join-Path $frappeDockerDir "overrides\compose.redis.yaml"
+  $overrideCompose = Join-Path $infraDir "docker-compose.override.yaml"
+  
+  # Zorunlu dosyaları kontrol et
+  if (-not (Test-Path $mariadbCompose)) {
+    Write-Hata "MariaDB override bulunamadı: $mariadbCompose" "frappe_docker repo'su doğru klonlanmamış olabilir."
+    exit 1
+  }
+  if (-not (Test-Path $redisCompose)) {
+    Write-Hata "Redis override bulunamadı: $redisCompose" "frappe_docker repo'su doğru klonlanmamış olabilir."
+    exit 1
+  }
+  
   return @(
-    "-f", (Join-Path $frappeDockerDir "compose.yaml"),
-    "-f", (Join-Path $frappeDockerDir "overrides\\compose.mariadb.yaml"),
-    "-f", (Join-Path $frappeDockerDir "overrides\\compose.redis.yaml"),
-    "-f", (Join-Path $infraDir "docker-compose.override.yaml")
+    "-f", $baseCompose,
+    "-f", $mariadbCompose,
+    "-f", $redisCompose,
+    "-f", $overrideCompose
   )
 }
 

@@ -96,7 +96,9 @@ def _parse_decimal_segment(segment: Optional[str], divisor: int) -> Optional[Dec
     return Decimal(segment) / Decimal(divisor)
 
 
-def parse_weighed_barcode(barcode: str, rules: Sequence[WeighedBarcodeRule]) -> Optional[ParsedWeighedBarcode]:
+def parse_weighed_barcode(
+    barcode: str, rules: Sequence[WeighedBarcodeRule]
+) -> Optional[ParsedWeighedBarcode]:
     candidate = barcode.strip()
     if not candidate.isdigit():
         return None

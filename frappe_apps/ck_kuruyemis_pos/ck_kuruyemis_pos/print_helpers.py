@@ -10,7 +10,7 @@ from frappe import _
 def _require_module(module_name: str, hint: str) -> None:
     try:
         __import__(module_name)
-    except ModuleNotFoundError as exc:
+    except ModuleNotFoundError:
         frappe.throw(_(hint))
 
 
@@ -21,7 +21,8 @@ def qr_data_url(data: str) -> str:
 
     _require_module(
         "qrcode",
-        "QR üretimi için 'qrcode' bağımlılığı gerekli. 'scan_me' modülünü kurun veya qrcode paketini yükleyin.",
+        "QR üretimi için 'qrcode' bağımlılığı gerekli. "
+        "'scan_me' modülünü kurun veya qrcode paketini yükleyin.",
     )
     import qrcode
 
@@ -39,7 +40,8 @@ def barcode_svg(data: str, module_width_mm: float = 0.2, module_height_mm: float
 
     _require_module(
         "barcode",
-        "Barkod üretimi için 'python-barcode' bağımlılığı gerekli. 'scan_me' modülünü kurun veya paketi yükleyin.",
+        "Barkod üretimi için 'python-barcode' bağımlılığı gerekli. "
+        "'scan_me' modülünü kurun veya paketi yükleyin.",
     )
     from barcode.codex import Code128
 

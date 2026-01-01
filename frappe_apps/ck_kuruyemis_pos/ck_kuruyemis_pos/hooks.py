@@ -21,5 +21,7 @@ fixtures = [
 
 # Override ERPNext barcode resolution to inject weighed barcode parsing.
 override_whitelisted_methods = {
-    "erpnext.stock.get_item_details.get_item_details": "ck_kuruyemis_pos.weighed_barcode.integration.get_item_details"
+    "erpnext.stock.get_item_details.get_item_details": (
+        "ck_kuruyemis_pos.weighed_barcode.integration.get_item_details"
+    )
 }

@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from decimal import Decimal
 from typing import Iterable, Optional
 
 from ck_kuruyemis_pos.weighed_barcode.parser import ParsedWeighedBarcode
