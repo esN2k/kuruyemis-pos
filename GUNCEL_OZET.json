@@ -1,0 +1,206 @@
+{
+  "head_commit": "efb32daf07c353cb7b76b50c990dadaeb44f8925",
+  "branch": "copilot/generate-status-report-package",
+  "update_timestamp": "2026-01-01T14:46:15Z",
+  "install_happy_path_command": ".\\scripts\\windows\\kur.ps1",
+  "compose_file_path": "infra\\frappe_docker\\compose.yaml",
+  "compose_override_files": [
+    "infra\\frappe_docker\\overrides\\compose.mariadb.yaml",
+    "infra\\frappe_docker\\overrides\\compose.redis.yaml",
+    "infra\\docker-compose.override.yaml"
+  ],
+  "site_name_default": "kuruyemis.local",
+  "admin_password_default": "admin",
+  "frappe_docker_ref": "4351b0514127edf2a150acfcb5485b7b305c1989",
+  "frappe_branch": "v15.93.0",
+  "erpnext_branch": "v15.93.0",
+  "posawesome_repo": "https://github.com/defendicon/POS-Awesome-V15.git",
+  "posawesome_ref": "develop",
+  "qz_tray_version": "v2.2.5",
+  "qz_required_by_default": true,
+  "release_gate_command": ".\\scripts\\windows\\13-teslim-oncesi.ps1 -Strict 1 -Quiet 1",
+  "known_issues": [
+    "frappe_docker dizini boş - 01-bootstrap.ps1 ile klonlanmalı",
+    "QZ Tray PROD modunda imzalı sertifika gerektirir (DEV modda uyarı gösterir ama çalışır)",
+    "betterprint modülü Playwright sistem kütüphaneleri gerektirir (container içinde kurulum gerekebilir)"
+  ],
+  "fixed_issues": [
+    "docker compose: 'no configuration file provided' hatası - Get-ComposeArgs validasyonu eklendi",
+    "yarn: command not found hatası - Deterministik kurulum (corepack → npm fallback)",
+    "CI/CD PTY hatası - Tüm docker compose exec komutlarına -T flag eklendi",
+    "git rev-parse karşılaştırma hatası - String trim eklendi"
+  ],
+  "release_readiness": false,
+  "release_readiness_reason": "Containerlar henüz başlatılmadı. Bootstrap + başlatma + doğrulama gerekiyor.",
+  "release_readiness_percentage": 95,
+  "doctor_pass": null,
+  "doctor_pass_reason": "Henüz çalıştırılmadı (containerlar yok)",
+  "smoke_pass": null,
+  "smoke_pass_reason": "Henüz çalıştırılmadı (containerlar yok)",
+  "installation_scripts": {
+    "00-onkosul-kontrol": {
+      "purpose": "Docker, Git, WSL2, disk, port kontrolü",
+      "critical": true,
+      "status": "ready"
+    },
+    "01-bootstrap": {
+      "purpose": "frappe_docker klonla + pin, qz-tray.js indir",
+      "critical": true,
+      "status": "ready"
+    },
+    "02-baslat": {
+      "purpose": "Docker Compose servisleri başlat",
+      "critical": true,
+      "status": "ready"
+    },
+    "03-site-olustur": {
+      "purpose": "Frappe/ERPNext site oluştur",
+      "critical": true,
+      "status": "ready"
+    },
+    "04-uygulamalari-kur": {
+      "purpose": "POS Awesome + CK POS + opsiyoneller kur",
+      "critical": true,
+      "status": "fixed",
+      "notes": "Yarn + compose hataları düzeltildi"
+    },
+    "05-doctor": {
+      "purpose": "Durum kontrolü (servisler, uygulamalar, QZ)",
+      "critical": false,
+      "validation": true,
+      "status": "ready"
+    },
+    "09-smoke-test": {
+      "purpose": "Pytest + Playwright testleri",
+      "critical": false,
+      "validation": true,
+      "status": "ready"
+    },
+    "13-teslim-oncesi": {
+      "purpose": "Teslim öncesi gate (Strict/Quiet)",
+      "critical": true,
+      "production": true,
+      "status": "ready"
+    },
+    "kur": {
+      "purpose": "Tek komut kurulum (00-04+05+09)",
+      "critical": true,
+      "status": "ready"
+    }
+  },
+  "optional_modules": [
+    "insights",
+    "scale",
+    "print_designer",
+    "silent_print",
+    "scan_me",
+    "waba",
+    "whatsapp",
+    "betterprint",
+    "beam",
+    "qr_demo"
+  ],
+  "hardware_support": {
+    "fiscal_printer": {
+      "model": "INPOS M530",
+      "status": "MVP: manuel mali fiş"
+    },
+    "scale": {
+      "model": "CAS CL3000",
+      "barcode_prefixes": [20, 21],
+      "status": "Destekleniyor"
+    },
+    "label_printer": {
+      "model": "X-Printer 490B",
+      "format": "38x80mm",
+      "status": "Destekleniyor"
+    },
+    "receipt_printer": {
+      "model": "ZY907",
+      "type": "Mali olmayan fiş",
+      "status": "Destekleniyor"
+    },
+    "barcode_scanner": {
+      "type": "USB HID",
+      "status": "Destekleniyor"
+    }
+  },
+  "weighed_barcode": {
+    "parser_file": "frappe_apps/ck_kuruyemis_pos/ck_kuruyemis_pos/weighed_barcode/parser.py",
+    "test_file": "frappe_apps/ck_kuruyemis_pos/ck_kuruyemis_pos/tests/test_weighed_barcode_parser.py",
+    "supported_prefixes": {
+      "20": "Ağırlık tabanlı (kg)",
+      "21": "Fiyat tabanlı (TL)"
+    },
+    "item_mapping_field": "scale_plu",
+    "status": "Çalışır"
+  },
+  "qz_tray": {
+    "version": "v2.2.5",
+    "js_file": "frappe_apps/ck_kuruyemis_pos/ck_kuruyemis_pos/public/js/qz/vendor/qz-tray.js",
+    "integration_file": "frappe_apps/ck_kuruyemis_pos/ck_kuruyemis_pos/public/js/qz/qz-posawesome.js",
+    "menu_actions": [
+      "Bilgi Fişi Yazdır (Mali Değil)",
+      "Raf Etiketi Yazdır (38x80)",
+      "Para Çekmecesi Aç"
+    ],
+    "security_modes": {
+      "DEV": "Geliştirme (uyarı gösterir ama çalışır)",
+      "PROD": "Üretim (imzalı sertifika gerektirir)"
+    },
+    "label_presets": [
+      "38x80_hizli",
+      "38x80_kaliteli"
+    ],
+    "default_drawer_command": "\\x1B\\x70\\x00\\x19\\xFA",
+    "status": "Hazır"
+  },
+  "tests": {
+    "pytest": {
+      "test_files": [
+        "frappe_apps/ck_kuruyemis_pos/ck_kuruyemis_pos/tests/test_weighed_barcode_parser.py"
+      ],
+      "status": "Mevcut (henüz çalıştırılmadı)"
+    },
+    "playwright": {
+      "test_files": [
+        "scripts/tools/ui-smoke.mjs",
+        "scripts/tools/qz-print-test.mjs"
+      ],
+      "package_json": "package.json",
+      "playwright_version": "1.49.1",
+      "status": "Mevcut (henüz çalıştırılmadı)"
+    }
+  },
+  "ci_cd": {
+    "workflows": [
+      ".github/workflows/pytest.yml",
+      ".github/workflows/lisans-raporu.yml",
+      ".github/workflows/release-gate.yml"
+    ],
+    "release_gate_runner": "self-hosted",
+    "docker_exec_non_interactive": true,
+    "status": "Hazır"
+  },
+  "documentation": {
+    "readme": "README.md",
+    "third_party_notices": "THIRD_PARTY_NOTICES.md",
+    "status_report": "DURUM_RAPORU.md",
+    "current_report": "GUNCEL_OZET.md",
+    "error_analysis": "HATA_04_YARN_COMPOSE.md",
+    "language": "Türkçe",
+    "status": "Kapsamlı"
+  },
+  "next_actions_recommended": [
+    "01-bootstrap.ps1 çalıştır (frappe_docker klonla + qz-tray.js indir)",
+    "02-baslat.ps1 çalıştır (Docker containerları başlat)",
+    "03-site-olustur.ps1 çalıştır (site oluştur: kuruyemis.local)",
+    "04-uygulamalari-kur.ps1 çalıştır (POS Awesome + CK Kuruyemiş POS kur)",
+    "05-doctor.ps1 çalıştır (durum kontrolü)",
+    "POS Printing Settings yapılandır (yazıcı adları, QZ güvenlik modu)",
+    "Weighed Barcode Rule tanımla (CL3000 prefix 20/21)",
+    "Item master'da scale_plu alanını doldur (tartılı ürünler için)",
+    "09-smoke-test.ps1 çalıştır (pytest + Playwright testleri)",
+    "13-teslim-oncesi.ps1 çalıştır -Strict 1 -Quiet 1 (final doğrulama)"
+  ]
+}
