@@ -21,7 +21,10 @@ def health():
 def fiscal_sale(payload: SaleRequest) -> SaleResponse:
     logger.info("Satış isteği alındı: toplam=%s satır=%s", payload.total, len(payload.lines))
     logger.info(
-        "Hedef cihaz %s:%s uygulama_no=%s", settings.device_ip, settings.device_port, settings.app_no
+        "Hedef cihaz %s:%s uygulama_no=%s",
+        settings.device_ip,
+        settings.device_port,
+        settings.app_no,
     )
 
     # YAPILACAK: GMP3 mesaj çerçeveleme ve TCP soket ile gönderim.
